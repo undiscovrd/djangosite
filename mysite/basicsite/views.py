@@ -9,4 +9,4 @@ import os.path
 currentLocation = os.getcwd().replace("\\","/")  + "/basicsite/"
 
 def index(request):
-    return render(request,currentLocation + 'templates/index.html')
+    return render(request,currentLocation + 'templates/loginpage.html')
