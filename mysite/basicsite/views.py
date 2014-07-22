@@ -10,3 +10,9 @@ currentLocation = os.getcwd().replace("\\","/")  + "/basicsite/"
 
 def index(request):
     return render(request,currentLocation + 'templates/loginpage.html')
+	
+def tasks(request):
+    return render(request,currentLocation + 'templates/tasks.html')
+	
+def timeline(request):
+    return render(request,currentLocation + 'templates/timeline.html')

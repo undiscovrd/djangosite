@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script type="application/javascript">
+	$(".timeline-item").hover(function () {
+    
+    $(this).toggleClass("active");
+    $(this).prev(".timeline-item").toggleClass("close");
+    $(this).next(".timeline-item").toggleClass("close");
+	});
+</script>
+
+<style>
+div {
+    font-family: Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+}
+.timeline {
+    width: 400px;
+}
+.timeline .timeline-item {
+    width: 100%;
+}
+.timeline .timeline-item .info, .timeline .timeline-item .year {
+    color: #808080;
+    display: block;
+    float:left;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+}
+.timeline .timeline-item.close .info, .timeline .timeline-item.close .year {
+    color: #4C4C4C;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+}
+.timeline .timeline-item .year {
+    font-size: 24px;
+    font-weight: bold;
+    width: 22%;
+}
+.timeline .timeline-item .info {
+    width: 100%;
+    width: 78%;
+    margin-left: -2px;
+    padding: 0 0 40px 35px;
+    border-left: 4px solid #aaa;
+    font-size: 14px;
+    line-height: 20px;
+}
+.timeline .timeline-item .marker {
+    background-color: #fff;
+    border: 4px solid #aaa;
+    height: 20px;
+    width: 20px;
+    border-radius: 100px;
+    display: block;
+    float: right;
+    margin-right: -14px;
+    z-index: 2000;
+    position: relative;
+}
+.timeline .timeline-item.active .info, .timeline .timeline-item:hover .info {
+    color: #1A1A1A;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+}
+.timeline .timeline-item.active .year, .timeline .timeline-item:hover .year {
+    color: #1A1A1A;
+}
+.timeline .timeline-item .marker .dot {
+    background-color: white;
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+    display: block;
+    border: 4px solid white;
+    height: 12px;
+    width: 12px;
+    border-radius: 100px;
+    float: right;
+    z-index: 2000;
+    position: relative;
+}
+.timeline .timeline-item.active .marker .dot, .timeline .timeline-item:hover .marker .dot {
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    transition: all 1s ease;
+    background-color: #9DB668;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+body {
+	background:none transparent;
+}
+</style>
+</head>
+<title>TimeLine!</title>
+<body>
+
+	<!-- You will need to convert css to LESS -->
+	<div class="timeline">
+		<div class="timeline-item">
+			<div class="year">2008 <span class="marker"><span class="dot"></span></span>
+			</div>
+			<div class="info">That song the artist formerly known as prince sang no longer applies.</div>
+		</div>
+		<div class="timeline-item">
+			<div class="year">2008 <span class="marker"><span class="dot"></span></span>
+			</div>
+			<div class="info">The in-house Gawker chat room is filled with photos of Rob Ford, and for one reason: Rob Ford takes a good goddamn photo.</div>
+		</div>
+		<div class="timeline-item">
+			<div class="year">2008 <span class="marker"><span class="dot"></span></span>
+			</div>
+			<div class="info">That song the artist formerly known as prince sang no longer applies.</div>
+		</div>
+		<div class="timeline-item">
+			<div class="year">2008 <span class="marker"><span class="dot"></span></span>
+			</div>
+			<div class="info">The in-house Gawker chat room is filled with photos of Rob Ford, and for one reason.The in-house Gawker chat room is filled with photos of Rob Ford, and for one reason.The in-house Gawker chat room is filled with photos of Rob Ford, and for one reason.</div>
+		</div>
+		<div class="timeline-item">
+			<div class="year">2008 <span class="marker"><span class="dot"></span></span>
+			</div>
+			<div class="info">That song the artist formerly known as prince sang no longer applies.</div>
+		</div>
+		<div class="timeline-item">
+			<div class="year">2008 <span class="marker"><span class="dot"></span></span>
+			</div>
+			<div class="info">The in-house Gawker chat room is filled with photos of Rob Ford, and for one reason.The in-house Gawker chat room is filled with photos of Rob Ford, and for one reason.The in-house Gawker chat room is filled with photos of Rob Ford, and for one reason.</div>
+		</div>
+	</div>
+
+</body>
+</html>
