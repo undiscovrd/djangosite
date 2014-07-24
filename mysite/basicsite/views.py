@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django import forms
+from models import User
 #from django.template import RequestContext
 
 import os.path
@@ -45,5 +46,8 @@ class LoginForm(forms.Form):
 def thanks(request):
     user = request.session['user']
     password = request.session['password']
+    
+    u = User(user_name=user, password=password, rights="user")
+    u.save()
     
     return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password});
