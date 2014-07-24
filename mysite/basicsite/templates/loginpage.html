@@ -78,12 +78,37 @@
 	{
 		position: relative;
 		display: block;
-		top:-250px;
+		top:-280px;
 		#margin-top:20px;
 	    left: 35%;
 	}
+    
+    form.formForm #id_username {
+        height:40px;
+        width:300px;
+        font-size: 25px;
+    }
+    
+    form.formForm #id_password {
+        height:40px;
+        width:300px;
+        margin-top: 40px;
+        display:block;
+        font-size: 25px;
+    }
 
 </style>
+
+<script type="application/javascript">
+    function loginProcess() {
+        var username = document.getElementById("id_username").value;
+        var password = document.getElementById("id_password").value;
+
+        <!-- post('/login/', {username : username, password : password}); -->
+    
+        loginform.submit();
+    }
+</script>
 </head>
 <body>
 <div class="titleBar">
@@ -93,10 +118,12 @@
 
 <div class="loginWindowDiv">
 	<img class="loginWindow" src="{{ STATIC_URL  }}loginrectangle.png" alt="some_text2">
-	<input type="image" class="loginButton" src="{{ STATIC_URL  }}loginbutton.png" onclick="alert('buttonclicked');">
-	<form class="formForm" action="/login/" method="post">{% csrf_token %}
-		<input class="nameField" type="text" name="Name" value="Mickey"><br>
-		<input class="passwordField" type="text" name="Pass" value="Mouse"><br>
+	<input type="image" class="loginButton" src="{{ STATIC_URL  }}loginbutton.png" onclick="loginProcess();">
+	<form id="loginform" class="formForm" action="/basicsite/login/" method="post">{% csrf_token %}
+		<!-- <input class="nameField" type="text" name="Name" value="Mickey"><br> -->
+		<!-- <input class="passwordField" type="text" name="Pass" value="Mouse"><br> -->
+        {{ form.username }}
+        {{ form.password }}
     </form> 
 </div>
 
