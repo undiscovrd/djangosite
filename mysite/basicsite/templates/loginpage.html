@@ -94,10 +94,10 @@
 <div class="loginWindowDiv">
 	<img class="loginWindow" src="{{ STATIC_URL  }}loginrectangle.png" alt="some_text2">
 	<input type="image" class="loginButton" src="{{ STATIC_URL  }}loginbutton.png" onclick="alert('buttonclicked');">
-	<form class="formForm" action="demo_form_action.asp" method="get">
+	<form class="formForm" action="/login/" method="post">{% csrf_token %}
 		<input class="nameField" type="text" name="Name" value="Mickey"><br>
 		<input class="passwordField" type="text" name="Pass" value="Mouse"><br>
-</form> 
+    </form> 
 </div>
 
 <div class="bottomBar">

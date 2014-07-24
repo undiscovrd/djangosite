@@ -43,11 +43,7 @@
 		margin-right: 0px;
 	}
 	
-	div.task-track {
-	
-	
-	}
-	
+
 	img.videolist-background {
 		float:left;
 		margin-top:50px;
@@ -198,6 +194,242 @@
 		height:420px;
 		overflow:auto;
 	}
+	
+	div.task-track {
+		display:block;
+	}
+	
+	
+	div.comment-task-container {
+		display:inline;
+		position:absolute;
+		z-index:1000;
+		margin-top:10px;
+		left:55px;
+		width:420px;
+		height:510px;
+		overflow:auto;
+		overflow-y:auto;
+		overflow-x:hidden;
+	}
+	
+	
+	.comment-task-container .comment-task-item {
+		width: 410px;
+		display: block;
+	}
+	.comment-task-container .comment-task-item .info, .comment-task-container .comment-task-item .year {
+		color: #1A1A1A;
+		float:left;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.comment-task-container .comment-task-item .year {
+		display: block;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+	}
+	.comment-task-container .comment-task-item .name {
+		display: inline;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+		color: #3366FF;
+		padding-left:10px;
+	}
+	.comment-task-container .comment-task-item .info {
+		display: block;
+		width: 100%;
+		width: 70%;
+		margin-left: -2px;
+		padding: 0 0 40px 35px;
+		border-left: 4px solid #808080;
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.comment-task-container .comment-task-item .marker {
+		background-color: #fff;
+		border: 4px solid #aaa;
+		height: 20px;
+		width: 20px;
+		border-radius: 100px;
+		display: block;
+		float: right;
+		margin-right: -14px;
+		z-index: 2000;
+		position: relative;
+	}
+	.comment-task-container .comment-task-item.active .info {
+		color: #1A1A1A;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.comment-task-container .comment-task-item.active .year {
+		color: #1A1A1A;
+	}
+	.comment-task-container .comment-task-item .marker .dot {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+	}
+	
+	.comment-task-container .comment-task-item .marker .dot-current {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+		background-color: #0066CC;
+	}
+	.comment-task-container .comment-task-item.active .marker .dot {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #9DB668;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+	
+	.comment-task-container .comment-task-item.active .marker .dot-current {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #0066CC;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+	
+	div.comment-track-container {
+		display:inline;
+		position:absolute;
+		z-index:1000;
+		margin-top:10px;
+		left:485px;
+		width:420px;
+		height:510px;
+		overflow:auto;
+		overflow-y:auto;
+		overflow-x:hidden;
+	}
+	
+	.comment-track-container .comment-track-item {
+		width: 410px;
+		display: block;
+	}
+	.comment-track-container .comment-track-item .info, .comment-track-container .comment-track-item .year {
+		color: #1A1A1A;
+		float:left;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.comment-track-container .comment-track-item .year {
+		display: block;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+	}
+	.comment-track-container .comment-track-item .name {
+		display: inline;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+		color: #3366FF;
+		padding-left:10px;
+	}
+	.comment-track-container .comment-track-item .info {
+		display: block;
+		width: 100%;
+		width: 70%;
+		margin-left: -2px;
+		padding: 0 0 40px 35px;
+		border-left: 4px solid #808080;
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.comment-track-container .comment-track-item .marker {
+		background-color: #fff;
+		border: 4px solid #aaa;
+		height: 20px;
+		width: 20px;
+		border-radius: 100px;
+		display: block;
+		float: right;
+		margin-right: -14px;
+		z-index: 2000;
+		position: relative;
+	}
+	.comment-track-container .comment-track-item.active .info {
+		color: #1A1A1A;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.comment-track-container .comment-track-item.active .year {
+		color: #1A1A1A;
+	}
+	.comment-track-container .comment-track-item .marker .dot {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+	}
+	
+	.comment-track-container .comment-track-item .marker .dot-current {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+		background-color: #0066CC;
+	}
+	.comment-track-container .comment-track-item.active .marker .dot {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #9DB668;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+	
+	.comment-track-container .comment-track-item.active .marker .dot-current {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #0066CC;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
 
 </style>
 <script type="application/javascript">
@@ -265,7 +497,75 @@
 </div>
 
 <div class="task-track">
-	<img class="task-track-background" src="{{ STATIC_URL }}task-track-background.png" alt="some_text">
+	<img class="messagefeed-background" src="{{ STATIC_URL }}message-feed-extended.png" alt="some_text">
+	<div class="comment-task-container">
+		<div class="comment-task">
+			<div class="comment-task-item">
+				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Offloaded from pc3</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.23.14 9.47a<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Random post</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.23.14 12.43p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Random post</div>
+			</div>
+		</div>
+	</div>
+	<div class="comment-track-container">
+		<div class="comment-track">
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Offloaded from pc3</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.23.14 9.47a<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Random post</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.23.14 12.43p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Random post</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="bottomBar">

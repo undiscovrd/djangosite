@@ -12,6 +12,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
 	url(r'^$', 'basicsite.views.index'),
-	url(r'^basicsite/tasks', 'basicsite.views.tasks'),
+	url(r'^basicsite/tasks/(?P<task>\d{4})', 'basicsite.views.tasks'),
+	url(r'^basicsite/tracks/(?P<track>\d{4})', 'basicsite.views.tracks'),
 	url(r'^basicsite/timeline', 'basicsite.views.timeline'),
 )
