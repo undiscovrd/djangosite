@@ -24,7 +24,7 @@ def login(request):
             request.session['user'] = user
             request.session['password'] = password
             
-            return redirect('/basicsite/thanks/') # Redirect after POST
+            return redirect('/basicsite/tasks/') # Redirect after POST
             
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -34,7 +34,23 @@ def login(request):
     return render(request, currentLocation + 'templates/loginpage.html', {'form': form,})
 	
 def tasks(request):
-    return render(request,currentLocation + 'templates/tasks.html')
+    if request.method == 'POST': # If the form has been submitted...
+        # ContactForm was defined in the previous section
+        form = ReplyBox(request.POST) # A form bound to the POST data
+        if form.is_valid(): # All validation rules pass
+            user = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            request.session['user'] = user
+            request.session['password'] = password
+            
+            return redirect('/basicsite/tasks/') # Redirect after POST
+            
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+    else:
+        form = ReplyBox() # An unbound form
+    
+    return render(request,currentLocation + 'templates/tasks.html', {'form': form,})
 	
 def timeline(request):
     return render(request,currentLocation + 'templates/timeline.html')
@@ -51,3 +67,6 @@ def thanks(request):
     u.save()
     
     return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password});
+    
+class ReplyBox(forms.Form):
+    comment = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )

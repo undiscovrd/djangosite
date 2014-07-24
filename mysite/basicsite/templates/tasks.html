@@ -207,7 +207,7 @@
 		margin-top:10px;
 		left:55px;
 		width:420px;
-		height:510px;
+		height:420px;
 		overflow:auto;
 		overflow-y:auto;
 		overflow-x:hidden;
@@ -242,9 +242,8 @@
 	.comment-task-container .comment-task-item .info {
 		display: block;
 		width: 100%;
-		width: 70%;
 		margin-left: -2px;
-		padding: 0 0 40px 35px;
+		padding: 0 0 15px 15px;
 		border-left: 4px solid #808080;
 		font-size: 14px;
 		line-height: 20px;
@@ -323,7 +322,7 @@
 		margin-top:10px;
 		left:485px;
 		width:420px;
-		height:510px;
+		height:420px;
 		overflow:auto;
 		overflow-y:auto;
 		overflow-x:hidden;
@@ -357,9 +356,8 @@
 	.comment-track-container .comment-track-item .info {
 		display: block;
 		width: 100%;
-		width: 70%;
 		margin-left: -2px;
-		padding: 0 0 40px 35px;
+		padding: 0 0 15px 15px;
 		border-left: 4px solid #808080;
 		font-size: 14px;
 		line-height: 20px;
@@ -430,6 +428,24 @@
 		background-color: #0066CC;
 		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
 	}
+    
+    .reply-boxes {
+        display:block;
+    }
+    
+    form.formForm {
+        margin-top: -115px;
+        display:block;
+        font-size: 25px;
+        margin-left:55px;
+        z-index:1500;
+    }
+    
+    .postButton {
+        margin-right:30px;
+    
+    
+    }
 
 </style>
 <script type="application/javascript">
@@ -525,6 +541,31 @@
 				</div>
 				<div class="info">Random post</div>
 			</div>
+            <div class="comment-task-item">
+				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Offloaded from pc3</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
+			</div>
+			<div class="comment-task-item">
+				<div class="year">Monday 7.23.14 9.47a<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Random post</div>
+			</div>
 			<div class="comment-task-item">
 				<div class="year">Monday 7.23.14 12.43p<div class="name">Michael Zucc</div>
 				</div>
@@ -559,6 +600,46 @@
 				</div>
 				<div class="info">Random post</div>
 			</div>
+            <div class="comment-track-item">
+				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Offloaded from pc3</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
+			</div>
+            <div class="comment-track-item">
+				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Offloaded from pc3</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
+			</div>
+			<div class="comment-track-item">
+				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
+				</div>
+				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
+			</div>
 			<div class="comment-track-item">
 				<div class="year">Monday 7.23.14 12.43p<div class="name">Michael Zucc</div>
 				</div>
@@ -566,7 +647,19 @@
 			</div>
 		</div>
 	</div>
+    
+    <div class="reply-boxes">
+        <form id="replybox" class="formForm" action="/basicsite/tasks/" method="post">{% csrf_token %}
+            {{ form.comment }}
+            <img class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text">
+            {{ form.comment }}
+            <img class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text">
+        </form>
+    </div>
+    
 </div>
+
+
 
 <div class="bottomBar">
 	<img src="{{ STATIC_URL }}topBar.png" alt="some_text">

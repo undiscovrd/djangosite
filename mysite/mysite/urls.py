@@ -14,6 +14,6 @@ urlpatterns = patterns('',
     url(r'^$', 'basicsite.views.login'),
     url(r'^basicsite/login', 'basicsite.views.login'),
     url(r'^basicsite/thanks', 'basicsite.views.thanks'),
-    url(r'^basicsite/tasks/(?P<task>\d{4})', 'basicsite.views.tasks'),
+    url(r'^basicsite/tasks', 'basicsite.views.tasks'),
     url(r'^basicsite/timeline', 'basicsite.views.timeline'),
 )
