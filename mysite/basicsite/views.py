@@ -69,4 +69,5 @@ def thanks(request):
     return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password});
     
 class ReplyBox(forms.Form):
-    comment = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
+    comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
+    comment2 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
