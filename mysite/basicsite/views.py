@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django import forms
 from models import User
+from models import Comment
+from django.utils import timezone
 #from django.template import RequestContext
 
 import os.path
@@ -32,26 +34,11 @@ def login(request):
         form = LoginForm() # An unbound form
 
     return render(request, currentLocation + 'templates/loginpage.html', {'form': form,})
-	
+
 def tasks(request):
-    if request.method == 'POST': # If the form has been submitted...
-        # ContactForm was defined in the previous section
-        form = ReplyBox(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            user = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            request.session['user'] = user
-            request.session['password'] = password
-            
-            return redirect('/basicsite/tasks/') # Redirect after POST
-            
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-    else:
-        form = ReplyBox() # An unbound form
-    
-    return render(request,currentLocation + 'templates/tasks.html', {'form': form,})
-	
+    formarea = ReplyBox()
+    return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea,})
+
 def timeline(request):
     return render(request,currentLocation + 'templates/timeline.html')
     
@@ -71,3 +58,16 @@ def thanks(request):
 class ReplyBox(forms.Form):
     comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
     comment2 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
+    
+def submitcomment(request):
+    if request.method == 'POST': # If the form has been submitted...
+        comment1 = request.POST['comment1']
+        comment2 = request.POST['comment2']
+        usercookie = request.session['user']
+        u = User(user_name=usercookie)
+        pub_date=timezone.now()
+        c = Comment(user_identifier=user, date_commented=pub_date, comment_text=comment1)
+        c.save()
+        return redirect('/basicsite/tasks/') # Redirect after POST
+    
+    return render(request, currentLocation + 'templates/thanks.html')

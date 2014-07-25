@@ -6,6 +6,8 @@
     function submitComment (commentEl) {
         var id = commentEl.id;
         alert(id + "is the id");
+        
+        replybox.submit();
     }
 
 </script>
@@ -657,10 +659,10 @@
 	</div>
     
     <div class="reply-boxes">
-        <form id="replybox" class="formForm" action="/basicsite/tasks/" method="post">{% csrf_token %}
-            {{ form.comment1 }}
+        <form id="replybox" class="formForm" action="/basicsite/submitcomment/" method="post">{% csrf_token %}
+            {{ formarea.comment1 }}
             <img id="send1" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
-            {{ form.comment2 }}
+            {{ formarea.comment2 }}
             <img id="send2" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
         </form>
     </div>

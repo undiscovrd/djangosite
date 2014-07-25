@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 
 from django.contrib import admin
-from basicsite.views import index
 #admin.autodiscover()     url(r'^basicsite/tracks/(?P<track>\d{4})', 'basicsite.views.tracks'),
 
 
@@ -16,4 +15,5 @@ urlpatterns = patterns('',
     url(r'^basicsite/thanks', 'basicsite.views.thanks'),
     url(r'^basicsite/tasks', 'basicsite.views.tasks'),
     url(r'^basicsite/timeline', 'basicsite.views.timeline'),
+    url(r'^basicsite/submitcomment', 'basicsite.views.submitcomment'),
 )
