@@ -528,7 +528,7 @@
 		<div class="comment-task">
             {% for comment in comments %}
             <div class="comment-task-item">
-                <div class="year">{{ comment.date_commented }}<div class="name">{{ comment.user_identifier }}</div>
+                <div class="year">{{ comment.date_commented }}<div class="name">{{ comment.user_identifier.user_name }}</div>
 				</div>
                     
                 <div class="info">{{ comment.comment_text }}</div>
