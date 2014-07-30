@@ -26,6 +26,14 @@ def login(request):
             request.session['user'] = user
             request.session['password'] = password
             
+            try:
+                testuser = User.objects.get(user_name=user)
+                if (testuser.user_name != user):
+                    u = User(user_name=user, password=password, rights="user")
+                    u.save()
+            except:
+                u = User(user_name=user, password=password, rights="user")
+                u.save()
             return redirect('/basicsite/tasks/') # Redirect after POST
             
         username = request.POST.get('username')
@@ -37,7 +45,8 @@ def login(request):
 
 def tasks(request):
     formarea = ReplyBox()
-    return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea,})
+    comments = Comment.objects.all()
+    return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 'comments' : comments,})
 
 def timeline(request):
     return render(request,currentLocation + 'templates/timeline.html')
@@ -64,9 +73,9 @@ def submitcomment(request):
         comment1 = request.POST['comment1']
         comment2 = request.POST['comment2']
         usercookie = request.session['user']
-        u = User(user_name=usercookie)
+        u = User.objects.get(user_name=usercookie)
         pub_date=timezone.now()
-        c = Comment(user_identifier=user, date_commented=pub_date, comment_text=comment1)
+        c = Comment(user_identifier=u, date_commented=pub_date, comment_text=comment1)
         c.save()
         return redirect('/basicsite/tasks/') # Redirect after POST
     

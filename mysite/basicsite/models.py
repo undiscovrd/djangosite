@@ -8,7 +8,7 @@ class User(models.Model):
 	
 class Task(models.Model):
     task_title = models.CharField(max_length=30)
-    started_date = models.DateField()
+    started_date = models.DateTimeField()
 	
 class TaskRoster(models.Model):
     user_identifier = models.ForeignKey(User)
@@ -17,7 +17,7 @@ class TaskRoster(models.Model):
 	
 class Video(models.Model):
     video_number = models.IntegerField()
-    uploaded_date = models.DateField()
+    uploaded_date = models.DateTimeField()
     location = models.CharField(max_length=200)
 
 #this guy will have his own identifier, so track->video->task
@@ -28,7 +28,7 @@ class Track(models.Model):
 	
 class Comment(models.Model):
     user_identifier = models.ForeignKey(User)
-    date_commented = models.DateField()
+    date_commented = models.DateTimeField()
     comment_text = models.CharField(max_length=400)
 	
 class CommentTask(models.Model):

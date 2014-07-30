@@ -526,67 +526,20 @@
 	<img class="messagefeed-background" src="{{ STATIC_URL }}message-feed-extended.png" alt="some_text">
 	<div class="comment-task-container">
 		<div class="comment-task">
-			<div class="comment-task-item">
-				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Offloaded from pc3</div>
-			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
-			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
-			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
-			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.23.14 9.47a<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Random post</div>
-			</div>
+            {% for comment in comments %}
             <div class="comment-task-item">
-				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
+                <div class="year">{{ comment.date_commented }}<div class="name">{{ comment.user_identifier }}</div>
 				</div>
-				<div class="info">Offloaded from pc3</div>
+                    
+                <div class="info">{{ comment.comment_text }}</div>
 			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
-			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
-			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
-			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.23.14 9.47a<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Random post</div>
-			</div>
-			<div class="comment-task-item">
-				<div class="year">Monday 7.23.14 12.43p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Random post</div>
-			</div>
+            {% endfor %}
 		</div>
 	</div>
 	<div class="comment-track-container">
 		<div class="comment-track">
 			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
+				<div class="year">Monday 7.22.14 10.31a Michael Zucc</div>
 				</div>
 				<div class="info">Offloaded from pc3</div>
 			</div>
