@@ -441,14 +441,20 @@
     
     .reply-boxes {
         display:block;
+        margin-top: -200px;
+       
     }
     
     form.formForm {
-        margin-top: -115px;
-        display:block;
-        font-size: 25px;
-        margin-left:55px;
-        z-index:1500;
+        margin-left:45px;
+        width: 450px;
+        display:inline;
+    }
+    
+    form.formForm #replybox2 {
+        margin-left:20px;
+        width: 500px;
+        display:inline;
     }
     
     .postButton {
@@ -538,83 +544,22 @@
 	</div>
 	<div class="comment-track-container">
 		<div class="comment-track">
+        {% for comment in comments %}
 			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 10.31a Michael Zucc</div>
+				<div class="year">Monday 7.22.14 10.31a<div class="name">Michael Zucc</div>
 				</div>
 				<div class="info">Offloaded from pc3</div>
 			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.23.14 9.47a<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Random post</div>
-			</div>
-            <div class="comment-track-item">
-				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Offloaded from pc3</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
-			</div>
-            <div class="comment-track-item">
-				<div class="year">Monday 7.22.14 10.31a <div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Offloaded from pc3</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 11.42a<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 2.26p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 6.31p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
-			</div>
-			<div class="comment-track-item">
-				<div class="year">Monday 7.23.14 12.43p<div class="name">Michael Zucc</div>
-				</div>
-				<div class="info">Random post</div>
-			</div>
+        {% endfor %}
 		</div>
 	</div>
     
     <div class="reply-boxes">
-        <form id="replybox" class="formForm" action="/basicsite/submitcomment/" method="post">{% csrf_token %}
+        <form id="replybox1" class="formForm" action="/basicsite/submitcommenttask/" method="post">{% csrf_token %}
             {{ formarea.comment1 }}
             <img id="send1" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
+        </form>
+        <form id="replybox2" class="formForm" action="/basicsite/submitcommenttrack/" method="post">{% csrf_token %}
             {{ formarea.comment2 }}
             <img id="send2" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
         </form>

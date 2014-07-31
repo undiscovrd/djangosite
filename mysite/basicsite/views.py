@@ -4,6 +4,8 @@ from django.shortcuts import redirect
 from django import forms
 from models import User
 from models import Comment
+from models import CommentTask
+from models import CommentTrack
 from django.utils import timezone
 #from django.template import RequestContext
 
@@ -26,7 +28,7 @@ def login(request):
             request.session['user'] = user
             request.session['password'] = password
             
-            try:
+b            try:
                 testuser = User.objects.get(user_name=user)
                 if (testuser.user_name != user):
                     u = User(user_name=user, password=password, rights="user")
@@ -46,6 +48,8 @@ def login(request):
 def tasks(request):
     formarea = ReplyBox()
     comments = Comment.objects.all()
+    commentstask = CommentTask.objects.all()
+    commentstrack = 
     return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 'comments' : comments,})
 
 def timeline(request):
@@ -68,10 +72,22 @@ class ReplyBox(forms.Form):
     comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
     comment2 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
     
-def submitcomment(request):
+def submitcommenttask(request):
     if request.method == 'POST': # If the form has been submitted...
         comment1 = request.POST['comment1']
-        comment2 = request.POST['comment2']
+        usercookie = request.session['user']
+        u = User.objects.get(user_name=usercookie)
+        pub_date=timezone.now()
+        c = Comment(user_identifier=u, date_commented=pub_date, comment_text=comment1)
+        c.save()
+       # ct = CommeTask(comment_identifier=c,
+        return redirect('/basicsite/tasks/') # Redirect after POST
+    
+    return render(request, currentLocation + 'templates/thanks.html')
+    
+def submitcommenttrack(request):
+    if request.method == 'POST': # If the form has been submitted...
+        comment1 = request.POST['comment1']
         usercookie = request.session['user']
         u = User.objects.get(user_name=usercookie)
         pub_date=timezone.now()

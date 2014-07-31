@@ -15,5 +15,6 @@ urlpatterns = patterns('',
     url(r'^basicsite/thanks', 'basicsite.views.thanks'),
     url(r'^basicsite/tasks', 'basicsite.views.tasks'),
     url(r'^basicsite/timeline', 'basicsite.views.timeline'),
-    url(r'^basicsite/submitcomment', 'basicsite.views.submitcomment'),
+    url(r'^basicsite/submitcommenttask', 'basicsite.views.submitcommenttask'),
+    url(r'^basicsite/submitcommenttrack', 'basicsite.views.submitcommenttrack'),
 )
