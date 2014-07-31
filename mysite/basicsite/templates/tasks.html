@@ -5,9 +5,17 @@
 <script type="application/javascript">
     function submitComment (commentEl) {
         var id = commentEl.id;
-        alert(id + "is the id");
         
-        replybox.submit();
+        if (id == "send1")
+            if (id_comment1.value == "")
+                alert("no value");
+            else
+                replybox1.submit();
+        else
+            if (id_comment2.value == "")
+                alert("no value");
+            else
+                replybox2.submit();
     }
 
 </script>
@@ -441,7 +449,7 @@
     
     .reply-boxes {
         display:block;
-        margin-top: -200px;
+        margin-top: -110px;
        
     }
     
@@ -481,10 +489,9 @@
 <div class="videolist">
 	<form class="task-down" action="">
 		<select name="tasks">
-		<option value="wakeup">wakeup</option>
-		<option value="finger">finger</option>
-		<option value="face">face</option>
-		<option value="wakeup2">wakeup2</option>
+        {% for task in alltasks %}
+            <option value="{{ task.id }}">{{ task.task_title }}</option>
+        {% endfor %}
 		</select>
 	</form>
 	<img class="videolist-background" src="{{ STATIC_URL }}video-list-background.png" alt="some_text">
@@ -532,23 +539,24 @@
 	<img class="messagefeed-background" src="{{ STATIC_URL }}message-feed-extended.png" alt="some_text">
 	<div class="comment-task-container">
 		<div class="comment-task">
-            {% for comment in comments %}
+            {% for comment in commentstask %}
             <div class="comment-task-item">
-                <div class="year">{{ comment.date_commented }}<div class="name">{{ comment.user_identifier.user_name }}</div>
+                <div class="year">{{ comment.comment_identifier.date_commented }}<div class="name">{{ comment.comment_identifier.user_identifier.user_name }}</div>
 				</div>
                     
-                <div class="info">{{ comment.comment_text }}</div>
+                <div class="info">{{ comment.comment_identifier.comment_text }}</div>
 			</div>
             {% endfor %}
 		</div>
 	</div>
 	<div class="comment-track-container">
 		<div class="comment-track">
-        {% for comment in comments %}
+        {% for comment in commentstrack %}
 			<div class="comment-track-item">
-				<div class="year">Monday 7.22.14 10.31a<div class="name">Michael Zucc</div>
+				<div class="year">{{ comment.comment_identifier.date_commented }}<div class="name">{{ comment.comment_identifier.user_identifier.user_name }}</div>
 				</div>
-				<div class="info">Offloaded from pc3</div>
+                    
+                <div class="info">{{ comment.comment_identifier.comment_text }}</div>
 			</div>
         {% endfor %}
 		</div>

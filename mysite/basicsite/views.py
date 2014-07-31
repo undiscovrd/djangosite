@@ -6,6 +6,8 @@ from models import User
 from models import Comment
 from models import CommentTask
 from models import CommentTrack
+from models import Task
+from models import Track
 from django.utils import timezone
 #from django.template import RequestContext
 
@@ -28,7 +30,7 @@ def login(request):
             request.session['user'] = user
             request.session['password'] = password
             
-b            try:
+            try:
                 testuser = User.objects.get(user_name=user)
                 if (testuser.user_name != user):
                     u = User(user_name=user, password=password, rights="user")
@@ -47,10 +49,32 @@ b            try:
 
 def tasks(request):
     formarea = ReplyBox()
-    comments = Comment.objects.all()
-    commentstask = CommentTask.objects.all()
-    commentstrack = 
-    return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 'comments' : comments,})
+    allcomments = Comment.objects.all()
+    tasks = Task.objects.all()
+    tracks = Track.objects.all()
+    try:
+        currenttask = request.session['currenttask']
+    except:
+        currenttask = tasks[0]
+        request.session['currenttask'] = currenttask.id;
+        
+    try:
+        currenttrack = request.session['currenttrack']
+    except:
+        currenttrack = tracks[0]
+        request.session['currenttrack'] = currenttrack.id;
+    
+    forloopcomtask = CommentTask.objects.all()
+    commentstask = []
+    for comtask in forloopcomtask:
+        commentstask.append(comtask)
+        
+    forloopcomtrack = CommentTrack.objects.all()
+    commentstrack = []
+    for comtrack in forloopcomtrack:
+        commentstrack.append(comtrack)
+    
+    return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 'allcomments' : allcomments, 'commentstask' : commentstask, 'commentstrack' : commentstrack, 'alltasks' : tracks, 'alltasks' : tasks, 'currenttask' : currenttask, 'currenttrack' : currenttrack})
 
 def timeline(request):
     return render(request,currentLocation + 'templates/timeline.html')
@@ -80,6 +104,10 @@ def submitcommenttask(request):
         pub_date=timezone.now()
         c = Comment(user_identifier=u, date_commented=pub_date, comment_text=comment1)
         c.save()
+        tk_id = request.session['currenttask']
+        ct = CommentTask(comment_identifier_id=c.id,task_identifier_id=tk_id)
+        ct.save()
+
        # ct = CommeTask(comment_identifier=c,
         return redirect('/basicsite/tasks/') # Redirect after POST
     
@@ -87,12 +115,16 @@ def submitcommenttask(request):
     
 def submitcommenttrack(request):
     if request.method == 'POST': # If the form has been submitted...
-        comment1 = request.POST['comment1']
+        comment2 = request.POST['comment2']
         usercookie = request.session['user']
         u = User.objects.get(user_name=usercookie)
         pub_date=timezone.now()
-        c = Comment(user_identifier=u, date_commented=pub_date, comment_text=comment1)
+        c = Comment(user_identifier=u, date_commented=pub_date, comment_text=comment2)
         c.save()
+        ta_id = request.session['currenttrack']
+        ca = CommentTrack(comment_identifier_id=c.id,track_identifier_id=ta_id)
+        ca.save()
         return redirect('/basicsite/tasks/') # Redirect after POST
     
     return render(request, currentLocation + 'templates/thanks.html')
+    
