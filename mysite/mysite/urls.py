@@ -17,4 +17,5 @@ urlpatterns = patterns('',
     url(r'^basicsite/timeline', 'basicsite.views.timeline'),
     url(r'^basicsite/submitcommenttask', 'basicsite.views.submitcommenttask'),
     url(r'^basicsite/submitcommenttrack', 'basicsite.views.submitcommenttrack'),
+    url(r'^basicsite/changetask', 'basicsite.views.changetask'),
 )

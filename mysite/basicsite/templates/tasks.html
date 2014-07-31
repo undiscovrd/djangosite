@@ -17,6 +17,13 @@
             else
                 replybox2.submit();
     }
+    
+    function changeTask () {
+        var e = document.getElementById("taskselection");
+        var valsel = e.options[e.selectedIndex].value;
+        alert(valsel + "is selected task id");
+        dropdowntask.submit();
+    }
 
 </script>
 
@@ -487,8 +494,11 @@
 </div>
 
 <div class="videolist">
-	<form class="task-down" action="">
-		<select name="tasks">
+    {{ whichmethod }}
+    {{ ctask }}
+	<form id="dropdowntask" class="task-down" onchange="changeTask()" action="/basicsite/changetask/" method="post">{% csrf_token %}
+		<select id="taskselection" name="tasks">
+        <option value="{{ currenttask.id }}">{{ currenttask.task_title }}</option>
         {% for task in alltasks %}
             <option value="{{ task.id }}">{{ task.task_title }}</option>
         {% endfor %}

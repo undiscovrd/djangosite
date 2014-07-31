@@ -53,10 +53,15 @@ def tasks(request):
     tasks = Task.objects.all()
     tracks = Track.objects.all()
     try:
-        currenttask = request.session['currenttask']
+        currenttaskid = request.session['currenttask']
+        currenttask = Task.objects.get(id=currenttaskid)
+        whichmethod = "went through try"
+        ctask = currenttask.id
     except:
         currenttask = tasks[0]
         request.session['currenttask'] = currenttask.id;
+        ctask = currenttask.id
+        whichmethod = "went through except"
         
     try:
         currenttrack = request.session['currenttrack']
@@ -67,14 +72,24 @@ def tasks(request):
     forloopcomtask = CommentTask.objects.all()
     commentstask = []
     for comtask in forloopcomtask:
-        commentstask.append(comtask)
+        if (comtask.task_identifier_id == ctask):
+            commentstask.append(comtask)
         
     forloopcomtrack = CommentTrack.objects.all()
     commentstrack = []
     for comtrack in forloopcomtrack:
         commentstrack.append(comtrack)
     
-    return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 'allcomments' : allcomments, 'commentstask' : commentstask, 'commentstrack' : commentstrack, 'alltasks' : tracks, 'alltasks' : tasks, 'currenttask' : currenttask, 'currenttrack' : currenttrack})
+    return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 
+        'allcomments' : allcomments, 
+        'commentstask' : commentstask, 
+        'commentstrack' : commentstrack, 
+        'alltasks' : tracks, 
+        'alltasks' : tasks, 
+        'currenttask' : currenttask, 
+        'currenttrack' : currenttrack, 
+        'whichmethod' : whichmethod,
+        'ctask' : ctask })
 
 def timeline(request):
     return render(request,currentLocation + 'templates/timeline.html')
@@ -125,6 +140,13 @@ def submitcommenttrack(request):
         ca = CommentTrack(comment_identifier_id=c.id,track_identifier_id=ta_id)
         ca.save()
         return redirect('/basicsite/tasks/') # Redirect after POST
+    
+    return render(request, currentLocation + 'templates/thanks.html')
+    
+def changetask(request):
+    if request.method == 'POST':
+        request.session['currenttask'] = request.POST['tasks']
+        return redirect('/basicsite/tasks/')
     
     return render(request, currentLocation + 'templates/thanks.html')
     
