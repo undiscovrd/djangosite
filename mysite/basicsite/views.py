@@ -65,9 +65,12 @@ def tasks(request):
         
     try:
         currenttrack = request.session['currenttrack']
+        currenttrack = Track.objects.get(id=currenttrackid)
+        ctrack = currenttrack.id
     except:
         currenttrack = tracks[0]
         request.session['currenttrack'] = currenttrack.id;
+        ctrack = currenttrack.id
     
     forloopcomtask = CommentTask.objects.all()
     commentstask = []
@@ -78,13 +81,19 @@ def tasks(request):
     forloopcomtrack = CommentTrack.objects.all()
     commentstrack = []
     for comtrack in forloopcomtrack:
-        commentstrack.append(comtrack)
+        if (comtrack.track_identifier_id == ctrack):
+            commentstrack.append(comtrack)
+        
+    tracksfortask = []
+    for track in tracks:
+        if (track.task_identifier_id == ctask):
+            tracksfortask.append(track)
     
     return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 
         'allcomments' : allcomments, 
         'commentstask' : commentstask, 
         'commentstrack' : commentstrack, 
-        'alltasks' : tracks, 
+        'tracksfortask' : tracksfortask, 
         'alltasks' : tasks, 
         'currenttask' : currenttask, 
         'currenttrack' : currenttrack, 
