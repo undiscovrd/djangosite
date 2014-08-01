@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Landing!</title>
+<style>
+	div.titleBar {
+		top:0px;
+		margin-left: auto;
+	    margin-right: auto;
+	}
+
+	div.bottomBar {
+		float:top;
+		margin-top:-43px;
+		position: relative;
+	}
+	
+	div.loginWindowDiv {
+		width: 100%;
+	}
+	
+	img.loginWindow
+	{
+		display: block;
+		margin-top:70px;
+	    margin-left: auto;
+	    margin-right: auto;
+	}
+	
+	img.titleBarText 
+	{
+		position: relative;
+		display: block;
+		top:-70px;
+		#margin-top:20px;
+	    margin-left: 220px;
+	}
+	
+	img.titleBarImg
+	{
+		margin-left: auto;
+	    margin-right: auto;
+	}
+	
+	input.loginButton
+	{
+		position: relative;
+		display: block;
+		top:-70px;
+		#margin-top:20px;
+	    left: 45%;
+	}
+	
+	input.nameField
+	{
+		position: relative;
+		display: block;
+		top:-30px;
+		height:40px;
+		width:300px;
+		#margin-top:20px;
+		font-size: 28px;
+	
+	}
+	
+	input.passwordField
+	{
+		position: relative;
+		display: block;
+		top:-15px;
+		height:40px;
+		width:300px;
+		#margin-top:20px;
+		font-size: 28px;
+	}
+	
+	form.formForm
+	{
+		position: relative;
+		display: block;
+		top:-280px;
+		#margin-top:20px;
+	    left: 35%;
+	}
+    
+    form.formForm #id_username {
+        height:40px;
+        width:300px;
+        font-size: 25px;
+    }
+    
+    form.formForm #id_password {
+        height:40px;
+        width:300px;
+        margin-top: 40px;
+        display:block;
+        font-size: 25px;
+    }
+   
+
+</style>
+
+<script type="application/javascript">
+    function loginProcess() {
+        var username = document.getElementById("id_username").value;
+        var password = document.getElementById("id_password").value;
+
+        <!-- post('/login/', {username : username, password : password}); -->
+    
+        loginform.submit();
+    }
+</script>
+</head>
+<body>
+<div class="titleBar">
+	<img class="titleBarImg" src="{{ STATIC_URL  }}topBar.png" alt="some_text">
+	<img class="titleBarText" src="{{ STATIC_URL  }}welcometodatacollectiontitle.png" alt="other_text">
+</div>
+
+<div class="loginWindowDiv">
+	<img class="loginWindow" src="{{ STATIC_URL  }}loginrectangle.png" alt="some_text2">
+	<input type="image" class="loginButton" src="{{ STATIC_URL  }}loginbutton.png" onclick="loginProcess();">
+	<form id="loginform" class="formForm" action="/basicsite/login/" method="post">{% csrf_token %}
+		<!-- <input class="nameField" type="text" name="Name" value="Mickey"><br> -->
+		<!-- <input class="passwordField" type="text" name="Pass" value="Mouse"><br> -->
+        {{ form.username }}
+        {{ form.password }}
+    </form> 
+</div>
+
+<div class="bottomBar">
+	<img src="{{ STATIC_URL  }}topBar.png" alt="some_text">
+</div>
+
+
+
+</body>
+</html>

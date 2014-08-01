@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Landing!</title>
+<script type="application/javascript">
+    function submitComment (commentEl) {
+        var id = commentEl.id;
+        
+        if (id == "send1")
+            if (id_comment1.value == "")
+                alert("no value");
+            else
+                replybox1.submit();
+        else
+            if (id_comment2.value == "")
+                alert("no value");
+            else
+                replybox2.submit();
+    }
+    
+    function changeTask () {
+        var e = document.getElementById("taskselection");
+        var valsel = e.options[e.selectedIndex].value;
+        alert(valsel + "is selected task id");
+        dropdowntask.submit();
+    }
+
+</script>
+
+<style>
+	div.titleBar {
+		top:0px;
+		margin-left: auto;
+	    margin-right: auto;
+	}
+
+	div.bottomBar {
+		#float:top;
+		#margin-top:-43px;
+		margin-top:10px;
+		position: relative;
+	}
+	
+	div.dropdown {
+		
+	}
+	
+	form.task-down {
+		height:20px;
+		width:40px;
+		font-size:20px;
+	
+	}
+	
+	div.timeline {
+        width:410px;
+	
+	}
+	
+	div.videolist {
+		#width:280px;
+		left:10px;
+		margin-right: 0px;
+	}
+	
+
+	img.videolist-background {
+		float:left;
+		margin-top:50px;
+	}
+	
+	img.timeline-title-background {
+		width:200px;
+		height:50px;
+		position:relative;
+		display: block;
+		float:top;
+		#margin-left:200px;
+		left:200px;
+	}
+	img.timeline-background {
+		display:block;
+		position:relative;
+		width:600px;
+		float:left;
+	}
+
+	
+	div {
+    font-family: Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+	}
+	
+	.timeline .timeline-item {
+		width: 100%;
+	}
+	.timeline .timeline-item .info, .timeline .timeline-item .year {
+		color: #808080;
+		display: block;
+		float:left;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.timeline .timeline-item.close .info, .timeline .timeline-item.close .year {
+		color: #4C4C4C;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.timeline .timeline-item .year {
+		font-size: 15px;
+		font-weight: bold;
+		width: 30%;
+	}
+	.timeline .timeline-item .info {
+		width: 100%;
+		width: 70%;
+		margin-left: -2px;
+		padding: 0 0 40px 35px;
+		border-left: 4px solid #aaa;
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.timeline .timeline-item .marker {
+		background-color: #fff;
+		border: 4px solid #aaa;
+		height: 20px;
+		width: 20px;
+		border-radius: 100px;
+		display: block;
+		float: right;
+		margin-right: -14px;
+		z-index: 2000;
+		position: relative;
+	}
+	.timeline .timeline-item.active .info, .timeline .timeline-item:hover .info {
+		color: #1A1A1A;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.timeline .timeline-item.active .year, .timeline .timeline-item:hover .year {
+		color: #1A1A1A;
+	}
+	.timeline .timeline-item .marker .dot {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+	}
+	
+	.timeline .timeline-item .marker .dot-current {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+		background-color: #0066CC;
+	}
+	.timeline .timeline-item.active .marker .dot, .timeline .timeline-item:hover .marker .dot {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #9DB668;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+	
+	.timeline .timeline-item.active .marker .dot-current, .timeline .timeline-item:hover .marker .dot-current {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #0066CC;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+	
+
+
+	body.timeline {
+		background:none transparent;
+	}
+	
+	div.timeline-container {
+		display:inline;
+		position:absolute;
+		z-index:1000;
+		margin-top:10px;
+		left:300px;
+		width:560px;
+		height:420px;
+		overflow:auto;
+	}
+	
+	div.task-track {
+		display:inline-block;
+        position: absolute;
+        max-height: 600px;
+	}
+	
+	
+	div.comment-task-container {
+		display:inline;
+		position:absolute;
+		z-index:1000;
+		margin-top:10px;
+		left:55px;
+		width:420px;
+		height:420px;
+		overflow:auto;
+		overflow-y:auto;
+		overflow-x:hidden;
+	}
+	
+	
+	.comment-task-container .comment-task-item {
+		width: 410px;
+		display: block;
+	}
+	.comment-task-container .comment-task-item .info, .comment-task-container .comment-task-item .year {
+		color: #1A1A1A;
+		float:left;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.comment-task-container .comment-task-item .year {
+		display: block;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+	}
+	.comment-task-container .comment-task-item .name {
+		display: inline;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+		color: #3366FF;
+		padding-left:10px;
+	}
+	.comment-task-container .comment-task-item .info {
+		display: block;
+		width: 100%;
+		margin-left: -2px;
+		padding: 0 0 15px 15px;
+		border-left: 4px solid #808080;
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.comment-task-container .comment-task-item .marker {
+		background-color: #fff;
+		border: 4px solid #aaa;
+		height: 20px;
+		width: 20px;
+		border-radius: 100px;
+		display: block;
+		float: right;
+		margin-right: -14px;
+		z-index: 2000;
+		position: relative;
+	}
+	.comment-task-container .comment-task-item.active .info {
+		color: #1A1A1A;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.comment-task-container .comment-task-item.active .year {
+		color: #1A1A1A;
+	}
+	.comment-task-container .comment-task-item .marker .dot {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+	}
+	
+	.comment-task-container .comment-task-item .marker .dot-current {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+		background-color: #0066CC;
+	}
+	.comment-task-container .comment-task-item.active .marker .dot {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #9DB668;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+	
+	.comment-task-container .comment-task-item.active .marker .dot-current {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #0066CC;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+	
+	div.comment-track-container {
+		display:inline;
+		position:absolute;
+		z-index:1000;
+		margin-top:10px;
+		left:485px;
+		width:420px;
+		height:420px;
+		overflow:auto;
+		overflow-y:auto;
+		overflow-x:hidden;
+	}
+	
+	.comment-track-container .comment-track-item {
+		width: 410px;
+		display: block;
+	}
+	.comment-track-container .comment-track-item .info, .comment-track-container .comment-track-item .year {
+		color: #1A1A1A;
+		float:left;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.comment-track-container .comment-track-item .year {
+		display: block;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+	}
+	.comment-track-container .comment-track-item .name {
+		display: inline;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+		color: #3366FF;
+		padding-left:10px;
+	}
+	.comment-track-container .comment-track-item .info {
+		display: block;
+		width: 100%;
+		margin-left: -2px;
+		padding: 0 0 15px 15px;
+		border-left: 4px solid #808080;
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.comment-track-container .comment-track-item .marker {
+		background-color: #fff;
+		border: 4px solid #aaa;
+		height: 20px;
+		width: 20px;
+		border-radius: 100px;
+		display: block;
+		float: right;
+		margin-right: -14px;
+		z-index: 2000;
+		position: relative;
+	}
+	.comment-track-container .comment-track-item.active .info {
+		color: #1A1A1A;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.comment-track-container .comment-track-item.active .year {
+		color: #1A1A1A;
+	}
+	.comment-track-container .comment-track-item .marker .dot {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+	}
+	
+	.comment-track-container .comment-track-item .marker .dot-current {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+		background-color: #0066CC;
+	}
+	.comment-track-container .comment-track-item.active .marker .dot {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #9DB668;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+	
+	.comment-track-container .comment-track-item.active .marker .dot-current {
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		background-color: #0066CC;
+		box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.2);
+	}
+    
+    .reply-boxes {
+        display:block;
+        margin-top: -110px;
+       
+    }
+    
+    form.formForm {
+        margin-left:45px;
+        width: 450px;
+        display:inline;
+    }
+    
+    form.formForm #replybox2 {
+        margin-left:20px;
+        width: 500px;
+        display:inline;
+    }
+    
+    .postButton {
+        margin-right:30px;
+    }
+    
+    div.wrapper {
+        margin-left:auto;
+        margin-right:auto;
+        width:960px;
+    }
+    
+    #LOL ok well this is the track number/video title
+    div.tracklist {
+        display:inline;
+		position:absolute;
+		z-index:4000;
+		margin-top:10px;
+		left:110px;
+		width:420px;
+		height:420px;
+		overflow:auto;
+		overflow-y:auto;
+		overflow-x:hidden;
+    }
+	
+	.tracklist .tracklist-item {
+		width: 410px;
+		display: block;
+	}
+	.tracklist .tracklist-item .info, .tracklist .tracklist-item .year {
+		color: #1A1A1A;
+		float:left;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+	}
+	.tracklist .tracklist-item .year {
+		display: block;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+	}
+	.tracklist .tracklist-item .name {
+		display: inline;
+		width:100%;
+		font-size: 12px;
+		font-weight: bold;
+		color: #3366FF;
+		padding-left:10px;
+	}
+	.tracklist .tracklist-item .info {
+		display: block;
+		width: 100%;
+		margin-left: -2px;
+		padding: 0 0 15px 15px;
+		border-left: 4px solid #808080;
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.tracklist .tracklist-item .marker {
+		background-color: #fff;
+		border: 4px solid #aaa;
+		height: 20px;
+		width: 20px;
+		border-radius: 100px;
+		display: block;
+		float: right;
+		margin-right: -14px;
+		z-index: 2000;
+		position: relative;
+	}
+	.tracklist .tracklist-item .marker .dot {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+	}
+	
+	.tracklist .tracklist-item .marker .dot-current {
+		background-color: white;
+		-webkit-transition: all 1s ease;
+		-moz-transition: all 1s ease;
+		transition: all 1s ease;
+		display: block;
+		border: 4px solid white;
+		height: 12px;
+		width: 12px;
+		border-radius: 100px;
+		float: right;
+		z-index: 2000;
+		position: relative;
+		background-color: #0066CC;
+	}
+
+</style>
+<script type="application/javascript">
+	$(".timeline-item").hover(function () {
+    
+    $(this).toggleClass("active");
+    $(this).prev(".timeline-item").toggleClass("close");
+    $(this).next(".timeline-item").toggleClass("close");
+	});
+</script>
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="titleBar">
+        <img class="titleBarImg" src="{{ STATIC_URL }}tasks-highlighted.png" alt="some_text">
+    </div>
+
+    <div class="videolist">
+    {{ whichmethod }}
+    {{ ctask }}
+    <form id="dropdowntask" class="task-down" onchange="changeTask()" action="/basicsite/changetask/" method="post">{% csrf_token %}
+        <select id="taskselection" name="tasks">
+        <option value="{{ currenttask.id }}">{{ currenttask.task_title }}</option>
+        {% for task in alltasks %}
+            <option value="{{ task.id }}">{{ task.task_title }}</option>
+        {% endfor %}
+        </select>
+    </form>
+    </div>
+    
+    
+
+    <div class="task-track">
+    
+    <img class="videolist-background" src="{{ STATIC_URL }}video-list-background.png" alt="some_text">
+    <div class="tracklist">
+        {% for track in tracksfortask %}
+            <div class="tracklist-item">
+                {{ track.task_identifier_id }} with {{ track.video_identifier_id }} with {{ track.status }}
+            </div>
+        {% endfor %}
+    </div>
+    <img class="timeline-title-background" src="{{ STATIC_URL }}timeline-title-background.png" alt="
+    some_text">
+    <img class="timeline-background" src="{{ STATIC_URL }}timeline-background.png" alt="some_text">
+
+    <div class="timeline-container">
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="year">Monday 7.22.14 10.31a <span class="marker"><span class="dot"></span></span>
+                </div>
+                <div class="info">Offloaded from pc3</div>
+            </div>
+            <div class="timeline-item">
+                <div class="year">Monday 7.22.14 11.42a <span class="marker"><span class="dot"></span></span>
+                </div>
+                <div class="info">Passed Tag check (123m,123s location of wakeup frame)</div>
+            </div>
+            <div class="timeline-item">
+                <div class="year">Monday 7.22.14 2.26p <span class="marker"><span class="dot"></span></span>
+                </div>
+                <div class="info">Aggregation Tool (v4.3) >> video is now #545. at location //JOHNLOCKE/videos/545/</div>
+            </div>
+            <div class="timeline-item">
+                <div class="year">Monday 7.22.14 6.31p <span class="marker"><span class="dot"></span></span>
+                </div>
+                <div class="info">Jared: Background has a lot of bright light sources. Hard to see finger in some frames. Maybe consider throwing out.</div>
+            </div>
+            <div class="timeline-item">
+                <div class="year">Monday 7.23.14 9.47a <span class="marker"><span class="dot"></span></span>
+                </div>
+                <div class="info">Random post</div>
+            </div>
+            <div class="timeline-item">
+                <div class="year">Monday 7.23.14 12.43p <span class="marker"><span class="dot-current"></span></span>
+                </div>
+                <div class="info">Random post</div>
+            </div>
+        </div>
+    </div>
+    
+    <img class="messagefeed-background" src="{{ STATIC_URL }}message-feed-extended.png" alt="some_text">
+    <div class="comment-task-container">
+        <div class="comment-task">
+            {% for comment in commentstask %}
+            <div class="comment-task-item">
+                <div class="year">{{ comment.comment_identifier.date_commented }}<div class="name">{{ comment.comment_identifier.user_identifier.user_name }}</div>
+                </div>
+                    
+                <div class="info">{{ comment.comment_identifier.comment_text }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="comment-track-container">
+        <div class="comment-track">
+        {% for comment in commentstrack %}
+            <div class="comment-track-item">
+                <div class="year">{{ comment.comment_identifier.date_commented }}<div class="name">{{ comment.comment_identifier.user_identifier.user_name }}</div>
+                </div>
+                    
+                <div class="info">{{ comment.comment_identifier.comment_text }}</div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+
+    <div class="reply-boxes">
+        <form id="replybox1" class="formForm" action="/basicsite/submitcommenttask/" method="post">{% csrf_token %}
+            {{ formarea.comment1 }}
+            <img id="send1" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
+        </form>
+        <form id="replybox2" class="formForm" action="/basicsite/submitcommenttrack/" method="post">{% csrf_token %}
+            {{ formarea.comment2 }}
+            <img id="send2" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
+        </form>
+    </div>
+
+    </div>
+
+</div>
+<!--
+<div class="bottomBar">
+	<img src="{{ STATIC_URL }}topBar.png" alt="some_text">
+</div>
+
+-->
+
+</body>
+</html>
