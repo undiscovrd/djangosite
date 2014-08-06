@@ -111,9 +111,6 @@ def thanks(request):
     user = request.session['user']
     password = request.session['password']
     
-    u = User(user_name=user, password=password, rights="user")
-    u.save()
-    
     return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password});
     
 class ReplyBox(forms.Form):
@@ -158,4 +155,30 @@ def changetask(request):
         return redirect('/basicsite/tasks/')
     
     return render(request, currentLocation + 'templates/thanks.html')
+    
+class CreateTaskBox(forms.Form):
+    taskname = forms.CharField(max_length=100)
+    nameEntry = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+    
+    def __init__(self, allusers, *args, **kwargs):
+        super(CreateTaskBox, self).__init__(*args, **kwargs)
+        self.fields['nameEntry'] = forms.ChoiceField(choices=[ (user.id, user.user_name) for user in allusers])
+    
+def createtask(request):
+    allusers = User.objects.all()
+    
+    form = CreateTaskBox(allusers)
+    
+    return render(request, currentLocation + 'templates/createtask.html', {'form' : form })
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
