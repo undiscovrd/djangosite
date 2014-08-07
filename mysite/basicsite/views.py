@@ -7,6 +7,7 @@ from models import Comment
 from models import CommentTask
 from models import CommentTrack
 from models import Task
+from models import TaskRoster
 from models import Track
 from django.utils import timezone
 #from django.template import RequestContext
@@ -111,7 +112,11 @@ def thanks(request):
     user = request.session['user']
     password = request.session['password']
     
-    return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password});
+    if request.method == 'POST': # If the form has been submitted...
+        taskName = request.POST['taskname']
+        selectedNames = request.POST.getlist('usernamelist')
+    
+    return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password, 'taskName' : taskName, 'selectedNames' : selectedNames });
     
 class ReplyBox(forms.Form):
     comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
@@ -158,24 +163,36 @@ def changetask(request):
     
 class CreateTaskBox(forms.Form):
     taskname = forms.CharField(max_length=100)
-    nameEntry = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
-    
-    def __init__(self, allusers, *args, **kwargs):
-        super(CreateTaskBox, self).__init__(*args, **kwargs)
-        self.fields['nameEntry'] = forms.ChoiceField(choices=[ (user.id, user.user_name) for user in allusers])
+    nameEntry = forms.BooleanField()
     
 def createtask(request):
     allusers = User.objects.all()
     
-    form = CreateTaskBox(allusers)
+    form = CreateTaskBox()
     
-    return render(request, currentLocation + 'templates/createtask.html', {'form' : form })
+    return render(request, currentLocation + 'templates/createtask.html', {'form' : form, 'allusers' : allusers })
     
+def submittask(request):
+    if request.method == 'POST':
+        if request.method == 'POST': # If the form has been submitted...
+            taskName = request.POST['taskname']
+            selectedNames = request.POST.getlist('usernamelist')
+            pub_date=timezone.now()
+            tk = Task(task_title = taskName, started_date=pub_date)
+            tk.save()
+        
+        for id in selectedNames:
+            u = User.objects.get(id=id)
+            tkroster = TaskRoster(user_identifier_id = u.id, task_identifier_id = tk.id, task_role = 'labeler')
+            tkroster.save()
+            
+    return redirect('/basicsite/tasks/') # Redirect after POST
     
+def createtrack(request):
+    allusers = User.objects.all()
+    form = CreateTaskBox()
     
-    
-    
-    
+    return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers })
     
     
     
