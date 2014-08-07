@@ -191,8 +191,22 @@ def submittask(request):
 def createtrack(request):
     allusers = User.objects.all()
     form = CreateTaskBox()
+    currenttask = request.session['currenttask']
+    ctkrostercount = TaskRoster.objects.all()
+    ctkroster=[]
+    for tkobj in ctkrostercount:
+        tkobjid = tkobj.id
+        if tkobj.task_identifier_id==int(currenttask):
+            isamatch = 'yes'
+            ctkroster.append(tkobj)
+            
+    ctkrosterclean = []
+    for tkrstrobj in ctkroster:
+        userToAppend = User.objects.get(id=tkrstrobj.user_identifier_id)
+        ctkrosterclean.append(userToAppend)
     
-    return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers })
+    
+    return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
     
     
     

@@ -24,7 +24,7 @@ div.createtaskdiv {
     </div>
     <h4>Assign a user</h4>
     <div class="nameList">
-        {% for user in allusers %}
+        {% for user in ctkrosterclean %}
         <div class="nameListItem">
             <input type="checkbox" name="usernamelist" id="{{ user.id }}" value="{{ user.id }}" />
             <label for="{{ user.id }}"><b>{{ user.user_name }}</b></label><br />
