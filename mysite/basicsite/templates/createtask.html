@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Create Task</title>
+</head>
+
+<style>
+div.createtaskwrapper {
+    display:block;
+}
+
+div.createtaskdiv {
+    display:inline-block;
+}
+</style>
+
+<h2>create task page</h2>
+<form id="nameCheckBoxes" class="name-form" action="/basicsite/submittask/" method="post">{% csrf_token %}
+    <div class="createtaskwrapper">
+        <div class="createtaskdiv">
+       
+        {{ form.taskname }}
+        </div>
+    </div>
+    <h4>Assign a user</h4>
+    <div class="nameList">
+        {% for user in allusers %}
+        <div class="nameListItem">
+            <input type="checkbox" name="usernamelist" id="{{ user.id }}" value="{{ user.id }}" />
+            <label for="{{ user.id }}"><b>{{ user.user_name }}</b></label><br />
+        </div>
+        {% endfor %}
+    </div>
+    <div class="createtaskbuttons">
+        <button type="submit" name="createtaskbutton" action="/basicsite/submittask/" method="post">create task</button>
+    </div>
+</form>
+
+
+</html>

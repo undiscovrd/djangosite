@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Upload Tool</title>
+</head>
+
+<style>
+body {
+    background-color: #838B8B;
+}
+
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+
+</style>
+<body>
+
+<div class="toolswrapper">
+<div class="toolsh1">upload tool </div>
+</div>
+
+<!-- Upload form. Note enctype attribute! -->
+<form action="/basicsite/receivetool/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>{{ form.non_field_errors }}</p>
+    <p>{{ form.fileform.label_tag }} {{ form.fileform.help_text }}</p>
+    <p>
+        {{ form.title }}
+        {{ form.fileform.errors }}
+        {{ form.fileform }}
+    </p>
+    <p><input type="submit" value="Upload" /></p>
+</form>
+
+
+</body>
+</html>

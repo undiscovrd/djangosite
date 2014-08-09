@@ -1,14 +1,11 @@
 # Create your views here.
 from django.shortcuts import render
 from django.shortcuts import redirect
+
 from django import forms
-from models import User
-from models import Comment
-from models import CommentTask
-from models import CommentTrack
-from models import Task
-from models import Track
+from models import *
 from django.utils import timezone
+from django.http import HttpResponse
 #from django.template import RequestContext
 
 import os.path
@@ -38,7 +35,7 @@ def login(request):
             except:
                 u = User(user_name=user, password=password, rights="user")
                 u.save()
-            return redirect('/basicsite/tasks/') # Redirect after POST
+            return redirect('/basicsite/tools/') # Redirect after POST
             
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -111,10 +108,11 @@ def thanks(request):
     user = request.session['user']
     password = request.session['password']
     
-    u = User(user_name=user, password=password, rights="user")
-    u.save()
+    if request.method == 'POST': # If the form has been submitted...
+        taskName = request.POST['taskname']
+        selectedNames = request.POST.getlist('usernamelist')
     
-    return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password});
+    return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password, 'taskName' : taskName, 'selectedNames' : selectedNames });
     
 class ReplyBox(forms.Form):
     comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
@@ -158,4 +156,94 @@ def changetask(request):
         return redirect('/basicsite/tasks/')
     
     return render(request, currentLocation + 'templates/thanks.html')
+    
+class CreateTaskBox(forms.Form):
+    taskname = forms.CharField(max_length=100)
+    nameEntry = forms.BooleanField()
+    
+def createtask(request):
+    allusers = User.objects.all()
+    
+    form = CreateTaskBox()
+    
+    return render(request, currentLocation + 'templates/createtask.html', {'form' : form, 'allusers' : allusers })
+    
+def submittask(request):
+    if request.method == 'POST':
+        if request.method == 'POST': # If the form has been submitted...
+            taskName = request.POST['taskname']
+            selectedNames = request.POST.getlist('usernamelist')
+            pub_date=timezone.now()
+            tk = Task(task_title = taskName, started_date=pub_date)
+            tk.save()
+        
+        for id in selectedNames:
+            u = User.objects.get(id=id)
+            tkroster = TaskRoster(user_identifier_id = u.id, task_identifier_id = tk.id, task_role = 'labeler')
+            tkroster.save()
+            
+    return redirect('/basicsite/tasks/') # Redirect after POST
+    
+def createtrack(request):
+    allusers = User.objects.all()
+    form = CreateTaskBox()
+    currenttask = request.session['currenttask']
+    ctkrostercount = TaskRoster.objects.all()
+    ctkroster=[]
+    for tkobj in ctkrostercount:
+        tkobjid = tkobj.id
+        if tkobj.task_identifier_id==int(currenttask):
+            isamatch = 'yes'
+            ctkroster.append(tkobj)
+            
+    ctkrosterclean = []
+    for tkrstrobj in ctkroster:
+        userToAppend = User.objects.get(id=tkrstrobj.user_identifier_id)
+        ctkrosterclean.append(userToAppend)
+    
+    
+    return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
+    
+def tools(request):
+    
+    alltools = ToolFile.objects.all()
+    
+    return render(request, currentLocation + 'templates/tools.html', {'alltools':alltools})
+    
+def uploadtool(request):
+    form = UploadFileForm()
+
+    
+    return render(request, currentLocation + 'templates/uploadtool.html', {'form':form})
+    
+def receivetool(request):
+    # Handle file upload
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            newtf = ToolFile(tf = request.FILES['fileform'], tooltitle = request.POST['title'])
+            newtf.save()
+        
+    else:
+        form = DocumentForm()
+        
+    return redirect('/basicsite/tools/')
+    
+def downloadtool(request, toolfileid):
+    conv = int(toolfileid)
+    toolfile = ToolFile.objects.get(id=conv)
+    
+    if "jpg" in str(toolfile.tf):
+        response = HttpResponse(toolfile, content_type='image/jpeg')
+        response['Content-Disposition'] = 'attachment;'
+    elif "zip" in str(toolfile.tf):
+        response = HttpResponse(toolfile.tf, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment;'
+
+    return response
+    
+    
+    
+    
+    
     

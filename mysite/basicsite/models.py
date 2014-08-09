@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 
 # Create your models here.
 class User(models.Model):
@@ -39,3 +40,11 @@ class CommentTrack(models.Model):
     comment_identifier = models.ForeignKey(Comment)
     track_identifier = models.ForeignKey(Track)
     comment_text = models.CharField(max_length=400)
+
+class ToolFile(models.Model):
+    tooltitle = models.CharField(max_length=50)
+    tf = models.FileField(upload_to='tools')
+    
+class UploadFileForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    fileform  = forms.FileField(label='select yo bits')   
