@@ -213,7 +213,6 @@ def tools(request):
 def uploadtool(request):
     form = UploadFileForm()
 
-    
     return render(request, currentLocation + 'templates/uploadtool.html', {'form':form})
     
 def receivetool(request):
@@ -221,7 +220,17 @@ def receivetool(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
-            newtf = ToolFile(tf = request.FILES['fileform'], tooltitle = request.POST['title'])
+            uploaddate=timezone.now()
+            originalfilename = str(request.FILES['fileform'])
+            originalfilename.replace("tools/", "");
+            newtf = ToolFile(
+                tf = request.FILES['fileform'], 
+                tooltitle = request.POST['title'], 
+                toolfilename = originalfilename, 
+                uploaded = uploaddate,
+                description = request.POST['description'],
+                purpose = request.POST['purposes']
+                )
             newtf.save()
         
     else:
@@ -235,12 +244,18 @@ def downloadtool(request, toolfileid):
     
     if "jpg" in str(toolfile.tf):
         response = HttpResponse(toolfile, content_type='image/jpeg')
-        response['Content-Disposition'] = 'attachment;'
+        response['Content-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
     elif "zip" in str(toolfile.tf):
         response = HttpResponse(toolfile.tf, content_type='application/zip')
-        response['Content-Disposition'] = 'attachment;'
+        response['Content-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
 
     return response
+    
+class UploadFileForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    fileform  = forms.FileField(label='select yo bits')
+    description = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
+    purposes = forms.ChoiceField(widget=forms.RadioSelect, choices=(('1', 'Collection',), ('2', 'Check-Processing',), ('3', 'Labeling',)))
     
     
     

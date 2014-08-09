@@ -44,7 +44,8 @@ class CommentTrack(models.Model):
 class ToolFile(models.Model):
     tooltitle = models.CharField(max_length=50)
     tf = models.FileField(upload_to='tools')
+    toolfilename = models.CharField(max_length=150)
+    uploaded = models.DateTimeField()
+    description = models.CharField(max_length=400)
+    purpose = models.CharField(max_length=50)
     
-class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50)
-    fileform  = forms.FileField(label='select yo bits')   
