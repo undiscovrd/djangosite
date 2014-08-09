@@ -1,15 +1,11 @@
 # Create your views here.
 from django.shortcuts import render
 from django.shortcuts import redirect
+
 from django import forms
-from models import User
-from models import Comment
-from models import CommentTask
-from models import CommentTrack
-from models import Task
-from models import TaskRoster
-from models import Track
+from models import *
 from django.utils import timezone
+from django.http import HttpResponse
 #from django.template import RequestContext
 
 import os.path
@@ -39,7 +35,7 @@ def login(request):
             except:
                 u = User(user_name=user, password=password, rights="user")
                 u.save()
-            return redirect('/basicsite/tasks/') # Redirect after POST
+            return redirect('/basicsite/tools/') # Redirect after POST
             
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -207,6 +203,44 @@ def createtrack(request):
     
     
     return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
+    
+def tools(request):
+    
+    alltools = ToolFile.objects.all()
+    
+    return render(request, currentLocation + 'templates/tools.html', {'alltools':alltools})
+    
+def uploadtool(request):
+    form = UploadFileForm()
+
+    
+    return render(request, currentLocation + 'templates/uploadtool.html', {'form':form})
+    
+def receivetool(request):
+    # Handle file upload
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            newtf = ToolFile(tf = request.FILES['fileform'], tooltitle = request.POST['title'])
+            newtf.save()
+        
+    else:
+        form = DocumentForm()
+        
+    return redirect('/basicsite/tools/')
+    
+def downloadtool(request, toolfileid):
+    conv = int(toolfileid)
+    toolfile = ToolFile.objects.get(id=conv)
+    
+    if "jpg" in str(toolfile.tf):
+        response = HttpResponse(toolfile, content_type='image/jpeg')
+        response['Content-Disposition'] = 'attachment;'
+    elif "zip" in str(toolfile.tf):
+        response = HttpResponse(toolfile.tf, content_type='application/zip')
+        response['Content-Disposition'] = 'attachment;'
+
+    return response
     
     
     

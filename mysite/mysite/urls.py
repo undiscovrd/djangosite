@@ -21,4 +21,8 @@ urlpatterns = patterns('',
     url(r'^basicsite/createtask', 'basicsite.views.createtask'),
     url(r'^basicsite/submittask', 'basicsite.views.submittask'),
     url(r'^basicsite/createtrack', 'basicsite.views.createtrack'),
+    url(r'^basicsite/tools', 'basicsite.views.tools'),
+    url(r'^basicsite/uploadtool', 'basicsite.views.uploadtool'),
+    url(r'^basicsite/receivetool', 'basicsite.views.receivetool'),
+    url(r'^basicsite/downloadtool/([0-9])/$', 'basicsite.views.downloadtool'),
 )
