@@ -467,7 +467,7 @@
     div.wrapper {
         margin-left:auto;
         margin-right:auto;
-        width:960px;
+        width:2000px;
     }
     
     #LOL ok well this is the track number/video title
@@ -595,10 +595,15 @@
     <a href="/basicsite/createtrack/"> create track </a>
     </div>
     
+    <div class="tracklist">
+        {% for track in tracksfortask %}
+            <div class="tracklist-item">
+                {{ track.task_identifier_id }} with {{ track.video_identifier_id }} with {{ track.status }}
+            </div>
+        {% endfor %}
+    </div>
     
-
-    <div class="task-track">
-    
+    <!--
     <img class="videolist-background" src="{{ STATIC_URL }}video-list-background.png" alt="some_text">
     <div class="tracklist">
         {% for track in tracksfortask %}
@@ -645,46 +650,43 @@
             </div>
         </div>
     </div>
-    
-    <img class="messagefeed-background" src="{{ STATIC_URL }}message-feed-extended.png" alt="some_text">
-    <div class="comment-task-container">
-        <div class="comment-task">
-            {% for comment in commentstask %}
-            <div class="comment-task-item">
-                <div class="year">{{ comment.comment_identifier.date_commented }}<div class="name">{{ comment.comment_identifier.user_identifier.user_name }}</div>
+    <div class="commentswrapper">
+        <div class="comment-task-container">
+            <div class="comment-task">
+                {% for comment in commentstask %}
+                <div class="comment-task-item">
+                    <div class="year">{{ comment.comment_identifier.date_commented }}<div class="name">{{ comment.comment_identifier.user_identifier.user_name }}</div>
+                    </div>
+                        
+                    <div class="info">{{ comment.comment_identifier.comment_text }}</div>
                 </div>
-                    
-                <div class="info">{{ comment.comment_identifier.comment_text }}</div>
+                {% endfor %}
             </div>
+        </div>
+        <div class="comment-track-container">
+            <div class="comment-track">
+            {% for comment in commentstrack %}
+                <div class="comment-track-item">
+                    <div class="year">{{ comment.comment_identifier.date_commented }}<div class="name">{{ comment.comment_identifier.user_identifier.user_name }}</div>
+                    </div>
+                        
+                    <div class="info">{{ comment.comment_identifier.comment_text }}</div>
+                </div>
             {% endfor %}
-        </div>
-    </div>
-    <div class="comment-track-container">
-        <div class="comment-track">
-        {% for comment in commentstrack %}
-            <div class="comment-track-item">
-                <div class="year">{{ comment.comment_identifier.date_commented }}<div class="name">{{ comment.comment_identifier.user_identifier.user_name }}</div>
-                </div>
-                    
-                <div class="info">{{ comment.comment_identifier.comment_text }}</div>
             </div>
-        {% endfor %}
+        </div>
+        <div class="reply-boxes">
+            <form id="replybox1" class="formForm" action="/basicsite/submitcommenttask/" method="post">{% csrf_token %}
+                {{ formarea.comment1 }}
+                <img id="send1" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
+            </form>
+            <form id="replybox2" class="formForm" action="/basicsite/submitcommenttrack/" method="post">{% csrf_token %}
+                {{ formarea.comment2 }}
+                <img id="send2" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
+            </form>
         </div>
     </div>
-
-    <div class="reply-boxes">
-        <form id="replybox1" class="formForm" action="/basicsite/submitcommenttask/" method="post">{% csrf_token %}
-            {{ formarea.comment1 }}
-            <img id="send1" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
-        </form>
-        <form id="replybox2" class="formForm" action="/basicsite/submitcommenttrack/" method="post">{% csrf_token %}
-            {{ formarea.comment2 }}
-            <img id="send2" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment(this);">
-        </form>
-    </div>
-
-    </div>
-
+    -->
 </div>
 <!--
 <div class="bottomBar">

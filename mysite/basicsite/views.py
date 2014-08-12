@@ -166,6 +166,11 @@ class CreateTaskBox(forms.Form):
     taskname = forms.CharField(max_length=100)
     nameEntry = forms.BooleanField()
     
+# form class for creating track, nameEntry refers a user that can be assigned to track
+class CreateTrackBox(forms.Form):
+    trackname = forms.CharField(max_length=100)
+    nameEntry = forms.BooleanField()
+    
 # loads the create task page
 def createtask(request):
     allusers = User.objects.all()
@@ -190,7 +195,7 @@ def submittask(request):
 # loads the create track page
 def createtrack(request):
     allusers = User.objects.all()
-    form = CreateTaskBox()
+    form = CreateTrackBox()
     currenttask = request.session['currenttask']
     ctkrostercount = TaskRoster.objects.all()
     ctkroster=[]
@@ -206,6 +211,21 @@ def createtrack(request):
         ctkrosterclean.append(userToAppend)
     return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
 
+# creates the task based off of the passed form data (attaches to cookies by name of fields in class)
+def submittrack(request):
+    if request.method == 'POST':
+        taskName = request.POST['trackname']
+        selectedNames = request.POST.getlist('usernamelist')
+        pub_date=timezone.now()
+        tk = Task(task_title = taskName, started_date=pub_date)
+        tk.save()
+    # involve selected users to task
+    for id in selectedNames:
+        u = User.objects.get(id=id)
+        tkroster = TaskRoster(user_identifier_id = u.id, task_identifier_id = tk.id, task_role = 'labeler')
+        tkroster.save()
+    return redirect('/basicsite/tasks/') # Redirect after POST    
+    
 # Load all tools, descending by version number, then display tools page
 def tools(request):
     alltools = ToolFile.objects.order_by('-versionnumber')
