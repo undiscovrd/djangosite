@@ -28,7 +28,6 @@ def login(request):
             password = form.cleaned_data['password']
             request.session['user'] = user
             request.session['password'] = password
-            
             try:
                 testuser = User.objects.get(user_name=user)
                 if (testuser.user_name != user):
@@ -131,8 +130,7 @@ def submitcommenttask(request):
         tk_id = request.session['currenttask']
         ct = CommentTask(comment_identifier_id=c.id,task_identifier_id=tk_id)
         ct.save()
-
-       # ct = CommeTask(comment_identifier=c,
+        
         return redirect('/basicsite/tasks/') # Redirect after POST
     
     return render(request, currentLocation + 'templates/thanks.html')
@@ -148,6 +146,7 @@ def submitcommenttrack(request):
         ta_id = request.session['currenttrack']
         ca = CommentTrack(comment_identifier_id=c.id,track_identifier_id=ta_id)
         ca.save()
+        
         return redirect('/basicsite/tasks/') # Redirect after POST
     
     return render(request, currentLocation + 'templates/thanks.html')
@@ -165,7 +164,6 @@ class CreateTaskBox(forms.Form):
     
 def createtask(request):
     allusers = User.objects.all()
-    
     form = CreateTaskBox()
     
     return render(request, currentLocation + 'templates/createtask.html', {'form' : form, 'allusers' : allusers })
@@ -202,7 +200,6 @@ def createtrack(request):
     for tkrstrobj in ctkroster:
         userToAppend = User.objects.get(id=tkrstrobj.user_identifier_id)
         ctkrosterclean.append(userToAppend)
-    
     
     return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
     
@@ -308,10 +305,4 @@ class UploadFileForm(forms.Form):
     def __init__(self, families, *args, **kwargs):
         super(UploadFileForm, self).__init__(*args, **kwargs)
         self.fields['family'] = forms.ChoiceField(choices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
-    
-
-    
-    
-    
-    
     
