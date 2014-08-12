@@ -39,9 +39,10 @@ div.toolsh1 {
     color: #97FFFF;
 }
 
-a.submittoolbutton {
+a.sectionbuttons {
     font=size: 26px;
     font-family: "Avenir", sans-serif;
+    color: #97FFFF;
 }
 
 div.alltoolswrapper {
@@ -69,7 +70,7 @@ p.alltoolsheader {
 div.toolsections {
     display: block;
     width: 100%;
-    margin-left:auto;
+    margin-left:30%;
     margin-right:auto;
 }
 
@@ -81,10 +82,11 @@ div.toolsections {
 </div>
 
 <div class="toolsections">
-<span><a href="/basicsite/tools/">All Tools</a></span>
-<span><a href="/basicsite/toolcategories/collection/">Collection</a></span>
-<span><a href="/basicsite/toolcategories/checkprocess/">Checking/Processing</a></span>
-<span><a href="/basicsite/toolcategories/labeling/">Labeling</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/tools/">All Tools</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/toolcategories/collection/">Collection</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/toolcategories/checkprocess/">Checking/Processing</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/toolcategories/labeling/">Labeling</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/uploadtool/">Submit new tool</a></span>
 </div>
 
 <div class="alltoolswrapper">
@@ -94,9 +96,9 @@ div.toolsections {
         <div class="toolrow">
             <span style="color:#00FFFF;"> name: </span>
             <span style="margin-right:50px"><a style="color:#FFD700; font-size:20px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
-            {% if tool.currentversion == '1' %}
-                This is the current Version
-            {% endif %}
+            <br>
+            <span style="color:#00FFFF;"> tool family: </span>
+            <span> {{ tool.family.toolfamilyname }} </span>
             <br>
             <span style="color:#00FFFF;"> version: </span>
             <span> {{ tool.versionnumber }} </span>

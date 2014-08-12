@@ -207,7 +207,7 @@ def createtrack(request):
     return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
     
 def tools(request):
-    alltools = ToolFile.objects.all()
+    alltools = ToolFile.objects.order_by('-versionnumber')
     
     return render(request, currentLocation + 'templates/tools.html', {'alltools':alltools})
     
