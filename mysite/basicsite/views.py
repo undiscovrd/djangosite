@@ -1,3 +1,13 @@
+############################################################
+#
+# Aquifi Confidential
+# Copyright (c) 2014 Aquifi, Inc., All Rights Reserved
+#
+# THE TERMS OF USE ARE SUBJECT TO THE PREVAILING LICENSING
+# AGREEMENT. THIS FILE MAY NOT BE COPIED
+# NOR DISTRIBUTED TO ANY OTHER PARTY.
+#
+############################################################
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
@@ -295,5 +305,5 @@ class UploadFileForm(forms.Form):
     
     def __init__(self, families, *args, **kwargs):
         super(UploadFileForm, self).__init__(*args, **kwargs)
- oices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
+        self.fields['family'] = forms.ChoiceField(choices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
     

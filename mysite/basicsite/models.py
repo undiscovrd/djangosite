@@ -1,3 +1,19 @@
+############################################################
+#
+# Aquifi Confidential
+# Copyright (c) 2014 Aquifi, Inc., All Rights Reserved
+#
+# THE TERMS OF USE ARE SUBJECT TO THE PREVAILING LICENSING
+# AGREEMENT. THIS FILE MAY NOT BE COPIED
+# NOR DISTRIBUTED TO ANY OTHER PARTY.
+#
+############################################################
+# Models.py defines the classes that are used to create the database, and store data.
+# Author: Michael Zuccarino
+# Date: 8.12.2014
+############################################################
+
+
 from django.db import models
 from django import forms
 

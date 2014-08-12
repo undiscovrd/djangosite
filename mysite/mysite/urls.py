@@ -1,14 +1,27 @@
+############################################################
+#
+# Aquifi Confidential
+# Copyright (c) 2014 Aquifi, Inc., All Rights Reserved
+#
+# THE TERMS OF USE ARE SUBJECT TO THE PREVAILING LICENSING
+# AGREEMENT. THIS FILE MAY NOT BE COPIED
+# NOR DISTRIBUTED TO ANY OTHER PARTY.
+#
+############################################################
+# This file handles the url requests to the server in the following standard:
+#
+#     example: localhost:8000/basicsite/page_name/
+#    
+# The url is referenced to a defined httpresponse in the views.py file.
+#
+# Author: Michael Zuccarino
+# Date: 8.12.2014
+############################################################
+
 from django.conf.urls import patterns, include, url
-
 from django.contrib import admin
-#admin.autodiscover()     url(r'^basicsite/tracks/(?P<track>\d{4})', 'basicsite.views.tracks'),
-
 
 urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'mysite.views.home', name='home'),
-    # url(r'^blog/', include('blog.urls')),
-
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'basicsite.views.login'),
     url(r'^basicsite/login', 'basicsite.views.login'),
