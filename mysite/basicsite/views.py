@@ -1,29 +1,22 @@
-# Create your views here.
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
-
 from django import forms
 from models import *
 from django.utils import timezone
 from django.http import HttpResponse
 from django.template import RequestContext
-#from django.template import RequestContext
 
 import os.path
 
-
-# Path to basicsite
+# File Path used to reference the templates
 currentLocation = os.getcwd().replace("\\","/")  + "/basicsite/"
 
-def index(request):
-    return render(request,currentLocation + 'templates/loginpage.html')
-    
+# Landing page to let user login or create new account
 def login(request):
-    if request.method == 'POST': # If the form has been submitted...
-        # ContactForm was defined in the previous section
-        form = LoginForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
             user = form.cleaned_data['username']
             password = form.cleaned_data['password']
             request.session['user'] = user
@@ -36,20 +29,23 @@ def login(request):
             except:
                 u = User(user_name=user, password=password, rights="user")
                 u.save()
-            return redirect('/basicsite/tools/') # Redirect after POST
+            return redirect('/basicsite/tools/')
             
         username = request.POST.get('username')
         password = request.POST.get('password')
     else:
-        form = LoginForm() # An unbound form
-
+        form = LoginForm()
+    # Renders and displays the login page, passing LoginForm
     return render(request, currentLocation + 'templates/loginpage.html', {'form': form,})
 
+# Processes and returns the /tasks/ page based on the cookies. Page is defaulted to first task, first track.
 def tasks(request):
     formarea = ReplyBox()
     allcomments = Comment.objects.all()
     tasks = Task.objects.all()
     tracks = Track.objects.all()
+    
+    # determine the current task based off of cookies, otherwise defaults to first task
     try:
         currenttaskid = request.session['currenttask']
         currenttask = Task.objects.get(id=currenttaskid)
@@ -60,7 +56,8 @@ def tasks(request):
         request.session['currenttask'] = currenttask.id;
         ctask = currenttask.id
         whichmethod = "went through except"
-        
+    
+    # determine the current track based off of cookies, otherwise defaults to first track
     try:
         currenttrack = request.session['currenttrack']
         currenttrack = Track.objects.get(id=currenttrackid)
@@ -70,23 +67,23 @@ def tasks(request):
         request.session['currenttrack'] = currenttrack.id;
         ctrack = currenttrack.id
     
+    # Filter out comments by task and track
     forloopcomtask = CommentTask.objects.all()
     commentstask = []
     for comtask in forloopcomtask:
         if (comtask.task_identifier_id == ctask):
             commentstask.append(comtask)
-        
     forloopcomtrack = CommentTrack.objects.all()
     commentstrack = []
     for comtrack in forloopcomtrack:
         if (comtrack.track_identifier_id == ctrack):
             commentstrack.append(comtrack)
-        
     tracksfortask = []
     for track in tracks:
         if (track.task_identifier_id == ctask):
             tracksfortask.append(track)
     
+    # display the tasks page with the passed objects
     return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 
         'allcomments' : allcomments, 
         'commentstask' : commentstask, 
@@ -97,28 +94,27 @@ def tasks(request):
         'currenttrack' : currenttrack, 
         'whichmethod' : whichmethod,
         'ctask' : ctask })
-
-def timeline(request):
-    return render(request,currentLocation + 'templates/timeline.html')
     
+# Defines the Login Form data for validation
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=100)
     password = forms.CharField()
     
+# this is a debug page to test state of cookies
 def thanks(request):
     user = request.session['user']
     password = request.session['password']
-    
-    if request.method == 'POST': # If the form has been submitted...
+    if request.method == 'POST':
         taskName = request.POST['taskname']
         selectedNames = request.POST.getlist('usernamelist')
-    
     return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password, 'taskName' : taskName, 'selectedNames' : selectedNames });
     
+# Form for the comment submission, one correlates to task, two to track
 class ReplyBox(forms.Form):
     comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
     comment2 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
-    
+
+# Creates a comment object and then relates it to the task
 def submitcommenttask(request):
     if request.method == 'POST': # If the form has been submitted...
         comment1 = request.POST['comment1']
@@ -130,11 +126,10 @@ def submitcommenttask(request):
         tk_id = request.session['currenttask']
         ct = CommentTask(comment_identifier_id=c.id,task_identifier_id=tk_id)
         ct.save()
-        
-        return redirect('/basicsite/tasks/') # Redirect after POST
-    
+        return redirect('/basicsite/tasks/')
     return render(request, currentLocation + 'templates/thanks.html')
     
+# Creates a comment object and then relates it to the task
 def submitcommenttrack(request):
     if request.method == 'POST': # If the form has been submitted...
         comment2 = request.POST['comment2']
@@ -146,74 +141,73 @@ def submitcommenttrack(request):
         ta_id = request.session['currenttrack']
         ca = CommentTrack(comment_identifier_id=c.id,track_identifier_id=ta_id)
         ca.save()
-        
         return redirect('/basicsite/tasks/') # Redirect after POST
-    
     return render(request, currentLocation + 'templates/thanks.html')
     
+# reloads the /tasks/ page with the task defined by cookie
 def changetask(request):
     if request.method == 'POST':
         request.session['currenttask'] = request.POST['tasks']
         return redirect('/basicsite/tasks/')
-    
     return render(request, currentLocation + 'templates/thanks.html')
     
+# form class for creating task, nameEntry refers a user that can be assigned to task
 class CreateTaskBox(forms.Form):
     taskname = forms.CharField(max_length=100)
     nameEntry = forms.BooleanField()
     
+# loads the create task page
 def createtask(request):
     allusers = User.objects.all()
     form = CreateTaskBox()
-    
     return render(request, currentLocation + 'templates/createtask.html', {'form' : form, 'allusers' : allusers })
-    
+
+# creates the task based off of the passed form data (attaches to cookies by name of fields in class)
 def submittask(request):
     if request.method == 'POST':
-        if request.method == 'POST': # If the form has been submitted...
-            taskName = request.POST['taskname']
-            selectedNames = request.POST.getlist('usernamelist')
-            pub_date=timezone.now()
-            tk = Task(task_title = taskName, started_date=pub_date)
-            tk.save()
-        
-        for id in selectedNames:
-            u = User.objects.get(id=id)
-            tkroster = TaskRoster(user_identifier_id = u.id, task_identifier_id = tk.id, task_role = 'labeler')
-            tkroster.save()
-            
+        taskName = request.POST['taskname']
+        selectedNames = request.POST.getlist('usernamelist')
+        pub_date=timezone.now()
+        tk = Task(task_title = taskName, started_date=pub_date)
+        tk.save()
+    # involve selected users to task
+    for id in selectedNames:
+        u = User.objects.get(id=id)
+        tkroster = TaskRoster(user_identifier_id = u.id, task_identifier_id = tk.id, task_role = 'labeler')
+        tkroster.save()
     return redirect('/basicsite/tasks/') # Redirect after POST
-    
+
+# loads the create track page
 def createtrack(request):
     allusers = User.objects.all()
     form = CreateTaskBox()
     currenttask = request.session['currenttask']
     ctkrostercount = TaskRoster.objects.all()
     ctkroster=[]
+    # only members in task can be assigned to track
     for tkobj in ctkrostercount:
         tkobjid = tkobj.id
         if tkobj.task_identifier_id==int(currenttask):
             isamatch = 'yes'
             ctkroster.append(tkobj)
-            
     ctkrosterclean = []
     for tkrstrobj in ctkroster:
         userToAppend = User.objects.get(id=tkrstrobj.user_identifier_id)
         ctkrosterclean.append(userToAppend)
-    
     return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
-    
+
+# Load all tools, descending by version number, then display tools page
 def tools(request):
     alltools = ToolFile.objects.order_by('-versionnumber')
-    
     return render(request, currentLocation + 'templates/tools.html', {'alltools':alltools})
-    
+
+# Loads the upload tool page
 def uploadtool(request):
     families = ToolFamily.objects.all()
     form = UploadFileForm(families)
-
     return render(request, currentLocation + 'templates/uploadtool.html', {'form':form, 'families':families})
 
+# Handles the upload request, then redirects to the tools page
 def receivetool(request):
     # Handle file upload
     if request.method == 'POST':
@@ -221,7 +215,6 @@ def receivetool(request):
         uploaddate=timezone.now()
         originalfilename = str(request.FILES['fileform'])
         originalfilename.replace("tools/", "");
-
         if request.POST['newfamily'] != '':
             familyname = request.POST['newfamily']
             try:
@@ -234,7 +227,6 @@ def receivetool(request):
                 specificfamily.save()
         else:
             specificfamily = ToolFamily.objects.get(id=request.POST['family'])
-        
         newtf = ToolFile(
             tf = request.FILES['fileform'], 
             tooltitle = request.POST['title'], 
@@ -246,52 +238,51 @@ def receivetool(request):
             family = specificfamily
             )
         newtf.save()
-        
     else:
         form = DocumentForm()
-        
     return redirect('/basicsite/tools/')
-    
+
+# Handles a download request on the tool pages
+# This function creates an HTTPResponse with an attachment property set in the header fields so that the client browser knows its a download.
 def downloadtool(request, toolfileid):
     conv = int(toolfileid)
     toolfile = ToolFile.objects.get(id=conv)
-    
     if "jpg" in str(toolfile.tf):
         response = HttpResponse(toolfile, content_type='image/jpeg')
-        response['Content-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
+        response['Contntent-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
     elif "zip" in str(toolfile.tf):
         response = HttpResponse(toolfile.tf, content_type='application/zip')
         response['Content-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
-
     return response
 
+# Loads page with just the tools for the Collection category
 def collectionsection(request):
     tools = ToolFile.objects.order_by('-versionnumber')
     alltools = []
     for tool in tools:
         if tool.purpose=='1':
             alltools.append(tool)
-    
     return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Collection Tools'}, context_instance=RequestContext(request))
 
+# Loads page with just the tools for the Checking/Processing category
 def checkprocesssection(request):
     tools = ToolFile.objects.order_by('-versionnumber')
     alltools = []
     for tool in tools:
         if tool.purpose=='2':
             alltools.append(tool)
-    
     return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Checking & Processing Tools'}, context_instance=RequestContext(request))
 
+# Loads page with just the tools for the Labeling category
 def labelsection(request):
     tools = ToolFile.objects.order_by('-versionnumber')
     alltools = []
     for tool in tools:
         if tool.purpose=='3':
             alltools.append(tool)
-    
     return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Labeling Tools'}, context_instance=RequestContext(request))
 
+# Defines the form for the upload tool page
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50)
     fileform  = forms.FileField(label='Tool File:')
@@ -304,5 +295,5 @@ class UploadFileForm(forms.Form):
     
     def __init__(self, families, *args, **kwargs):
         super(UploadFileForm, self).__init__(*args, **kwargs)
-        self.fields['family'] = forms.ChoiceField(choices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
+ oices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
     
