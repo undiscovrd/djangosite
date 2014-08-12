@@ -41,6 +41,11 @@ class CommentTrack(models.Model):
     track_identifier = models.ForeignKey(Track)
     comment_text = models.CharField(max_length=400)
 
+class ToolFamily(models.Model):
+    toolfamilyname = models.CharField(max_length=150)
+    datecreated = models.DateTimeField()
+    description = models.CharField(max_length=400)
+    
 class ToolFile(models.Model):
     tooltitle = models.CharField(max_length=50)
     tf = models.FileField(upload_to='tools')
@@ -48,4 +53,9 @@ class ToolFile(models.Model):
     uploaded = models.DateTimeField()
     description = models.CharField(max_length=400)
     purpose = models.CharField(max_length=50)
+    versionnumber = models.DecimalField(max_digits=10, decimal_places=7)
+    family = models.ForeignKey(ToolFamily)
+    
+
+    
     

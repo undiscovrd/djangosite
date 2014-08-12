@@ -25,4 +25,7 @@ urlpatterns = patterns('',
     url(r'^basicsite/uploadtool', 'basicsite.views.uploadtool'),
     url(r'^basicsite/receivetool', 'basicsite.views.receivetool'),
     url(r'^basicsite/downloadtool/([0-9])/$', 'basicsite.views.downloadtool'),
+    url(r'^basicsite/toolcategories/collection', 'basicsite.views.collectionsection'),
+    url(r'^basicsite/toolcategories/checkprocess', 'basicsite.views.checkprocesssection'),
+    url(r'^basicsite/toolcategories/label', 'basicsite.views.labelsection'),
 )

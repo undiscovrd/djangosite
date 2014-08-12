@@ -1,11 +1,13 @@
 # Create your views here.
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.shortcuts import render_to_response
 
 from django import forms
 from models import *
 from django.utils import timezone
 from django.http import HttpResponse
+from django.template import RequestContext
 #from django.template import RequestContext
 
 import os.path
@@ -205,33 +207,48 @@ def createtrack(request):
     return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
     
 def tools(request):
-    
     alltools = ToolFile.objects.all()
     
     return render(request, currentLocation + 'templates/tools.html', {'alltools':alltools})
     
 def uploadtool(request):
-    form = UploadFileForm()
+    families = ToolFamily.objects.all()
+    form = UploadFileForm(families)
 
-    return render(request, currentLocation + 'templates/uploadtool.html', {'form':form})
-    
+    return render(request, currentLocation + 'templates/uploadtool.html', {'form':form, 'families':families})
+
 def receivetool(request):
     # Handle file upload
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            uploaddate=timezone.now()
-            originalfilename = str(request.FILES['fileform'])
-            originalfilename.replace("tools/", "");
-            newtf = ToolFile(
-                tf = request.FILES['fileform'], 
-                tooltitle = request.POST['title'], 
-                toolfilename = originalfilename, 
-                uploaded = uploaddate,
-                description = request.POST['description'],
-                purpose = request.POST['purposes']
-                )
-            newtf.save()
+        uploaddate=timezone.now()
+        originalfilename = str(request.FILES['fileform'])
+        originalfilename.replace("tools/", "");
+
+        if request.POST['newfamily'] != '':
+            familyname = request.POST['newfamily']
+            try:
+                # test to see if already exists
+                specificfamily = ToolFamily.objects.get(toolfamilyname=familyname)
+            except ToolFamily.DoesNotExist:
+                # does not exist, create new family
+                pub_date=timezone.now()
+                specificfamily = ToolFamily(toolfamilyname=familyname, datecreated=pub_date, description=request.POST['familydescription'])
+                specificfamily.save()
+        else:
+            specificfamily = ToolFamily.objects.get(id=request.POST['family'])
+        
+        newtf = ToolFile(
+            tf = request.FILES['fileform'], 
+            tooltitle = request.POST['title'], 
+            toolfilename = originalfilename, 
+            uploaded = uploaddate,
+            description = request.POST['description'],
+            purpose = request.POST['purposes'],
+            versionnumber = request.POST['versionnumber'],
+            family = specificfamily
+            )
+        newtf.save()
         
     else:
         form = DocumentForm()
@@ -250,13 +267,49 @@ def downloadtool(request, toolfileid):
         response['Content-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
 
     return response
+
+def collectionsection(request):
+    tools = ToolFile.objects.all()
+    alltools = []
+    for tool in tools:
+        if tool.purpose=='1':
+            alltools.append(tool)
     
+    return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Collection Tools'}, context_instance=RequestContext(request))
+
+def checkprocesssection(request):
+    tools = ToolFile.objects.all()
+    alltools = []
+    for tool in tools:
+        if tool.purpose=='2':
+            alltools.append(tool)
+    
+    return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Checking & Processing Tools'}, context_instance=RequestContext(request))
+
+def labelsection(request):
+    tools = ToolFile.objects.all()
+    alltools = []
+    for tool in tools:
+        if tool.purpose=='3':
+            alltools.append(tool)
+    
+    return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Labeling Tools'}, context_instance=RequestContext(request))
+
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50)
-    fileform  = forms.FileField(label='select yo bits')
+    fileform  = forms.FileField(label='Tool File:')
     description = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
     purposes = forms.ChoiceField(widget=forms.RadioSelect, choices=(('1', 'Collection',), ('2', 'Check-Processing',), ('3', 'Labeling',)))
+    versionnumber = forms.DecimalField(widget=forms.NumberInput)
+    family = forms.ChoiceField(widget=forms.RadioSelect)
+    familydescription = forms.ChoiceField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 2}))
+    newfamily = forms.CharField(max_length=50)
     
+    def __init__(self, families, *args, **kwargs):
+        super(UploadFileForm, self).__init__(*args, **kwargs)
+        self.fields['family'] = forms.ChoiceField(choices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
+    
+
     
     
     

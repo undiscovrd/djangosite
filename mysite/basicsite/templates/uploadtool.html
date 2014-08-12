@@ -7,6 +7,7 @@
 <style>
 body {
     background-color: #838B8B;
+    font-family: "Avenir Next", sans-serif;
 }
 
 div.toolswrapper {
@@ -23,7 +24,6 @@ div.toolsh1 {
     width: 70%;
     font-size:36px;
     text-align:center;
-    font-family: "Avenir Next", sans-serif;
     color: #97FFFF;
 }
 
@@ -38,17 +38,39 @@ div.toolsh1 {
 <form action="/basicsite/receivetool/" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     <p>{{ form.non_field_errors }}</p>
-    <p>{{ form.fileform.label_tag }} {{ form.fileform.help_text }}</p>
-    <p>
-        {{ form.title }}
-        {{ form.fileform.errors }}
-        {{ form.fileform }}
-    </p>
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+    Tool Name:
+    {{ form.title }}
+    <br>
     Description:
     <br>
     {{ form.description }}
-    {{ form.purposes }}    
+    <br>
+    <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+    Type:
+    {{ form.purposes }}
+    <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+    Version Number: {{ form.versionnumber }}
+    <br>
+    Is this the Current Version: {{ form.iscurrentversion }}
+    <br>
+    <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+    Tool Families:
+    {{ form.family }}
+    <br>
+    Create New Tool Family
+    {{ form.newfamily }}
+    <br>
+    Family Description:
+    <p></p>
+    {{ form.familydescription }}
+    <br>
+    <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+    {{ form.fileform.label_tag }} {{ form.fileform.help_text }}
+    {{ form.fileform.errors }}
+    {{ form.fileform }}
     <p><input type="submit" value="Upload" /></p>
+    <div style="background-color: #008B8B; width:50%; height:6px;"></div>
 </form>
 
 
