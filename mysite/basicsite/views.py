@@ -266,7 +266,7 @@ def downloadtool(request, toolfileid):
     return response
 
 def collectionsection(request):
-    tools = ToolFile.objects.all()
+    tools = ToolFile.objects.order_by('-versionnumber')
     alltools = []
     for tool in tools:
         if tool.purpose=='1':
@@ -275,7 +275,7 @@ def collectionsection(request):
     return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Collection Tools'}, context_instance=RequestContext(request))
 
 def checkprocesssection(request):
-    tools = ToolFile.objects.all()
+    tools = ToolFile.objects.order_by('-versionnumber')
     alltools = []
     for tool in tools:
         if tool.purpose=='2':
@@ -284,7 +284,7 @@ def checkprocesssection(request):
     return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Checking & Processing Tools'}, context_instance=RequestContext(request))
 
 def labelsection(request):
-    tools = ToolFile.objects.all()
+    tools = ToolFile.objects.order_by('-versionnumber')
     alltools = []
     for tool in tools:
         if tool.purpose=='3':

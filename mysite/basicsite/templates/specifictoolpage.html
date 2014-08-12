@@ -6,7 +6,8 @@
 
 <style>
 body {
-    background-color: black;
+    background-color: white;
+    margin: 0px;
 }
 
 div.toolswrapper {
@@ -51,9 +52,12 @@ div.alltoolswrapper {
 
 div.toolrow {
     display:block;
-    background-color:#2F4F4F;
+   # background-color:#2F4F4F;
     color: white;
     font-family: "Avenir", sans-serif;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 p.alltoolsheader {
@@ -64,7 +68,10 @@ p.alltoolsheader {
     text-align:center;
     font-family: "Avenir Next", sans-serif;
     color: #97FFFF;
-    background-color:#black;
+    #background-color:#black;
+    background: url("{{ STATIC_URL }}toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
 }
 
 div.toolsections {
@@ -77,8 +84,11 @@ div.toolsections {
 div.headerstuff {
     margin-top:-90px;
     position:fixed;
-    background-color:black;
+    #background-color:black;
     width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
 }
 
 div.wholepagewrapper {

@@ -6,7 +6,7 @@
 
 <style>
 body {
-    background-color: black;
+    background-color: white;
 }
 
 div.wholepagewrapper {
@@ -55,27 +55,39 @@ div.alltoolswrapper {
 
 div.toolrow {
     display:block;
-    background-color:#2F4F4F;
+    #background-color:#2F4F4F;
     color: white;
     font-family: "Avenir", sans-serif;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 div.collection-toolrow {
     display:block;
-    background-color:#940CE8;
+   # background-color:#940CE8;
     color: white;
     font-family: "Avenir", sans-serif;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 div.Check-Processing-toolrow {
     display:block;
-    background-color:#5900FF;
+    #background-color:#5900FF;
     color: white;
     font-family: "Avenir", sans-serif;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 div.Labeling-toolrow {
     display:block;
-    background-color:#1C0CE8;
+    #background-color:#1C0CE8;
     color: white;
     font-family: "Avenir", sans-serif;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
 }
 
 p.alltoolsheader {
@@ -85,8 +97,11 @@ p.alltoolsheader {
     font-size:30px;
     text-align:center;
     font-family: "Avenir Next", sans-serif;
-    color: #97FFFF;
-    background-color:#black;
+    color: #31649E;
+    #background-color:#black;
+    background: url("{{ STATIC_URL }}toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
 }
 
 div.categorizedtoolswrapper {
@@ -103,8 +118,11 @@ div.toolsections {
 div.headerstuff {
     margin-top:-90px;
     position:fixed;
-    background-color:black;
+    #background-color:black;
     width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
 }
 
 </style>
