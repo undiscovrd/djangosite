@@ -74,52 +74,64 @@ div.toolsections {
     margin-right:auto;
 }
 
+div.headerstuff {
+    margin-top:-90px;
+    position:fixed;
+    background-color:black;
+    width:100%;
+}
+
+div.wholepagewrapper {
+    margin-top:100px;
+}
+
+
 </style>
 <body>
 
-<div class="toolswrapper">
-<div class="toolsh1"> tools page </div>
-</div>
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1"> tools page </div>
+    </div>
 
-<div class="toolsections">
-    <span><a class="sectionbuttons" href="/basicsite/tools/">All Tools</a></span>
-    <span><a class="sectionbuttons" href="/basicsite/toolcategories/collection/">Collection</a></span>
-    <span><a class="sectionbuttons" href="/basicsite/toolcategories/checkprocess/">Checking/Processing</a></span>
-    <span><a class="sectionbuttons" href="/basicsite/toolcategories/labeling/">Labeling</a></span>
-    <span><a class="sectionbuttons" href="/basicsite/uploadtool/">Submit new tool</a></span>
-</div>
-
-<div class="alltoolswrapper">
-    <p class="alltoolsheader">{{ pagetitle }}</p>
-    
-    {% for tool in alltools %}
-        <div class="toolrow">
-            <span style="color:#00FFFF;"> name: </span>
-            <span style="margin-right:50px"><a style="color:#FFD700; font-size:20px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
-            <br>
-            <span style="color:#00FFFF;"> tool family: </span>
-            <span> {{ tool.family.toolfamilyname }} </span>
-            <br>
-            <span style="color:#00FFFF;"> version: </span>
-            <span> {{ tool.versionnumber }} </span>
-            <br>
-            <span style="color:#00FFFF;"> file: </span>
-            <span> {{ tool.toolfilename }} </span>
-            <br>
-            <span style="color:#00FFFF;"> uploaded: </span>
-            <span> {{ tool.uploaded }} </span>
-            <br>
-            <span style="color:#00FFFF;">description:</span>
-            <span>{{ tool.description }}</span>
-            <br>
-            <div style="background-color: #008B8B; width:100%; height:6px;"></div>
-        </div>
-    {% endfor %}
-    <div class="uploadtoolwrapper">
-        <a class="submittoolbutton" href="/basicsite/uploadtool/">Submit new tool</a>
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/tools/">All Tools</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/toolcategories/collection/">Collection</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/toolcategories/checkprocess/">Checking/Processing</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/toolcategories/labeling/">Labeling</a></span>
+        <span><a style="color: #0CE84D" class="sectionbuttons" href="/basicsite/uploadtool/">Submit new tool</a></span>
     </div>
 </div>
-    
+
+<div class="wholepagewrapper">
+    <div class="alltoolswrapper">
+        <p class="alltoolsheader">{{ pagetitle }}</p>
+        
+        {% for tool in alltools %}
+            <div class="toolrow">
+                <span style="color:#00FFFF;"> name: </span>
+                <span style="margin-right:50px"><a style="color:#FFD700; font-size:20px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <br>
+                <span style="color:#00FFFF;"> tool family: </span>
+                <span> {{ tool.family.toolfamilyname }} </span>
+                <br>
+                <span style="color:#00FFFF;"> version: </span>
+                <span> {{ tool.versionnumber }} </span>
+                <br>
+                <span style="color:#00FFFF;"> file: </span>
+                <span> {{ tool.toolfilename }} </span>
+                <br>
+                <span style="color:#00FFFF;"> uploaded: </span>
+                <span> {{ tool.uploaded }} </span>
+                <br>
+                <span style="color:#00FFFF;">description:</span>
+                <span>{{ tool.description }}</span>
+                <br>
+                <div style="background-color: #008B8B; width:100%; height:6px;"></div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
 
 
 </body>
