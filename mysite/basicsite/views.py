@@ -16,7 +16,7 @@ from models import *
 from django.utils import timezone
 from django.http import HttpResponse
 from django.template import RequestContext
-from pages import *
+from constants import *
 
 # Landing page to let user login or create new account
 def login(request):
