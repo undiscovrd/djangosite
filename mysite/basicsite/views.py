@@ -16,11 +16,7 @@ from models import *
 from django.utils import timezone
 from django.http import HttpResponse
 from django.template import RequestContext
-
-import os.path
-
-# File Path used to reference the templates
-currentLocation = os.getcwd().replace("\\","/")  + "/basicsite/"
+from pages import *
 
 # Landing page to let user login or create new account
 def login(request):
@@ -46,7 +42,7 @@ def login(request):
     else:
         form = LoginForm()
     # Renders and displays the login page, passing LoginForm
-    return render(request, currentLocation + 'templates/loginpage.html', {'form': form,})
+    return render(request, currentLocation + LoginPageTemplate, {'form': form,})
 
 # Processes and returns the /tasks/ page based on the cookies. Page is defaulted to first task, first track.
 def tasks(request):
@@ -94,7 +90,7 @@ def tasks(request):
             tracksfortask.append(track)
     
     # display the tasks page with the passed objects
-    return render(request,currentLocation + 'templates/tasks.html', {'formarea': formarea, 
+    return render(request,TaskPageTemplate, {'formarea': formarea, 
         'allcomments' : allcomments, 
         'commentstask' : commentstask, 
         'commentstrack' : commentstrack, 
@@ -117,7 +113,7 @@ def thanks(request):
     if request.method == 'POST':
         taskName = request.POST['taskname']
         selectedNames = request.POST.getlist('usernamelist')
-    return render(request, currentLocation + 'templates/thanks.html', {"username" : user, "password" : password, 'taskName' : taskName, 'selectedNames' : selectedNames });
+    return render(request,ThanksPageTemplate, {"username" : user, "password" : password, 'taskName' : taskName, 'selectedNames' : selectedNames });
     
 # Form for the comment submission, one correlates to task, two to track
 class ReplyBox(forms.Form):
@@ -137,7 +133,7 @@ def submitcommenttask(request):
         ct = CommentTask(comment_identifier_id=c.id,task_identifier_id=tk_id)
         ct.save()
         return redirect('/basicsite/tasks/')
-    return render(request, currentLocation + 'templates/thanks.html')
+    return render(request,ThanksPageTemplate)
     
 # Creates a comment object and then relates it to the task
 def submitcommenttrack(request):
@@ -159,7 +155,7 @@ def changetask(request):
     if request.method == 'POST':
         request.session['currenttask'] = request.POST['tasks']
         return redirect('/basicsite/tasks/')
-    return render(request, currentLocation + 'templates/thanks.html')
+    return render(request, ThanksPageTemplate)
     
 # form class for creating task, nameEntry refers a user that can be assigned to task
 class CreateTaskBox(forms.Form):
@@ -175,7 +171,7 @@ class CreateTrackBox(forms.Form):
 def createtask(request):
     allusers = User.objects.all()
     form = CreateTaskBox()
-    return render(request, currentLocation + 'templates/createtask.html', {'form' : form, 'allusers' : allusers })
+    return render(request,CreateTaskPageTemplate, {'form' : form, 'allusers' : allusers })
 
 # creates the task based off of the passed form data (attaches to cookies by name of fields in class)
 def submittask(request):
@@ -209,16 +205,16 @@ def createtrack(request):
     for tkrstrobj in ctkroster:
         userToAppend = User.objects.get(id=tkrstrobj.user_identifier_id)
         ctkrosterclean.append(userToAppend)
-    return render(request, currentLocation + 'templates/createtrack.html', {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
+    return render(request, CreateTrackPageTemplate, {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
 
 # creates the task based off of the passed form data (attaches to cookies by name of fields in class)
 def submittrack(request):
     if request.method == 'POST':
-        taskName = request.POST['trackname']
+        trackName = request.POST['trackname']
         selectedNames = request.POST.getlist('usernamelist')
         pub_date=timezone.now()
-        tk = Task(task_title = taskName, started_date=pub_date)
-        tk.save()
+        tc = Track(track_title = trackName, started_date=pub_date)
+        tc.save()
     # involve selected users to task
     for id in selectedNames:
         u = User.objects.get(id=id)
@@ -229,13 +225,13 @@ def submittrack(request):
 # Load all tools, descending by version number, then display tools page
 def tools(request):
     alltools = ToolFile.objects.order_by('-versionnumber')
-    return render(request, currentLocation + 'templates/tools.html', {'alltools':alltools})
+    return render(request, ToolPageTemplate, {'alltools':alltools})
 
 # Loads the upload tool page
 def uploadtool(request):
     families = ToolFamily.objects.all()
     form = UploadFileForm(families)
-    return render(request, currentLocation + 'templates/uploadtool.html', {'form':form, 'families':families})
+    return render(request, UploadToolPageTemplate, {'form':form, 'families':families})
 
 # Handles the upload request, then redirects to the tools page
 def receivetool(request):
@@ -292,7 +288,7 @@ def collectionsection(request):
     for tool in tools:
         if tool.purpose=='1':
             alltools.append(tool)
-    return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Collection Tools'}, context_instance=RequestContext(request))
+    return render_to_response(SpecificToolPageTemplate, { 'alltools' : alltools, 'pagetitle' : 'Collection Tools'}, context_instance=RequestContext(request))
 
 # Loads page with just the tools for the Checking/Processing category
 def checkprocesssection(request):
@@ -301,7 +297,7 @@ def checkprocesssection(request):
     for tool in tools:
         if tool.purpose=='2':
             alltools.append(tool)
-    return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Checking & Processing Tools'}, context_instance=RequestContext(request))
+    return render_to_response(SpecificToolPageTemplate, { 'alltools' : alltools, 'pagetitle' : 'Checking & Processing Tools'}, context_instance=RequestContext(request))
 
 # Loads page with just the tools for the Labeling category
 def labelsection(request):
@@ -310,7 +306,7 @@ def labelsection(request):
     for tool in tools:
         if tool.purpose=='3':
             alltools.append(tool)
-    return render_to_response(currentLocation + 'templates/specifictoolpage.html', { 'alltools' : alltools, 'pagetitle' : 'Labeling Tools'}, context_instance=RequestContext(request))
+    return render_to_response(SpecificToolPageTemplate, { 'alltools' : alltools, 'pagetitle' : 'Labeling Tools'}, context_instance=RequestContext(request))
 
 # Defines the form for the upload tool page
 class UploadFileForm(forms.Form):

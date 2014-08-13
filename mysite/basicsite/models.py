@@ -13,7 +13,6 @@
 # Date: 8.12.2014
 ############################################################
 
-
 from django.db import models
 from django import forms
 
