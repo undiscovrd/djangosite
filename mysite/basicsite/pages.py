@@ -15,12 +15,12 @@
 import os.path
 
 # File Path used to reference the templates
-currentLocation = os.getcwd().replace("\\","/")  + "/basicsite/"
-LoginPageTemplate = currentLocation + 'templates/loginpage.html'
-TaskPageTemplate = currentLocation + 'templates/tasks.html'
-ThanksPageTemplate = currentLocation + 'templates/thanks.html'
-CreateTaskPageTemplate = currentLocation + 'templates/createtask.html'
-CreateTrackPageTemplate = currentLocation + 'templates/createtrack.html'
-ToolPageTemplate = currentLocation + 'templates/tools.html'
-UploadToolPageTemplate = currentLocation + 'templates/uploadtool.html'
-SpecificToolPageTemplate = currentLocation + 'templates/specifictoolpage.html'
+CURRENTLOCATION = os.getcwd().replace("\\","/")  + "/basicsite/"
+LOGINPAGETEMPLATE = CURRENTLOCATION + 'templates/loginpage.html'
+TASKPAGETEMPLATE = CURRENTLOCATION + 'templates/tasks.html'
+THANKSPAGETEMPLATE = CURRENTLOCATION + 'templates/thanks.html'
+CREATETASKPAGETEMPLATE = CURRENTLOCATION + 'templates/createtask.html'
+CREATETRACKPAGETEMPLATE = CURRENTLOCATION + 'templates/createtrack.html'
+TOOLPAGETEMPLATE = CURRENTLOCATION + 'templates/tools.html'
+UPLOADTOOLPAGETEMPLATE = CURRENTLOCATION + 'templates/uploadtool.html'
+SPECIFICTOOLPAGETEMPLATE = CURRENTLOCATION + 'templates/specifictoolpage.html'
