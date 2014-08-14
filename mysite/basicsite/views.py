@@ -322,4 +322,9 @@ class UploadFileForm(forms.Form):
     def __init__(self, families, *args, **kwargs):
         super(UploadFileForm, self).__init__(*args, **kwargs)
         self.fields['family'] = forms.ChoiceField(choices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
+        
+        
+def uploadvideopage(request):
     
+    return render_to_response(UPLOADVIDEOPAGETEMPLATE, {}, context_instance=RequestContext(request))
+

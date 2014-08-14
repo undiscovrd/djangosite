@@ -38,6 +38,10 @@ class Video(models.Model):
     video_number = models.IntegerField()
     uploaded_date = models.DateTimeField()
     location = models.CharField(max_length=200)
+    
+class VideoFamily(models.Model):
+    familyname = models.CharField(max_length=200)
+    datecreated = models.DateTimeField()
 
 # List of tracks, the status of it, and the video it is related to. Multiple tracks point to a single task.
 class Track(models.Model):
