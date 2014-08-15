@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.http import HttpResponse
 from django.template import RequestContext
 from constants import *
+import csv
 
 # Landing page to let user login or create new account
 def login(request):
@@ -332,15 +333,24 @@ def uploadvideopage(request):
     return render_to_response(UPLOADVIDEOPAGETEMPLATE, { 'uploadform':uploadform }, context_instance=RequestContext(request))
 
 def handleuploadrequest(request):
-    f = open( CURRENTLOCATION + 'file.py', 'w' )
-    treedata = request.POST['treedata']
-    treedatadict = eval(repr(treedata))
-    treedatakeys = treedatadict[0]
-    treedatavalues = treedatadict.values()
-    f.write( 'dict = ' + repr(cookiedata) + '\n' )
-    f.write( 'treedatakeys = ' + repr(treedatakeys) + '\n' )
-    f.write( 'treedatavalues = ' + repr(treedatavalues) + '\n' )
-    f.close()
+    treedata = request.FILES['file_form_name[]']
+    fileList = treedata.split(",")
+    
+    for filename in fileList:
+        f = request.POST[filename]
+        handle_uploaded_file(f,filename)
     
     return render_to_response(UPLOADVIDEOPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    
+def handle_uploaded_file(f,filename):
+    destination = open(filename, 'wb+')
+    for chunk in f.chunks():
+        destination.write(chunk)
+    destination.close()
+    
+def receivefile(f,filename):
+    destination = open(filename, 'wb+')
+    for chunk in f.chunks():
+        destination.write(chunk)
+    destination.close()
 

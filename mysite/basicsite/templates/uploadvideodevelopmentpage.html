@@ -139,17 +139,22 @@ div.treecontents {
 
 <div id="container">
     <div class="filebrowser">
+    <input type="button" label="yar" onclick="uploadFilteredFiles()" />
         <form id="uploadformid" action="/basicsite/handleuploadrequest/" method="post" enctype="multipart/form-data">
               {% csrf_token %}
               {{ uploadform.videotitle }}
               <p><input type="submit" value="Upload" /></p>
               <div class="treecontents">
-                <input type="file" id="file_form" webkitdirectory directory />
+                <input type="file" id="file_form" name="file_form_name[]" webkitdirectory directory multiple/>
                 <input type="hidden" name="treedata" />
                 <ul id="dir-tree"></ul>
               </div>
-              <div class="center" id="thumbnails"></div>
+              <!-- <div id="dynamicfileelementsid" class="dynamicfileelements" style="visibility: hidden; display:inline;">
+                  ready for these div hacks 
+                  
+              </div>-->
         </form>
+        
     </div>
 </div>
 
@@ -162,7 +167,8 @@ div.treecontents {
     </div>
   </div>
 </script>
-<script src="{{ STATIC_URL }}jquery.min.js" type="text/javascript"></script>
+<script src="//code.jquery.com/jquery-1.10.2.js" type="text/javascript"></script>
+<!--<script src="{{ STATIC_URL }}jquery.min.js" type="text/javascript"></script>-->
 <script src="{{ STATIC_URL }}jquery.tree.js" type="text/javascript"></script>
 <script>
   // Simple JavaScript Templating
@@ -240,19 +246,23 @@ div.treecontents {
       }
       return tree_;
     }
-       
+    
     this.init = function(e) {
       // Reset
       html_ = [];
       tree_ = {};
       pathList_ = [];
+      fullList = [];
       self.fileList = e.target.files;
       
       // TODO: optimize this so we're not going through the file list twice
       // (here and in buildFromPathList).
       for (var i = 0, file; file = self.fileList[i]; ++i) {
+        fullList.push(file);
         pathList_.push(file.webkitRelativePath);
-        alert(pathList_);
+        alert(pathList_[i]);
+        $('#dynamicfileelementsid').append('<input type="file" name="' + file.webkitRelativePath + '" value="'+ file +'" />');
+        
       }
       
       var filetree = {
@@ -261,7 +271,9 @@ div.treecontents {
       filetree.filetreearray.push(pathList_);
       var formbyid = document.getElementById("uploadformid");
       var treedataelement = formbyid.elements["treedata"];
-      treedataelement.value =  jQuery.parseJSON(jQuery.serialize(pathList_));
+      tempArr = [];
+      tempArr.push(pathList_.toString());
+      treedataelement.value =  tempArr.toString();
       
       
       self.render(self.buildFromPathList(pathList_));
@@ -277,6 +289,19 @@ div.treecontents {
       }
     }
   };
+  
+    function uploadFilteredFiles() {
+        var xhr = new XMLHttpRequest();
+        var fileList = document.getElementById("file_form").files;
+        var fd = new FormData();
+        fd.append("csrfmiddlewaretoken","{% csrf_token %}");
+        for (var i = 0, file; file = fileList[i]; i++) {
+            fd.append("file" + i, file);
+            xhr.open("POST", "/basicsite/receivefile/");
+            xhr.send(fd);
+        }
+        
+    }
 
   var tree = new Tree('#dir-tree');
 
