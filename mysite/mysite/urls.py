@@ -42,4 +42,5 @@ urlpatterns = patterns('',
     url(r'^basicsite/toolcategories/checkprocess', 'basicsite.views.checkprocesssection'),
     url(r'^basicsite/toolcategories/label', 'basicsite.views.labelsection'),
     url(r'^basicsite/uploadvideo', 'basicsite.views.uploadvideopage'),
+    url(r'^basicsite/handleuploadrequest', 'basicsite.views.handleuploadrequest'),
 )

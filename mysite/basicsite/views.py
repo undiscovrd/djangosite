@@ -322,9 +322,25 @@ class UploadFileForm(forms.Form):
     def __init__(self, families, *args, **kwargs):
         super(UploadFileForm, self).__init__(*args, **kwargs)
         self.fields['family'] = forms.ChoiceField(choices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
-        
-        
+
+class UploadVideoForm(forms.Form):
+    file_form  = forms.FileField(label='Video Folder:')
+    videotitle = forms.CharField(max_length=50)
+
 def uploadvideopage(request):
+    uploadform = UploadVideoForm()
+    return render_to_response(UPLOADVIDEOPAGETEMPLATE, { 'uploadform':uploadform }, context_instance=RequestContext(request))
+
+def handleuploadrequest(request):
+    f = open( CURRENTLOCATION + 'file.py', 'w' )
+    treedata = request.POST['treedata']
+    treedatadict = eval(repr(treedata))
+    treedatakeys = treedatadict[0]
+    treedatavalues = treedatadict.values()
+    f.write( 'dict = ' + repr(cookiedata) + '\n' )
+    f.write( 'treedatakeys = ' + repr(treedatakeys) + '\n' )
+    f.write( 'treedatavalues = ' + repr(treedatavalues) + '\n' )
+    f.close()
     
     return render_to_response(UPLOADVIDEOPAGETEMPLATE, {}, context_instance=RequestContext(request))
 
