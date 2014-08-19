@@ -18,6 +18,8 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from constants import *
 import csv
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
 
 # Landing page to let user login or create new account
 def login(request):
@@ -226,6 +228,7 @@ def submittrack(request):
 # Load all tools, descending by version number, then display tools page
 def tools(request):
     alltools = ToolFile.objects.order_by('-versionnumber')
+    request.session['currenttoolpage'] = '/basicsite/tools/'
     return render(request, TOOLPAGETEMPLATE, {'alltools':alltools})
 
 # Loads the upload tool page
@@ -250,7 +253,7 @@ def receivetool(request):
             except ToolFamily.DoesNotExist:
                 # does not exist, create new family
                 pub_date=timezone.now()
-                specificfamily = ToolFamily(toolfamilyname=familyname, datecreated=pub_date, description=request.POST['familydescription'])
+                specificfamily = ToolFamily(toolfamilyname=familyname, datecreated=pub_date, description=request.POST['familydescription'], category=request.POST['purposes'])
                 specificfamily.save()
         else:
             specificfamily = ToolFamily.objects.get(id=request.POST['family'])
@@ -284,35 +287,87 @@ def downloadtool(request, toolfileid):
 
 # Loads page with just the tools for the Collection category
 def collectionsection(request):
+    request.session['currenttoolpage'] = '/basicsite/toolcategories/collection/'
     tools = ToolFile.objects.order_by('-versionnumber')
+    try:
+        families = ToolFamily.objects.all()
+        containsArr = []
+        relatedtools = []
+        for family in families:
+            ranhere='yes'
+            if family.category == '1':
+                for tool in tools:
+                    toolfamid = tool.family_id 
+                    famid = family.id
+                    if tool.family_id == family.id:
+                        if not tool.family_id in containsArr:
+                            relatedtools.append(tool)
+                            containsArr.append(tool.family_id)
+    except:
+        relatedtools = []       
     alltools = []
     for tool in tools:
         if tool.purpose=='1':
             alltools.append(tool)
-    return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Collection Tools'}, context_instance=RequestContext(request))
+    return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Collection Tools', 'relatedtools':relatedtools}, context_instance=RequestContext(request))
 
 # Loads page with just the tools for the Checking/Processing category
 def checkprocesssection(request):
+    request.session['currenttoolpage'] = '/basicsite/toolcategories/checkprocess/'
     tools = ToolFile.objects.order_by('-versionnumber')
+    try:
+        families = ToolFamily.objects.all()
+        containsArr = []
+        relatedtools = []
+        for family in families:
+            ranhere='yes'
+            if family.category == '2':
+                for tool in tools:
+                    toolfamid = tool.family_id 
+                    famid = family.id
+                    if tool.family_id == family.id:
+                        if not tool.family_id in containsArr:
+                            relatedtools.append(tool)
+                            containsArr.append(tool.family_id)
+    except:
+        relatedtools = []       
     alltools = []
     for tool in tools:
         if tool.purpose=='2':
             alltools.append(tool)
-    return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Checking & Processing Tools'}, context_instance=RequestContext(request))
+    return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Checking & Processing Tools', 'relatedtools':relatedtools}, context_instance=RequestContext(request))
 
 # Loads page with just the tools for the Labeling category
 def labelsection(request):
+    request.session['currenttoolpage'] = '/basicsite/toolcategories/labeling/'
     tools = ToolFile.objects.order_by('-versionnumber')
+    try:
+        families = ToolFamily.objects.all()
+        containsArr = []
+        relatedtools = []
+        for family in families:
+            ranhere='yes'
+            if family.category == '3':
+                for tool in tools:
+                    toolfamid = tool.family_id 
+                    famid = family.id
+                    if tool.family_id == family.id:
+                        if not tool.family_id in containsArr:
+                            relatedtools.append(tool)
+                            containsArr.append(tool.family_id)
+    except:
+        relatedtools = []       
     alltools = []
     for tool in tools:
         if tool.purpose=='3':
             alltools.append(tool)
-    return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Labeling Tools'}, context_instance=RequestContext(request))
+    return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Labeling Tools', 'relatedtools':relatedtools}, context_instance=RequestContext(request))
 
 # Defines the form for the upload tool page
 class UploadFileForm(forms.Form):
     title = forms.CharField(max_length=50)
     fileform  = forms.FileField(label='Tool File:')
+    versionform = forms.FileField(label='Version Log:')
     description = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
     purposes = forms.ChoiceField(widget=forms.RadioSelect, choices=(('1', 'Collection',), ('2', 'Check-Processing',), ('3', 'Labeling',)))
     versionnumber = forms.DecimalField(widget=forms.NumberInput)
@@ -353,4 +408,28 @@ def receivefile(f,filename):
     for chunk in f.chunks():
         destination.write(chunk)
     destination.close()
+    
+def specificfamilypage(request, family):
+    conv_id = int(family)
+    everytool = ToolFile.objects.order_by('-versionnumber')
+    alltools = []
+    for tool in everytool:
+        if tool.family_id == conv_id:
+            toolfamily = ToolFamily.objects.get(id=conv_id)
+            familyname = toolfamily.toolfamilyname
+            alltools.append(tool)
+    return render_to_response(SPECIFICFAMILYPAGETEMPLATE, {'alltools':alltools, 'familyname':familyname}, context_instance=RequestContext(request))
 
+def deletetool(request, toolid):
+    tool = ToolFile.objects.get(id=toolid)
+    tool.delete()    
+    alltools = ToolFile.objects.order_by('-versionnumber')
+    return redirect(request.session['currenttoolpage'])
+
+# These two auto-delete files from filesystem when they are unneeded:
+@receiver(models.signals.post_delete, sender=ToolFile)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    if instance.tf:
+        if os.path.isfile(instance.tf.path):
+            os.remove(instance.tf.path)
+   

@@ -148,7 +148,8 @@ div.headerstuff {
         {% for tool in alltools %}
             <div class="toolrow">
                 <span style="color:#00FFFF;"> name: </span>
-                <span style="margin-right:50px"><a style="color:#FFD700; font-size:20px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <span style="margin-right:10px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <span><a style="color: #FF6103" href="/basicsite/deletetool/{{ tool.id }}/">delete</a></span>
                 <br>
                 <span style="color:#00FFFF;"> tool family: </span>
                 <span> {{ tool.family.toolfamilyname }} </span>
@@ -176,7 +177,8 @@ div.headerstuff {
             {% if "1" in tool.purpose %}
                 <div class="collection-toolrow">
                     <span style="color:#00FFFF;"> name: </span>
-                    <span style="margin-right:50px"><a style="color:#FFD700; font-size:20px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                    <span style="margin-right:10px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                    <span><a style="color: #FF6103" href="/basicsite/deletetool/{{ tool.id }}/">delete</a></span>
                     <br>
                     <span style="color:#00FFFF;"> tool family: </span>
                     <span> {{ tool.family.toolfamilyname }} </span>
@@ -203,7 +205,8 @@ div.headerstuff {
             {% if "2" in tool.purpose %}
                 <div class="Check-Processing-toolrow">
                     <span style="color:#00FFFF;"> name: </span>
-                    <span style="margin-right:50px"><a style="color:#FFD700; font-size:20px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                    <span style="margin-right:10px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                    <span><a style="color: #FF6103" href="/basicsite/deletetool/{{ tool.id }}/">delete</a></span>
                     <br>
                     <span style="color:#00FFFF;"> tool family: </span>
                     <span> {{ tool.family.toolfamilyname }} </span>
@@ -231,7 +234,8 @@ div.headerstuff {
             {% if "3" in tool.purpose %}        
                 <div class="Labeling-toolrow">
                 <span style="color:#00FFFF;"> name: </span>
-                <span style="margin-right:50px"><a style="color:#FFD700; font-size:20px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <span style="margin-right:10px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <span><a style="color: #FF6103" href="/basicsite/deletetool/{{ tool.id }}/">delete</a></span>
                 <br>
                 <span style="color:#00FFFF;"> tool family: </span>
                 <span> {{ tool.family.toolfamilyname }} </span>

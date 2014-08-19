@@ -44,4 +44,6 @@ urlpatterns = patterns('',
     url(r'^basicsite/uploadvideo', 'basicsite.views.uploadvideopage'),
     url(r'^basicsite/receivefile', 'basicsite.views.receivefile'),
     url(r'^basicsite/handleuploadrequest', 'basicsite.views.handleuploadrequest'),
+    url(r'^basicsite/family/([0-9])/$', 'basicsite.views.specificfamilypage'),
+    url(r'^basicsite/deletetool/([0-9])/$', 'basicsite.views.deletetool'),
 )

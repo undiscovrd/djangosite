@@ -71,11 +71,13 @@ class ToolFamily(models.Model):
     toolfamilyname = models.CharField(max_length=150)
     datecreated = models.DateTimeField()
     description = models.CharField(max_length=400)
+    category = models.CharField(max_length=2)
 
 # List of all tools. File Info held by 'tf' relation. Purpose relates to one of the three main categories: Collection, Check/Processing, Labeling.
 class ToolFile(models.Model):
     tooltitle = models.CharField(max_length=50)
     tf = models.FileField(upload_to='tools')
+    versionlog = models.FileField(upload_to='versionlogs')
     toolfilename = models.CharField(max_length=150)
     uploaded = models.DateTimeField()
     description = models.CharField(max_length=400)
