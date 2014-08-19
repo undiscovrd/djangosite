@@ -59,6 +59,7 @@ div.toolrow {
     background: url("{{ STATIC_URL }}toolrowdarkblue.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
+    padding-left:20px;
 }
 
 div.toolrowfamily {
@@ -134,11 +135,13 @@ div.wholepagewrapper {
             <div style="background-color:#473C8B; margin-left:auto; margin-right:auto;" class="familyrow">
                 <span><a style="color:#00FF7F; font-size:25px;" href="/basicsite/family/{{ tool.family.id }}/">{{ tool.family.toolfamilyname }}</a></span> 
                 <span style="color:#F0FFFF; font-size:25px;"> version: </span>
-                <span style="color:#00FFFF; font-size:25px;"> {{ tool.versionnumber }} </span>
+                <span style="color:#FFC125; font-size:25px;"> {{ tool.versionnumber }} </span>
+                <span><a style="color:#00FF7F; font-size:17px;" href="/basicsite/family/versionlog/{{ tool.family.id }}/"> View Version Log </a> </span>
             </div>
             <div class="toolrowfamily">
                 <span style="color:#00FFFF;"> name: </span>
-                <span style="margin-right:10px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <span style="margin-right:7px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <span><a style="color:#00FF7F; font-size:12px;margin-right:7px;" href="/basicsite/family/versionlog/{{ tool.family.id }}/"> View Version Log </a> </span>
                 <span><a style="color: #FF6103" href="/basicsite/deletetool/{{ tool.id }}/">delete</a></span>
                 <br>
                 <span style="color:#00FFFF;"> file: </span>
@@ -158,14 +161,14 @@ div.wholepagewrapper {
         {% for tool in alltools %}
             <div class="toolrow">
                 <span style="color:#00FFFF;"> name: </span>
-                <span style="margin-right:10px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <span style="margin-right:7px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
                 <span><a style="color: #FF6103" href="/basicsite/deletetool/{{ tool.id }}/">delete</a></span>
                 <br>
                 <span style="color:#00FFFF;"> tool family: </span>
                 <span> {{ tool.family.toolfamilyname }} </span>
                 <br>
                 <span style="color:#00FFFF;"> version: </span>
-                <span> {{ tool.versionnumber }} </span>
+                <span style="color:#FFC125;"> {{ tool.versionnumber }} </span>
                 <br>
                 <span style="color:#00FFFF;"> file: </span>
                 <span> {{ tool.toolfilename }} </span>

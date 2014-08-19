@@ -45,5 +45,6 @@ urlpatterns = patterns('',
     url(r'^basicsite/receivefile', 'basicsite.views.receivefile'),
     url(r'^basicsite/handleuploadrequest', 'basicsite.views.handleuploadrequest'),
     url(r'^basicsite/family/([0-9])/$', 'basicsite.views.specificfamilypage'),
+    url(r'^basicsite/family/versionlog/([0-9])/$', 'basicsite.views.viewversionlog'),
     url(r'^basicsite/deletetool/([0-9])/$', 'basicsite.views.deletetool'),
 )

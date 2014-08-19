@@ -7,6 +7,8 @@
 <style>
 body {
     background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
 }
 
 div.wholepagewrapper {
@@ -148,14 +150,14 @@ div.headerstuff {
         {% for tool in alltools %}
             <div class="toolrow">
                 <span style="color:#00FFFF;"> name: </span>
-                <span style="margin-right:10px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
+                <span style="margin-right:7px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tooltitle }}</a></span>
                 <span><a style="color: #FF6103" href="/basicsite/deletetool/{{ tool.id }}/">delete</a></span>
                 <br>
                 <span style="color:#00FFFF;"> tool family: </span>
                 <span> {{ tool.family.toolfamilyname }} </span>
                 <br>
                 <span style="color:#00FFFF;"> version: </span>
-                <span> {{ tool.versionnumber }} </span>
+                <span  style="color:#FFC125;"> {{ tool.versionnumber }} </span>
                 <br>
                 <span style="color:#00FFFF;"> file: </span>
                 <span> {{ tool.toolfilename }} </span>
@@ -184,7 +186,7 @@ div.headerstuff {
                     <span> {{ tool.family.toolfamilyname }} </span>
                     <br>
                     <span style="color:#00FFFF;"> version: </span>
-                    <span> {{ tool.versionnumber }} </span>
+                    <span style="color:#FFC125;"> {{ tool.versionnumber }} </span>
                     <br>
                     <span style="color:#00FFFF;"> file: </span>
                     <span> {{ tool.toolfilename }} </span>
@@ -212,7 +214,7 @@ div.headerstuff {
                     <span> {{ tool.family.toolfamilyname }} </span>
                     <br>
                     <span style="color:#00FFFF;"> version: </span>
-                    <span> {{ tool.versionnumber }} </span>
+                    <span style="color:#FFC125;"> {{ tool.versionnumber }} </span>
                     <br>
                     <span style="color:#00FFFF;"> file: </span>
                     <span> {{ tool.toolfilename }} </span>
@@ -241,7 +243,7 @@ div.headerstuff {
                 <span> {{ tool.family.toolfamilyname }} </span>
                 <br>
                 <span style="color:#00FFFF;"> version: </span>
-                <span> {{ tool.versionnumber }} </span>
+                <span style="color:#FFC125;"> {{ tool.versionnumber }} </span>
                 <br>
                 <span style="color:#00FFFF;"> file: </span>
                 <span> {{ tool.toolfilename }} </span>

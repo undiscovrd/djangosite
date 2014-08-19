@@ -258,9 +258,10 @@ def receivetool(request):
         else:
             specificfamily = ToolFamily.objects.get(id=request.POST['family'])
         newtf = ToolFile(
-            tf = request.FILES['fileform'], 
-            tooltitle = request.POST['title'], 
-            toolfilename = originalfilename, 
+            tf = request.FILES['fileform'],
+            versionlog = request.FILES['versionform'],
+            tooltitle = request.POST['title'],
+            toolfilename = originalfilename,
             uploaded = uploaddate,
             description = request.POST['description'],
             purpose = request.POST['purposes'],
@@ -271,6 +272,22 @@ def receivetool(request):
     else:
         form = DocumentForm()
     return redirect('/basicsite/tools/')
+    
+# Defines the form for the upload tool page
+class UploadFileForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    fileform  = forms.FileField(label='Tool File:')
+    versionform = forms.FileField(label='Version Log:')
+    description = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
+    purposes = forms.ChoiceField(widget=forms.RadioSelect, choices=(('1', 'Collection',), ('2', 'Check-Processing',), ('3', 'Labeling',)))
+    versionnumber = forms.FloatField(widget=forms.NumberInput)
+    family = forms.ChoiceField(widget=forms.RadioSelect)
+    familydescription = forms.ChoiceField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 2}))
+    newfamily = forms.CharField(max_length=50)
+    
+    def __init__(self, families, *args, **kwargs):
+        super(UploadFileForm, self).__init__(*args, **kwargs)
+        self.fields['family'] = forms.ChoiceField(choices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
 
 # Handles a download request on the tool pages
 # This function creates an HTTPResponse with an attachment property set in the header fields so that the client browser knows its a download.
@@ -363,22 +380,6 @@ def labelsection(request):
             alltools.append(tool)
     return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Labeling Tools', 'relatedtools':relatedtools}, context_instance=RequestContext(request))
 
-# Defines the form for the upload tool page
-class UploadFileForm(forms.Form):
-    title = forms.CharField(max_length=50)
-    fileform  = forms.FileField(label='Tool File:')
-    versionform = forms.FileField(label='Version Log:')
-    description = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
-    purposes = forms.ChoiceField(widget=forms.RadioSelect, choices=(('1', 'Collection',), ('2', 'Check-Processing',), ('3', 'Labeling',)))
-    versionnumber = forms.DecimalField(widget=forms.NumberInput)
-    family = forms.ChoiceField(widget=forms.RadioSelect)
-    familydescription = forms.ChoiceField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 2}))
-    newfamily = forms.CharField(max_length=50)
-    
-    def __init__(self, families, *args, **kwargs):
-        super(UploadFileForm, self).__init__(*args, **kwargs)
-        self.fields['family'] = forms.ChoiceField(choices=[ (o.id, o.toolfamilyname) for o in ToolFamily.objects.all()])
-
 class UploadVideoForm(forms.Form):
     file_form  = forms.FileField(label='Video Folder:')
     videotitle = forms.CharField(max_length=50)
@@ -409,8 +410,8 @@ def receivefile(f,filename):
         destination.write(chunk)
     destination.close()
     
-def specificfamilypage(request, family):
-    conv_id = int(family)
+def specificfamilypage(request, familyid):
+    conv_id = int(familyid)
     everytool = ToolFile.objects.order_by('-versionnumber')
     alltools = []
     for tool in everytool:
@@ -426,10 +427,28 @@ def deletetool(request, toolid):
     alltools = ToolFile.objects.order_by('-versionnumber')
     return redirect(request.session['currenttoolpage'])
 
-# These two auto-delete files from filesystem when they are unneeded:
+# Delete files from filesystem when the corresponding object in the database is removed
 @receiver(models.signals.post_delete, sender=ToolFile)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
     if instance.tf:
         if os.path.isfile(instance.tf.path):
             os.remove(instance.tf.path)
+            
+def viewversionlog(request, familyid):
+    conv_id = int(familyid)
+    everytool = ToolFile.objects.order_by('-versionnumber')
+    latestTool = ToolFile()
+    foundlatest = 'no'
+    versionlog = ''
+    for tool in everytool:
+        if foundlatest == 'no':
+            if tool.family_id == conv_id:
+                foundlatest = 'yes'
+                latestTool = tool
+                versionlogfilename = latestTool.versionlog
+                versionlog = versionlogfilename.file.read()
+              #  versionlog = versionlogfile.read()
+    return render_to_response(VIEWVERSIONLOGPAGETEMPLATE, {'latestTool':latestTool, 'versionlog':versionlog}, context_instance=RequestContext(request))
+
+   
    

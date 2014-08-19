@@ -82,7 +82,7 @@ class ToolFile(models.Model):
     uploaded = models.DateTimeField()
     description = models.CharField(max_length=400)
     purpose = models.CharField(max_length=50)
-    versionnumber = models.DecimalField(max_digits=10, decimal_places=7)
+    versionnumber = models.FloatField()
     family = models.ForeignKey(ToolFamily)
     
 
