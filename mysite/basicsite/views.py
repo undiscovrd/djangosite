@@ -17,7 +17,6 @@ from django.utils import timezone
 from django.http import HttpResponse
 from django.template import RequestContext
 from constants import *
-import csv
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 
@@ -425,7 +424,7 @@ def handleuploadrequest(request):
 
             cleanedvideoname = file.name.replace('.zip', '')
 
-            v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect.id, checkprocesstool = selectedcheckprocesslist)
+            v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist)
             v.save()
     
     return redirect('/basicsite/uploadvideo/')
@@ -484,7 +483,19 @@ def viewversionlog(request, familyid):
     
 def videos(request):
     allvideos = Video.objects.all()
-    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos}, context_instance=RequestContext(request))
+    finalList = []
+    for video in allvideos:
+        sorted = video.checkprocesstool.split(",")
+        checkprocessminor = []
+        intermediary = []
+        for toolid in sorted:
+            if toolid != '':
+                tool = ToolFile.objects.get(id=toolid)
+                checkprocessminor.append(tool)
+        intermediary.append(video)
+        intermediary.append(checkprocessminor)
+        finalList.append(intermediary)
+    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos, 'finalList':finalList}, context_instance=RequestContext(request))
 
 def videofilterpage(request):
     return render_to_response(VIDEOFILTERPAGETEMPLATE, {}, context_instance=RequestContext(request))

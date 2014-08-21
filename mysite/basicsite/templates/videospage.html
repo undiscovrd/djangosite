@@ -49,6 +49,67 @@ div.toolswrapper {
     width: 70%;
     #background-color: #5F9EA0;
 }
+div.videolistwraper {
+    margin-left:auto;
+    margin-right:auto;
+    width:800px;
+    
+}
+span.videotablesegment {
+    border-width: 1px;
+    border-style: solid;
+    font-size: 20px;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+span.videotablesegmentdata {
+    border-width: 1px;
+    border-style: solid;
+    font-size: 20px;
+    display:block;
+}
+#videonumber {
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:30px;
+    padding-bottom:24px;
+}
+#uploaddate {
+    padding-left:5px;
+    font-size:18px;
+    color:white;
+    border-color: black;
+}
+#collectiontoolused {
+    padding-left:5px;
+    color:white;
+    border-color: black;
+}
+#checkprocesstoolused {
+    padding-left:7px;
+    color:white;
+    border-color: black;
+    display:inline;
+}
+div.colmaster {
+    width:70%;
+    height:85px;
+}
+div.col {
+    float:left;
+}
+#colvideo {
+    margin-top:30px;
+    width:55px;
+}
+#coldata {
+    width:500px;
+    height:75px;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
 </style>
 
 <body>
@@ -66,13 +127,23 @@ div.toolswrapper {
 </div>
 
 <div class="swagwrapper">
-{% for video in allvideos %}
-    {{ video.video_number }}
-    {{ video.uploaded_date }}
-    {{ video.collectiontool }}
-    {{ video.checkprocesstool }}
-    <br>
-{% endfor %}
+    <div class="videolistwraper">
+        {% for video, tup  in finalList %}
+            <div class="colmaster">
+                <div class="col" id="colvideo">
+                    <a class="videolink" style="color:#FFD700; font-size:17px;" href=""><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
+                </div>
+                <div class="col" id="coldata">
+                    <span class="videotablesegmentdata" id="uploaddate" >{{ video.uploaded_date }}</span>
+                    <span class="videotablesegmentdata" id="collectiontoolused" >{{ video.collectiontool.tooltitle }}</span>
+                    {% for subtup in tup %}
+                        <span class="videotablesegmentdata" style="font-size=10px;" id="checkprocesstoolused" >{{ subtup.tooltitle }}</span>
+                    {% endfor %}
+                    <br>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 
 </div>
 

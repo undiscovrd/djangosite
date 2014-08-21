@@ -33,17 +33,36 @@ class TaskRoster(models.Model):
     task_identifier = models.ForeignKey(Task)
     task_role = models.CharField(max_length=30)
 
-# Maintains a list of videos, when they were uploaded, and where it is stored
-class Video(models.Model):
-    video_number = models.IntegerField()
-    uploaded_date = models.DateTimeField()
-    collectiontool = models.CharField(max_length=4)
-    checkprocesstool = models.CharField(max_length=20)
-
 class VideoFamily(models.Model):
     familyname = models.CharField(max_length=200)
     datecreated = models.DateTimeField()
 
+# List of tool families for more specific tool tracking. (i.e.: Face Labeling, Wake Up Tagging, etc..)
+class ToolFamily(models.Model):
+    toolfamilyname = models.CharField(max_length=150)
+    datecreated = models.DateTimeField()
+    description = models.CharField(max_length=400)
+    category = models.CharField(max_length=2)
+
+# List of all tools. File Info held by 'tf' relation. Purpose relates to one of the three main categories: Collection, Check/Processing, Labeling.
+class ToolFile(models.Model):
+    tooltitle = models.CharField(max_length=50)
+    tf = models.FileField(upload_to='tools')
+    versionlog = models.FileField(upload_to='versionlogs')
+    toolfilename = models.CharField(max_length=150)
+    uploaded = models.DateTimeField()
+    description = models.CharField(max_length=400)
+    purpose = models.CharField(max_length=50)
+    versionnumber = models.FloatField()
+    family = models.ForeignKey(ToolFamily)
+    
+# Maintains a list of videos, when they were uploaded, and where it is stored
+class Video(models.Model):
+    video_number = models.IntegerField()
+    uploaded_date = models.DateTimeField()
+    collectiontool = models.ForeignKey(ToolFile)
+    checkprocesstool = models.CharField(max_length=20)
+    
 # List of tracks, the status of it, and the video it is related to. Multiple tracks point to a single task.
 class Track(models.Model):
     task_identifier = models.ForeignKey(Task)
@@ -66,26 +85,3 @@ class CommentTrack(models.Model):
     comment_identifier = models.ForeignKey(Comment)
     track_identifier = models.ForeignKey(Track)
     comment_text = models.CharField(max_length=400)
-
-# List of tool families for more specific tool tracking. (i.e.: Face Labeling, Wake Up Tagging, etc..)
-class ToolFamily(models.Model):
-    toolfamilyname = models.CharField(max_length=150)
-    datecreated = models.DateTimeField()
-    description = models.CharField(max_length=400)
-    category = models.CharField(max_length=2)
-
-# List of all tools. File Info held by 'tf' relation. Purpose relates to one of the three main categories: Collection, Check/Processing, Labeling.
-class ToolFile(models.Model):
-    tooltitle = models.CharField(max_length=50)
-    tf = models.FileField(upload_to='tools')
-    versionlog = models.FileField(upload_to='versionlogs')
-    toolfilename = models.CharField(max_length=150)
-    uploaded = models.DateTimeField()
-    description = models.CharField(max_length=400)
-    purpose = models.CharField(max_length=50)
-    versionnumber = models.FloatField()
-    family = models.ForeignKey(ToolFamily)
-    
-
-    
-    
