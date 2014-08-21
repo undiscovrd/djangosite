@@ -91,6 +91,7 @@ div.toolswrapper {
         <form id="uploadformid" action="/basicsite/handleuploadrequest/" method="post" enctype="multipart/form-data">
               {% csrf_token %}
               <p class="uploadeventtitle"> Upload Event Name: {{ uploadform.videotitle }}</p>
+              <p class="uploadeventtitle"> Description: {{uploadform.description }} </p>
               <p class="alltoolstitle"> Tools Used </p>
               <p class="collectiontitle"> Collection Tools </p>
               {{ uploadform.collection }}

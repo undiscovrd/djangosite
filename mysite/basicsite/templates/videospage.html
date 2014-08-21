@@ -80,17 +80,20 @@ span.videotablesegmentdata {
     font-size:18px;
     color:white;
     border-color: black;
+    border-top:0px;
 }
 #collectiontoolused {
     padding-left:5px;
     color:white;
     border-color: black;
+    border-top:0px;
 }
 #checkprocesstoolused {
     padding-left:7px;
     color:white;
     border-color: black;
     display:inline;
+    border-style: none;
 }
 div.colmaster {
     width:70%;
@@ -128,7 +131,11 @@ div.col {
 
 <div class="swagwrapper">
     <div class="videolistwraper">
-        {% for video, tup  in finalList %}
+    
+           {{ finalListMajor}}
+        {% for event, majorlist  in finalListMajor %}
+        <br>{{event.id}}
+            {% for video, subtup  in majorlist %}
             <div class="colmaster">
                 <div class="col" id="colvideo">
                     <a class="videolink" style="color:#FFD700; font-size:17px;" href=""><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
@@ -137,11 +144,12 @@ div.col {
                     <span class="videotablesegmentdata" id="uploaddate" >{{ video.uploaded_date }}</span>
                     <span class="videotablesegmentdata" id="collectiontoolused" >{{ video.collectiontool.tooltitle }}</span>
                     {% for subtup in tup %}
-                        <span class="videotablesegmentdata" style="font-size=10px;" id="checkprocesstoolused" >{{ subtup.tooltitle }}</span>
+                        <span class="videotablesegmentdata" style="font-size=10px;" id="checkprocesstoolused" >{{ subtup.tooltitle }},</span>
                     {% endfor %}
                     <br>
                 </div>
             </div>
+            {% endfor %}
         {% endfor %}
     </div>
 

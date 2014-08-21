@@ -384,6 +384,7 @@ class UploadVideoForm(forms.Form):
     videotitle = forms.CharField(max_length=50)
     collection = forms.ChoiceField(widget=forms.RadioSelect)
     checkprocess = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}))
     
     def __init__(self, *args, **kwargs):
         super(UploadVideoForm, self).__init__(*args, **kwargs)
@@ -407,6 +408,8 @@ def handleuploadrequest(request):
     uploadeventtitle = request.POST['videotitle']
     pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + uploadeventtitle
     os.mkdir(pathtouploadeventfolder)
+    ev = Event(name=uploadeventtitle, description=request.POST['description'],event_date=timezone.now())
+    ev.save()
     if request.POST['upload_multiple'] == '2':
         for file in fileList:
             videoname = request.POST['videotitle']
@@ -424,7 +427,7 @@ def handleuploadrequest(request):
 
             cleanedvideoname = file.name.replace('.zip', '')
 
-            v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist)
+            v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
             v.save()
     
     return redirect('/basicsite/uploadvideo/')
@@ -483,19 +486,27 @@ def viewversionlog(request, familyid):
     
 def videos(request):
     allvideos = Video.objects.all()
-    finalList = []
-    for video in allvideos:
-        sorted = video.checkprocesstool.split(",")
-        checkprocessminor = []
-        intermediary = []
-        for toolid in sorted:
-            if toolid != '':
-                tool = ToolFile.objects.get(id=toolid)
-                checkprocessminor.append(tool)
-        intermediary.append(video)
-        intermediary.append(checkprocessminor)
-        finalList.append(intermediary)
-    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos, 'finalList':finalList}, context_instance=RequestContext(request))
+    allevents = Event.objects.all()
+    finalListMajor = []
+    for event in allevents:
+        finalListMinor = []
+        for video in allvideos:
+            if video.event_id == event.id:
+                sorted = video.checkprocesstool.split(",")
+                checkprocessminor = []
+                intermediary = []
+                for toolid in sorted:
+                    if toolid != '':
+                        tool = ToolFile.objects.get(id=toolid)
+                        checkprocessminor.append(tool)
+                intermediary.append(video)
+                intermediary.append(checkprocessminor)
+                finalListMinor.append(intermediary)
+        intermediarymajor = []
+        intermediarymajor.append(event)
+        intermediarymajor.append(finalListMinor)
+        finalListMajor.append(intermediarymajor)
+    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos, 'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
 
 def videofilterpage(request):
     return render_to_response(VIDEOFILTERPAGETEMPLATE, {}, context_instance=RequestContext(request))

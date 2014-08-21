@@ -56,11 +56,18 @@ class ToolFile(models.Model):
     versionnumber = models.FloatField()
     family = models.ForeignKey(ToolFamily)
     
+# Keeps track of all the upload events
+class Event(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=400)
+    event_date = models.DateTimeField()
+    
 # Maintains a list of videos, when they were uploaded, and where it is stored
 class Video(models.Model):
     video_number = models.IntegerField()
     uploaded_date = models.DateTimeField()
     collectiontool = models.ForeignKey(ToolFile)
+    event = models.ForeignKey(Event)
     checkprocesstool = models.CharField(max_length=20)
     
 # List of tracks, the status of it, and the video it is related to. Multiple tracks point to a single task.
