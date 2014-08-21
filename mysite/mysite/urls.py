@@ -47,4 +47,8 @@ urlpatterns = patterns('',
     url(r'^basicsite/family/([0-9])/$', 'basicsite.views.specificfamilypage'),
     url(r'^basicsite/family/versionlog/([0-9])/$', 'basicsite.views.viewversionlog'),
     url(r'^basicsite/deletetool/([0-9])/$', 'basicsite.views.deletetool'),
+    url(r'^basicsite/videos', 'basicsite.views.videos'),
+    url(r'^basicsite/videocategories/filterpage', 'basicsite.views.videofilterpage'),
+    url(r'^basicsite/videocategories/assigntotaskpage', 'basicsite.views.videoassigntotaskpage'),
+    url(r'^basicsite/videocategories/tasks', 'basicsite.views.videotasks'),
 )

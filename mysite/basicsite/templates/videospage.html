@@ -9,30 +9,8 @@ body {
     margin: 0px;
     font-family: "Avenir Next", sans-serif;
 }
-
-#container {
-    margin-left:auto;
-    margin-right:auto;
-    width: 400px;
+div.swagwrapper {
     margin-top:100px;
-}
-li {
-    list-style-type:none
-}
-
-p.uploadeventtitle {
-    text-align:center;
-}
-
-#id_videotitle {
-    margin-left:auto;
-    margin-right:auto;
-    width: 200px;
-}
-
-p.alltoolstitle {
-    text-align:center;
-    
 }
 div.toolsections {
     display: block;
@@ -72,6 +50,7 @@ div.toolswrapper {
     #background-color: #5F9EA0;
 }
 </style>
+
 <body>
 <div class="headerstuff">
     <div class="toolswrapper">
@@ -86,26 +65,18 @@ div.toolswrapper {
     </div>
 </div>
 
-<div id="container">
-    <div class="filebrowser">
-        <form id="uploadformid" action="/basicsite/handleuploadrequest/" method="post" enctype="multipart/form-data">
-              {% csrf_token %}
-              <p class="uploadeventtitle"> Upload Event Name: {{ uploadform.videotitle }}</p>
-              <p class="alltoolstitle"> Tools Used </p>
-              <p class="collectiontitle"> Collection Tools </p>
-              {{ uploadform.collection }}
-              <p class="checkprocesstitle"> Checking and Processing Tools </p>
-              {{ uploadform.checkprocess }}
-              <br>
-              What Kind of upload is this?
-              {{ uploadform.upload_multiple }}
-              <input type="file" name="files" multiple />
-              <p><input type="submit" value="Upload" /></p>
-        </form>
-        
-    </div>
+<div class="swagwrapper">
+{% for video in allvideos %}
+    {{ video.video_number }}
+    {{ video.uploaded_date }}
+    {{ video.collectiontool }}
+    {{ video.checkprocesstool }}
+    <br>
+{% endfor %}
+
 </div>
+
+
 
 </body>
 </html>
-

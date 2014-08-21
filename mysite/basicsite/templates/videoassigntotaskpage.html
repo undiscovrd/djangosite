@@ -9,31 +9,6 @@ body {
     margin: 0px;
     font-family: "Avenir Next", sans-serif;
 }
-
-#container {
-    margin-left:auto;
-    margin-right:auto;
-    width: 400px;
-    margin-top:100px;
-}
-li {
-    list-style-type:none
-}
-
-p.uploadeventtitle {
-    text-align:center;
-}
-
-#id_videotitle {
-    margin-left:auto;
-    margin-right:auto;
-    width: 200px;
-}
-
-p.alltoolstitle {
-    text-align:center;
-    
-}
 div.toolsections {
     display: block;
     width: 100%;
@@ -42,7 +17,7 @@ div.toolsections {
 }
 
 div.headerstuff {
-    margin-top:-100px;
+    #margin-top:-90px;
     position:fixed;
     #background-color:black;
     width:100%;
@@ -72,10 +47,11 @@ div.toolswrapper {
     #background-color: #5F9EA0;
 }
 </style>
+
 <body>
 <div class="headerstuff">
     <div class="toolswrapper">
-    <div class="toolsh1"> all videos page </div>
+    <div class="toolsh1"> video assign to task page </div>
     </div>
 
     <div class="toolsections">
@@ -86,26 +62,12 @@ div.toolswrapper {
     </div>
 </div>
 
-<div id="container">
-    <div class="filebrowser">
-        <form id="uploadformid" action="/basicsite/handleuploadrequest/" method="post" enctype="multipart/form-data">
-              {% csrf_token %}
-              <p class="uploadeventtitle"> Upload Event Name: {{ uploadform.videotitle }}</p>
-              <p class="alltoolstitle"> Tools Used </p>
-              <p class="collectiontitle"> Collection Tools </p>
-              {{ uploadform.collection }}
-              <p class="checkprocesstitle"> Checking and Processing Tools </p>
-              {{ uploadform.checkprocess }}
-              <br>
-              What Kind of upload is this?
-              {{ uploadform.upload_multiple }}
-              <input type="file" name="files" multiple />
-              <p><input type="submit" value="Upload" /></p>
-        </form>
-        
-    </div>
-</div>
+{% for video in allvideos %}
+
+
+{% endfor %}
+
+
 
 </body>
 </html>
-

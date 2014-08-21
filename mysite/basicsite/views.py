@@ -381,22 +381,54 @@ def labelsection(request):
     return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Labeling Tools', 'relatedtools':relatedtools}, context_instance=RequestContext(request))
 
 class UploadVideoForm(forms.Form):
-    file_form  = forms.FileField(label='Video Folder:')
+    upload_multiple = forms.ChoiceField(widget=forms.RadioSelect, choices=(('1', 'One Giant Zip For Mankind',), ('2', 'One Video Per Zip',),))
     videotitle = forms.CharField(max_length=50)
-
+    collection = forms.ChoiceField(widget=forms.RadioSelect)
+    checkprocess = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+    
+    def __init__(self, *args, **kwargs):
+        super(UploadVideoForm, self).__init__(*args, **kwargs)
+        alltools = ToolFile.objects.order_by('-versionnumber')
+        collectiontools = []
+        checkprocesstools = []
+        for tool in alltools:
+            if tool.purpose == '1':
+                collectiontools.append(tool)
+            if tool.purpose == '2':
+                checkprocesstools.append(tool)
+        self.fields['collection'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in collectiontools])
+        self.fields['checkprocess'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), choices=[ (o.id, o.tooltitle + ' ->    v' + str(o.versionnumber) ) for o in checkprocesstools])
+        
 def uploadvideopage(request):
     uploadform = UploadVideoForm()
     return render_to_response(UPLOADVIDEOPAGETEMPLATE, { 'uploadform':uploadform }, context_instance=RequestContext(request))
 
 def handleuploadrequest(request):
-    treedata = request.FILES['file_form_name[]']
-    fileList = treedata.split(",")
+    fileList = request.FILES.getlist('files')
+    uploadeventtitle = request.POST['videotitle']
+    pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + uploadeventtitle
+    os.mkdir(pathtouploadeventfolder)
+    if request.POST['upload_multiple'] == '2':
+        for file in fileList:
+            videoname = request.POST['videotitle']
+            withproperpath = pathtouploadeventfolder + '/' + file.name
+            fd = open(withproperpath, 'wb+')  # or 'wb+' for binary file
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+            
+            selectedcheckprocesslist = ''
+            for toolid in request.POST.getlist('checkprocess'):
+                selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
+
+            selectedcollect = ToolFile.objects.get(id=request.POST['collection'])
+
+            cleanedvideoname = file.name.replace('.zip', '')
+
+            v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect.id, checkprocesstool = selectedcheckprocesslist)
+            v.save()
     
-    for filename in fileList:
-        f = request.POST[filename]
-        handle_uploaded_file(f,filename)
-    
-    return render_to_response(UPLOADVIDEOPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    return redirect('/basicsite/uploadvideo/')
     
 def handle_uploaded_file(f,filename):
     destination = open(filename, 'wb+')
@@ -449,6 +481,18 @@ def viewversionlog(request, familyid):
                 versionlog = versionlogfilename.file.read()
               #  versionlog = versionlogfile.read()
     return render_to_response(VIEWVERSIONLOGPAGETEMPLATE, {'latestTool':latestTool, 'versionlog':versionlog}, context_instance=RequestContext(request))
+    
+def videos(request):
+    allvideos = Video.objects.all()
+    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos}, context_instance=RequestContext(request))
 
-   
+def videofilterpage(request):
+    return render_to_response(VIDEOFILTERPAGETEMPLATE, {}, context_instance=RequestContext(request))
+
+def videoassigntotaskpage(request):
+    return render_to_response(VIDEOASSIGNTOTASKPAGETEMPLATE, {}, context_instance=RequestContext(request))
+
+def videotasks(request):
+    return render_to_response(VIDEOTASKSPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    
    

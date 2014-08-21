@@ -37,8 +37,9 @@ class TaskRoster(models.Model):
 class Video(models.Model):
     video_number = models.IntegerField()
     uploaded_date = models.DateTimeField()
-    location = models.CharField(max_length=200)
-    
+    collectiontool = models.CharField(max_length=4)
+    checkprocesstool = models.CharField(max_length=20)
+
 class VideoFamily(models.Model):
     familyname = models.CharField(max_length=200)
     datecreated = models.DateTimeField()
