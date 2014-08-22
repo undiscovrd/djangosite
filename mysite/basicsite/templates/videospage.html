@@ -174,10 +174,11 @@ span.eventuploader {
                         <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
                     </div>
                     <div class="col" id="coldata">
-                        <span class="videotablesegmentdata" id="uploaddate" >{{ video.uploaded_date }}</span>
-                        <span class="videotablesegmentdata" id="collectiontoolused" >{{ video.collectiontool.tooltitle }}</span>
+                        <span class="videotablesegmentdata" id="uploaddate" ><span style="font-size:14px; color: #97FFFF;"> Uploaded on: </span> {{ video.uploaded_date }}</span>
+                        <span class="videotablesegmentdata" id="collectiontoolused" ><span style="font-size:14px; color: #97FFFF;">Collection Tool:</span> {{ video.collectiontool.tooltitle }}</span>
+                        <span style="font-size:14px; color: #97FFFF;padding-left:5px;">Checking/Processing Tools:</span>
                         {% for tup in subtup %}
-                            <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" >{{ tup.tooltitle }},</span>
+                            <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" > {{ tup.tooltitle }},</span>
                         {% endfor %}
                         <br>
                     </div>
