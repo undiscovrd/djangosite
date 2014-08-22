@@ -41,6 +41,9 @@ def login(request):
             
         username = request.POST.get('username')
         password = request.POST.get('password')
+        request.session['user'] = user
+        request.session['password'] = password
+        
     else:
         form = LoginForm()
     # Renders and displays the login page, passing LoginForm
@@ -408,7 +411,8 @@ def handleuploadrequest(request):
     uploadeventtitle = request.POST['videotitle']
     pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + uploadeventtitle
     os.mkdir(pathtouploadeventfolder)
-    ev = Event(name=uploadeventtitle, description=request.POST['description'],event_date=timezone.now())
+    u = User.objects.get(user_name=request.session['user'])
+    ev = Event(name=uploadeventtitle, description=request.POST['description'],event_date=timezone.now(), uploader_id=u.id)
     ev.save()
     if request.POST['upload_multiple'] == '2':
         for file in fileList:
@@ -486,7 +490,7 @@ def viewversionlog(request, familyid):
     
 def videos(request):
     allvideos = Video.objects.all()
-    allevents = Event.objects.all()
+    allevents = Event.objects.order_by("-event_date")
     finalListMajor = []
     for event in allevents:
         finalListMinor = []
@@ -517,4 +521,10 @@ def videoassigntotaskpage(request):
 def videotasks(request):
     return render_to_response(VIDEOTASKSPAGETEMPLATE, {}, context_instance=RequestContext(request))
     
-   
+def downloadvideo(request, videonumber):
+    video = Video.objects.get(video_number=videonumber)
+    event = Event.objects.get(id=video.event_id)
+    pathtovideo = CURRENTLOCATION + '/videos/' + event.name + '/' + str(video.video_number) + '.zip'
+    response = HttpResponse(pathtovideo, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=' + str(video.video_number)
+    return response

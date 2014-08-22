@@ -105,7 +105,13 @@ div.headerstuff {
 div.wholepagewrapper {
     margin-top:100px;
 }
-
+div.versiontext {
+    padding-left:30px;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    color: #555555;
+}
 
 </style>
 <body>
@@ -127,9 +133,10 @@ div.wholepagewrapper {
 <div class="wholepagewrapper">
     <div class="alltoolswrapper">
         <p class="alltoolsheader">{{ latestTool.family.toolfamilyname }} Version Log for Version {{ latestTool.versionnumber }}</p>
-        
-      {{ versionlog }}
-        
+       
+      <div class="versiontext">
+        {{ versionlog|linebreaksbr }}
+      </div>
     </div>
 </div>
 

@@ -64,8 +64,7 @@ span.videotablesegment {
     background-repeat: no-repeat;
 }
 span.videotablesegmentdata {
-    border-width: 1px;
-    border-style: solid;
+
     font-size: 20px;
     display:block;
 }
@@ -96,8 +95,13 @@ span.videotablesegmentdata {
     border-style: none;
 }
 div.colmaster {
-    width:70%;
+    width:100%;
     height:85px;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+        border-width: 1px;
+    border-style: solid;
 }
 div.col {
     float:left;
@@ -112,6 +116,30 @@ div.col {
     background: url("{{ STATIC_URL }}toolrowdarkblue.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
+}
+div.eventheaders {
+    width:100%;
+    margin-top:20px;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
+}
+span.eventname {
+    color: #31649E;
+    font-size: 25px;
+}
+span.eventdate {
+    color: #31649E;
+}
+span.eventdescription {
+    color: #31649E;
+}
+span.eventuploader {
+    color: #31649E;
+    font-size: 18px;
 }
 </style>
 
@@ -131,24 +159,29 @@ div.col {
 
 <div class="swagwrapper">
     <div class="videolistwraper">
-    
-           {{ finalListMajor}}
         {% for event, majorlist  in finalListMajor %}
-        <br>{{event.id}}
-            {% for video, subtup  in majorlist %}
-            <div class="colmaster">
-                <div class="col" id="colvideo">
-                    <a class="videolink" style="color:#FFD700; font-size:17px;" href=""><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
-                </div>
-                <div class="col" id="coldata">
-                    <span class="videotablesegmentdata" id="uploaddate" >{{ video.uploaded_date }}</span>
-                    <span class="videotablesegmentdata" id="collectiontoolused" >{{ video.collectiontool.tooltitle }}</span>
-                    {% for subtup in tup %}
-                        <span class="videotablesegmentdata" style="font-size=10px;" id="checkprocesstoolused" >{{ subtup.tooltitle }},</span>
-                    {% endfor %}
-                    <br>
-                </div>
+            <div class="eventheaders">
+                <br>
+                <span class="eventname">{{event.name}}</span>
+                <br>
+                <span class="eventdate">{{event.event_date}} </span><span class="eventuploader">| Uploaded by: {{event.uploader.user_name}}</span>
+                <br>
+                <span class="eventdescription">{{event.description}}</span>
             </div>
+            {% for video, subtup  in majorlist %}
+                <div class="colmaster">
+                    <div class="col" id="colvideo">
+                        <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
+                    </div>
+                    <div class="col" id="coldata">
+                        <span class="videotablesegmentdata" id="uploaddate" >{{ video.uploaded_date }}</span>
+                        <span class="videotablesegmentdata" id="collectiontoolused" >{{ video.collectiontool.tooltitle }}</span>
+                        {% for tup in subtup %}
+                            <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" >{{ tup.tooltitle }},</span>
+                        {% endfor %}
+                        <br>
+                    </div>
+                </div>
             {% endfor %}
         {% endfor %}
     </div>

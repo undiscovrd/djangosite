@@ -61,6 +61,7 @@ class Event(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=400)
     event_date = models.DateTimeField()
+    uploader = models.ForeignKey(User)
     
 # Maintains a list of videos, when they were uploaded, and where it is stored
 class Video(models.Model):
