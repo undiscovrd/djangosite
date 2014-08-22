@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript">
+    var button = document.getElementsByTagName('button');
+    button.onClick = function(e) {
+        alert("I am a File");
+        
+        var length = e.file_input.items.length;
+        for (var i = 0; i < length; i++) {
+          var entry = e.file_input.items[i].webkitGetAsEntry();
+          if (entry.isFile) {
+            alert("I am a File");
+          } else if (entry.isDirectory) {
+            alert("I am a Directory");
+          }
+        }
+    };
+</script>
+</head>
+<title>Upload Video Page</title>
+<body>
+This is the video upload page.
+<div class="experimentaluploader">
+    Experimental:
+    <input type="file" id="file_input" webkitdirectory="true" directory="true">
+    <input type="button" id="madbutton">
+</div>
+<div class="contentwrapper">
+    <form action="/basicsite/receivetool/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.non_field_errors }}</p>
+            <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        Tool Name:
+        {{ form.title }}
+        <br>
+        Description:
+        <br>
+        {{ form.description }}
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        Type:
+        {{ form.purposes }}
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        Version Number: {{ form.versionnumber }}
+        <br>
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        Tool Families:
+        {{ form.family }}
+        <div style="background-color: #b0cdcb; width:50%; height:2px;"></div>
+        Or if you wish to create a new tool family:
+        <br>
+        Tool Family Name: {{ form.newfamily }}
+        <br>
+        Family Description:
+        <br>
+        {{ form.familydescription }}
+        <br>
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        {{ form.fileform.label_tag }} {{ form.fileform.help_text }}
+        {{ form.fileform.errors }}
+        {{ form.fileform }}
+        <p><input type="submit" value="Upload" /></p>
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+    </form>
+</div>
+</body>
+</html>

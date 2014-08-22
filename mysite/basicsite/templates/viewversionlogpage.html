@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Tools</title>
+</head>
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+
+div.uploadtoolwrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #63B8FF;
+    height:20px;
+}
+
+div.toolsdiv {
+    display:inline-block;
+}
+
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+
+a.sectionbuttons {
+    font=size: 26px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+
+div.alltoolswrapper {
+    
+}
+
+div.toolrow {
+    display:block;
+   # background-color:#2F4F4F;
+    color: white;
+    font-family: "Avenir", sans-serif;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+div.toolrowfamily {
+    display:block;
+   # background-color:#2F4F4F;
+    color: white;
+    font-family: "Avenir", sans-serif;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    padding-left:20px;
+}
+
+p.alltoolsheader {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    font-size:30px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #31649E;
+    #background-color:#black;
+    background: url("{{ STATIC_URL }}toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
+}
+
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+div.headerstuff {
+    margin-top:-100px;
+    position:fixed;
+    #background-color:black;
+    width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
+}
+
+div.wholepagewrapper {
+    margin-top:100px;
+}
+div.versiontext {
+    padding-left:30px;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    color: #555555;
+}
+
+</style>
+<body>
+
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1"> tools page </div>
+    </div>
+
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/tools/">All Tools</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/toolcategories/collection/">Collection</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/toolcategories/checkprocess/">Checking/Processing</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/toolcategories/labeling/">Labeling</a></span>
+        <span><a style="color: #0CE84D" class="sectionbuttons" href="/basicsite/uploadtool/">Submit new tool</a></span>
+    </div>
+</div>
+
+<div class="wholepagewrapper">
+    <div class="alltoolswrapper">
+        <p class="alltoolsheader">{{ latestTool.family.toolfamilyname }} Version Log for Version {{ latestTool.versionnumber }}</p>
+       
+      <div class="versiontext">
+        {{ versionlog|linebreaksbr }}
+      </div>
+    </div>
+</div>
+
+</body>
+</html>

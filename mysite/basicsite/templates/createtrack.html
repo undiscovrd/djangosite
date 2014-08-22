@@ -9,17 +9,17 @@ div.createtaskwrapper {
     display:block;
 }
 
-div.createtaskdiv {
+div.createtrackdiv {
     display:inline-block;
 }
 </style>
 
 <h2>create track page</h2>
-<form id="nameCheckBoxes" class="name-form" action="/basicsite/submittask/" method="post">{% csrf_token %}
+<form id="nameCheckBoxes" class="name-form" action="/basicsite/submittrack/" method="post">{% csrf_token %}
     <div class="createtaskwrapper">
-        <div class="createtaskdiv">
+        <div class="createtrackdiv">
        
-        {{ form.taskname }}
+        {{ form.trackname }}
         </div>
     </div>
     <h4>Assign a user</h4>
@@ -31,8 +31,8 @@ div.createtaskdiv {
         </div>
         {% endfor %}
     </div>
-    <div class="createtaskbuttons">
-        <button type="submit" name="createtaskbutton" action="/basicsite/submittask/" method="post">create task</button>
+    <div class="createtrackbuttons">
+        <button type="submit" name="createtrackbutton" action="/basicsite/submittrack/" method="post">create track</button>
     </div>
 </form>
 

@@ -7,6 +7,7 @@
 <style>
 body {
     background-color: #838B8B;
+    font-family: "Avenir Next", sans-serif;
 }
 
 div.toolswrapper {
@@ -23,8 +24,36 @@ div.toolsh1 {
     width: 70%;
     font-size:36px;
     text-align:center;
-    font-family: "Avenir Next", sans-serif;
     color: #97FFFF;
+}
+
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+a.sectionbuttons {
+    font=size: 26px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+
+div.formdiv {
+    display: block;
+    width: 60%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+p {
+    margin-left:auto;
+    margin-right:auto;
+}
+
+li {
+    list-style-type:none
 }
 
 </style>
@@ -34,18 +63,56 @@ div.toolsh1 {
 <div class="toolsh1">upload tool </div>
 </div>
 
+<div class="toolsections">
+    <span><a class="sectionbuttons" href="/basicsite/tools/">All Tools</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/toolcategories/collection/">Collection</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/toolcategories/checkprocess/">Checking/Processing</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/toolcategories/labeling/">Labeling</a></span>
+    <span><a class="sectionbuttons" href="/basicsite/uploadtool/">Submit new tool</a></span>
+</div>
+
 <!-- Upload form. Note enctype attribute! -->
-<form action="/basicsite/receivetool/" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    <p>{{ form.non_field_errors }}</p>
-    <p>{{ form.fileform.label_tag }} {{ form.fileform.help_text }}</p>
-    <p>
+<div class="formdiv">
+    <form action="/basicsite/receivetool/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.non_field_errors }}</p>
+            <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        Tool Name:
         {{ form.title }}
+        <br>
+        Description:
+        <br>
+        {{ form.description }}
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        Type:
+        {{ form.purposes }}
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        Version Number: {{ form.versionnumber }}
+        <br>
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        Tool Families:
+        {{ form.family }}
+        <div style="background-color: #b0cdcb; width:50%; height:2px;"></div>
+        Or if you wish to create a new tool family:
+        <br>
+        Tool Family Name: {{ form.newfamily }}
+        <br>
+        Family Description:
+        <br>
+        {{ form.familydescription }}
+        <br>
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        {{ form.fileform.label_tag }} {{ form.fileform.help_text }}
         {{ form.fileform.errors }}
         {{ form.fileform }}
-    </p>
-    <p><input type="submit" value="Upload" /></p>
-</form>
+        <br>
+        {{ form.versionform.label_tag }} {{ form.versionform.help_text }}
+        {{ form.versionform.errors }}
+        {{ form.versionform }}
+        <p><input type="submit" value="Upload" /></p>
+        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+    </form>
+</div>
 
 
 </body>
