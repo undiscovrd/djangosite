@@ -518,7 +518,8 @@ def videos(request):
     return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos, 'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
 
 def videofilterpage(request):
-    return render_to_response(VIDEOFILTERPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    allevents = Event.objects.order_by('-event_date')
+    return render_to_response(VIDEOFILTERPAGETEMPLATE, {'allevents':allevents}, context_instance=RequestContext(request))
 
 def videoassigntotaskpage(request):
     return render_to_response(VIDEOASSIGNTOTASKPAGETEMPLATE, {}, context_instance=RequestContext(request))

@@ -46,6 +46,26 @@ div.toolswrapper {
     width: 70%;
     #background-color: #5F9EA0;
 }
+div.bodywrapper {
+    padding-top:60px;
+    margin-left:auto;
+    margin-right:auto;
+    width:850px;
+    text-align:center;
+}
+div.eventlistwrapper {
+    width:840px;
+}
+div.eventrow {
+    padding-top:5px;
+    padding-bottom:5px;
+    margin-left:1px;
+    width:400px;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
+    float:left;
+}
 </style>
 
 <body>
@@ -62,10 +82,21 @@ div.toolswrapper {
     </div>
 </div>
 
-{% for video in allvideos %}
 
-
-{% endfor %}
+<div class="bodywrapper">
+    <div class="eventlistwrapper">
+    {% for event in allevents %}
+        <div class="eventrow" onclick="alert('{{event.name}}');">
+            {{ event.name }}
+            <br>
+            {{ event.event_date }}
+            <br>
+            {{ event.description }}
+            <br>
+        </div>
+    {% endfor %}
+    </div>
+</div>
 
 
 
