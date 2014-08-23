@@ -19,6 +19,8 @@ from django.template import RequestContext
 from constants import *
 from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
+import zipfile
+import StringIO
 
 # Landing page to let user login or create new account
 def login(request):
@@ -433,20 +435,23 @@ def handleuploadrequest(request):
 
             v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
             v.save()
-    
+        allvideos = Video.objects.all()
+        filenames = []
+        pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + ev.name
+        for video in allvideos:
+            if video.event_id == ev.id:
+                withproperpath = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
+                filenames.append(withproperpath)
+
+        zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+        zf = zipfile.ZipFile(zip_filename, 'w')
+        for fpath in filenames:
+            fdir, fname = os.path.split(fpath)
+            zip_path = os.path.join(ev.name, fname)
+            zf.write(fpath, zip_path)
+        zf.close()
     return redirect('/basicsite/uploadvideo/')
     
-def handle_uploaded_file(f,filename):
-    destination = open(filename, 'wb+')
-    for chunk in f.chunks():
-        destination.write(chunk)
-    destination.close()
-    
-def receivefile(f,filename):
-    destination = open(filename, 'wb+')
-    for chunk in f.chunks():
-        destination.write(chunk)
-    destination.close()
     
 def specificfamilypage(request, familyid):
     conv_id = int(familyid)
@@ -521,10 +526,88 @@ def videoassigntotaskpage(request):
 def videotasks(request):
     return render_to_response(VIDEOTASKSPAGETEMPLATE, {}, context_instance=RequestContext(request))
     
-def downloadvideo(request, videonumber):
-    video = Video.objects.get(video_number=videonumber)
+def downloadvideo(request, videonumber, event_id):
+    video = Video.objects.get(video_number=videonumber,event_id=event_id)
     event = Event.objects.get(id=video.event_id)
     pathtovideo = CURRENTLOCATION + '/videos/' + event.name + '/' + str(video.video_number) + '.zip'
-    response = HttpResponse(pathtovideo, content_type='application/zip')
+    video_handle = open(pathtovideo, 'rb')
+    response = HttpResponse(video_handle, content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=' + str(video.video_number)
     return response
+    
+def downloadevent(request, event_id):
+    allvideos = Video.objects.all()
+    event_id = int(event_id)
+    ev = Event.objects.get(id=event_id)
+    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + ev.name
+    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    event_handle = open(zip_filename, 'rb')
+    response = HttpResponse(event_handle, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=' + ev.name + '.zip'
+    return response
+
+def addtoevent(request, event_id):
+    event_id = int(event_id)
+    ev = Event.objects.get(id=event_id)
+    form = AddToEventForm()
+    return render_to_response(ADDTOEVENTPAGETEMPLATE, {'form':form, 'event':ev}, context_instance=RequestContext(request))
+
+class AddToEventForm(forms.Form):
+    upload_multiple = forms.ChoiceField(widget=forms.RadioSelect, choices=(('1', 'One Giant Zip For Mankind',), ('2', 'One Video Per Zip',),))
+    collection = forms.ChoiceField(widget=forms.RadioSelect)
+    checkprocess = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+    
+    def __init__(self, *args, **kwargs):
+        super(AddToEventForm, self).__init__(*args, **kwargs)
+        alltools = ToolFile.objects.order_by('-versionnumber')
+        collectiontools = []
+        checkprocesstools = []
+        for tool in alltools:
+            if tool.purpose == '1':
+                collectiontools.append(tool)
+            if tool.purpose == '2':
+                checkprocesstools.append(tool)
+        self.fields['collection'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in collectiontools])
+        self.fields['checkprocess'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), choices=[ (o.id, o.tooltitle + ' ->    v' + str(o.versionnumber) ) for o in checkprocesstools])
+        
+def handleaddtoevent(request, event_id):
+    event_id = int(event_id)
+    fileList = request.FILES.getlist('files')
+    u = User.objects.get(user_name=request.session['user'])
+    ev = Event.objects.get(id=event_id)
+    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + ev.name
+    if request.POST['upload_multiple'] == '2':
+        for file in fileList:
+            withproperpath = pathtouploadeventfolder + '/' + file.name
+            fd = open(withproperpath, 'wb+')
+            for chunk in file.chunks():
+                fd.write(chunk)
+            fd.close()
+            
+            selectedcheckprocesslist = ''
+            for toolid in request.POST.getlist('checkprocess'):
+                selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
+
+            selectedcollect = ToolFile.objects.get(id=request.POST['collection'])
+
+            cleanedvideoname = file.name.replace('.zip', '')
+
+            v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
+            v.save()
+        allvideos = Video.objects.all()
+        filenames = []
+        pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + ev.name
+        for video in allvideos:
+            if video.event_id == ev.id:
+                withproperpath = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
+                filenames.append(withproperpath)
+        zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+        os.remove(zip_filename)
+        zf = zipfile.ZipFile(zip_filename, 'w')
+        for fpath in filenames:
+            fdir, fname = os.path.split(fpath)
+            zip_path = os.path.join(ev.name, fname)
+            zf.write(fpath, zip_path)
+        zf.close()
+    
+    return redirect('/basicsite/videos/')

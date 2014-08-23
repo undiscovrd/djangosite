@@ -162,7 +162,8 @@ span.eventuploader {
         {% for event, majorlist  in finalListMajor %}
             <div class="eventheaders">
                 <br>
-                <span class="eventname">{{event.name}}</span>
+                <span class="eventname">{{event.name}}</span><span><a style="color: #8E388E; font-size:14px;" href="/basicsite/downloadevent/{{ event.id }}/"> download </a></span>
+                <span><a style="color: #FF4500; font-size:14px;" href="/basicsite/addtoevent/{{ event.id }}/">add to</a></span>
                 <br>
                 <span class="eventdate">{{event.event_date}} </span><span class="eventuploader">| Uploaded by: {{event.uploader.user_name}}</span>
                 <br>
@@ -171,7 +172,7 @@ span.eventuploader {
             {% for video, subtup  in majorlist %}
                 <div class="colmaster">
                     <div class="col" id="colvideo">
-                        <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
+                        <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/{{ event.id }}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
                     </div>
                     <div class="col" id="coldata">
                         <span class="videotablesegmentdata" id="uploaddate" ><span style="font-size:14px; color: #97FFFF;"> Uploaded on: </span> {{ video.uploaded_date }}</span>
@@ -186,7 +187,6 @@ span.eventuploader {
             {% endfor %}
         {% endfor %}
     </div>
-
 </div>
 
 
