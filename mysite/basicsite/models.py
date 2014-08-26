@@ -22,16 +22,17 @@ class User(models.Model):
     password = models.CharField(max_length=30)
     rights = models.CharField(max_length=30)
 	
-# Task is the high level pipeline. Tracks are leaves of the task.
-class Task(models.Model):
-    task_title = models.CharField(max_length=30)
+class Pipeline(models.Model):
+    pipeline_title = models.CharField(max_length=30)
+    description = models.CharField(max_length=400)
     started_date = models.DateTimeField()
+    target_date = models.DateTimeField()
 
-# Just maintains a record of who is assigned to the tasks through a User->Task relationship. Includes role in task.
-class TaskRoster(models.Model):
+# Just maintains a record of who is assigned to the pipelines through a User->pipeline relationship. Includes role in pipeline.
+class PipelineRoster(models.Model):
     user_identifier = models.ForeignKey(User)
-    task_identifier = models.ForeignKey(Task)
-    task_role = models.CharField(max_length=30)
+    pipeline_identifier = models.ForeignKey(Pipeline)
+    pipeline_role = models.CharField(max_length=30)
 
 class VideoFamily(models.Model):
     familyname = models.CharField(max_length=200)
@@ -64,32 +65,15 @@ class Event(models.Model):
     uploader = models.ForeignKey(User)
     
 # Maintains a list of videos, when they were uploaded, and where it is stored
-class Video(models.Model):
+class Video(models.Model): 
     video_number = models.IntegerField()
     uploaded_date = models.DateTimeField()
     collectiontool = models.ForeignKey(ToolFile)
     event = models.ForeignKey(Event)
     checkprocesstool = models.CharField(max_length=20)
     
-# List of tracks, the status of it, and the video it is related to. Multiple tracks point to a single task.
+# List of tracks, the status of it, and the video it is related to. Multiple tracks point to a single pipeline.
 class Track(models.Model):
-    task_identifier = models.ForeignKey(Task)
+    pipeline_identifier = models.ForeignKey(Pipeline)
     video_identifier = models.ForeignKey(Video)
     status = models.CharField(max_length=50)
-
-# List of ALL comments across all tracks and tasks. They are accessed relationally by the identifier in the following classes.
-class Comment(models.Model):
-    user_identifier = models.ForeignKey(User)
-    date_commented = models.DateTimeField()
-    comment_text = models.CharField(max_length=400)
-	
-# List of identifiers that relate the comments made for tasks to the Comment table.
-class CommentTask(models.Model):
-    comment_identifier = models.ForeignKey(Comment)
-    task_identifier = models.ForeignKey(Task)
-
-# List of identifiers that relate the comments made for tracks to the Comment table.
-class CommentTrack(models.Model):
-    comment_identifier = models.ForeignKey(Comment)
-    track_identifier = models.ForeignKey(Track)
-    comment_text = models.CharField(max_length=400)

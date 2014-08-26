@@ -21,6 +21,7 @@ from django.db.models.signals import post_delete
 from django.dispatch.dispatcher import receiver
 import zipfile
 import StringIO
+from django.forms import widgets
 
 # Landing page to let user login or create new account
 def login(request):
@@ -39,7 +40,7 @@ def login(request):
             except:
                 u = User(user_name=user, password=password, rights="user")
                 u.save()
-            return redirect('/basicsite/tools/')
+            return redirect('/basicsite/home/')
             
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -50,63 +51,6 @@ def login(request):
         form = LoginForm()
     # Renders and displays the login page, passing LoginForm
     return render(request, LOGINPAGETEMPLATE, {'form': form,})
-
-# Processes and returns the /tasks/ page based on the cookies. Page is defaulted to first task, first track.
-def tasks(request):
-    formarea = ReplyBox()
-    allcomments = Comment.objects.all()
-    tasks = Task.objects.all()
-    tracks = Track.objects.all()
-    
-    # determine the current task based off of cookies, otherwise defaults to first task
-    try:
-        currenttaskid = request.session['currenttask']
-        currenttask = Task.objects.get(id=currenttaskid)
-        whichmethod = "went through try"
-        ctask = currenttask.id
-    except:
-        currenttask = tasks[0]
-        request.session['currenttask'] = currenttask.id;
-        ctask = currenttask.id
-        whichmethod = "went through except"
-    
-    # determine the current track based off of cookies, otherwise defaults to first track
-    try:
-        currenttrack = request.session['currenttrack']
-        currenttrack = Track.objects.get(id=currenttrackid)
-        ctrack = currenttrack.id
-    except:
-        currenttrack = tracks[0]
-        request.session['currenttrack'] = currenttrack.id;
-        ctrack = currenttrack.id
-    
-    # Filter out comments by task and track
-    forloopcomtask = CommentTask.objects.all()
-    commentstask = []
-    for comtask in forloopcomtask:
-        if (comtask.task_identifier_id == ctask):
-            commentstask.append(comtask)
-    forloopcomtrack = CommentTrack.objects.all()
-    commentstrack = []
-    for comtrack in forloopcomtrack:
-        if (comtrack.track_identifier_id == ctrack):
-            commentstrack.append(comtrack)
-    tracksfortask = []
-    for track in tracks:
-        if (track.task_identifier_id == ctask):
-            tracksfortask.append(track)
-    
-    # display the tasks page with the passed objects
-    return render(request,TASKPAGETEMPLATE, {'formarea': formarea, 
-        'allcomments' : allcomments, 
-        'commentstask' : commentstask, 
-        'commentstrack' : commentstrack, 
-        'tracksfortask' : tracksfortask, 
-        'alltasks' : tasks, 
-        'currenttask' : currenttask, 
-        'currenttrack' : currenttrack, 
-        'whichmethod' : whichmethod,
-        'ctask' : ctask })
     
 # Defines the Login Form data for validation
 class LoginForm(forms.Form):
@@ -125,109 +69,7 @@ def thanks(request):
 # Form for the comment submission, one correlates to task, two to track
 class ReplyBox(forms.Form):
     comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
-    comment2 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
-
-# Creates a comment object and then relates it to the task
-def submitcommenttask(request):
-    if request.method == 'POST': # If the form has been submitted...
-        comment1 = request.POST['comment1']
-        usercookie = request.session['user']
-        u = User.objects.get(user_name=usercookie)
-        pub_date=timezone.now()
-        c = Comment(user_identifier=u, date_commented=pub_date, comment_text=comment1)
-        c.save()
-        tk_id = request.session['currenttask']
-        ct = CommentTask(comment_identifier_id=c.id,task_identifier_id=tk_id)
-        ct.save()
-        return redirect('/basicsite/tasks/')
-    return render(request,THANKSPAGETEMPLATE)
-    
-# Creates a comment object and then relates it to the task
-def submitcommenttrack(request):
-    if request.method == 'POST': # If the form has been submitted...
-        comment2 = request.POST['comment2']
-        usercookie = request.session['user']
-        u = User.objects.get(user_name=usercookie)
-        pub_date=timezone.now()
-        c = Comment(user_identifier=u, date_commented=pub_date, comment_text=comment2)
-        c.save()
-        ta_id = request.session['currenttrack']
-        ca = CommentTrack(comment_identifier_id=c.id,track_identifier_id=ta_id)
-        ca.save()
-        return redirect('/basicsite/tasks/') # Redirect after POST
-    return render(request, THANKSPAGETEMPLATE)
-    
-# reloads the /tasks/ page with the task defined by cookie
-def changetask(request):
-    if request.method == 'POST':
-        request.session['currenttask'] = request.POST['tasks']
-        return redirect('/basicsite/tasks/')
-    return render(request, THANKSPAGETEMPLATE)
-    
-# form class for creating task, nameEntry refers a user that can be assigned to task
-class CreateTaskBox(forms.Form):
-    taskname = forms.CharField(max_length=100)
-    nameEntry = forms.BooleanField()
-    
-# form class for creating track, nameEntry refers a user that can be assigned to track
-class CreateTrackBox(forms.Form):
-    trackname = forms.CharField(max_length=100)
-    nameEntry = forms.BooleanField()
-    
-# loads the create task page
-def createtask(request):
-    allusers = User.objects.all()
-    form = CreateTaskBox()
-    return render(request,CREATETASKPAGETEMPLATE, {'form' : form, 'allusers' : allusers })
-
-# creates the task based off of the passed form data (attaches to cookies by name of fields in class)
-def submittask(request):
-    if request.method == 'POST':
-        taskName = request.POST['taskname']
-        selectedNames = request.POST.getlist('usernamelist')
-        pub_date=timezone.now()
-        tk = Task(task_title = taskName, started_date=pub_date)
-        tk.save()
-    # involve selected users to task
-    for id in selectedNames:
-        u = User.objects.get(id=id)
-        tkroster = TaskRoster(user_identifier_id = u.id, task_identifier_id = tk.id, task_role = 'labeler')
-        tkroster.save()
-    return redirect('/basicsite/tasks/') # Redirect after POST
-
-# loads the create track page
-def createtrack(request):
-    allusers = User.objects.all()
-    form = CreateTrackBox()
-    currenttask = request.session['currenttask']
-    ctkrostercount = TaskRoster.objects.all()
-    ctkroster=[]
-    # only members in task can be assigned to track
-    for tkobj in ctkrostercount:
-        tkobjid = tkobj.id
-        if tkobj.task_identifier_id==int(currenttask):
-            isamatch = 'yes'
-            ctkroster.append(tkobj)
-    ctkrosterclean = []
-    for tkrstrobj in ctkroster:
-        userToAppend = User.objects.get(id=tkrstrobj.user_identifier_id)
-        ctkrosterclean.append(userToAppend)
-    return render(request, CREATETRACKPAGETEMPLATE, {'form' : form, 'allusers' : allusers, 'ctkrosterclean' : ctkrosterclean })
-
-# creates the task based off of the passed form data (attaches to cookies by name of fields in class)
-def submittrack(request):
-    if request.method == 'POST':
-        trackName = request.POST['trackname']
-        selectedNames = request.POST.getlist('usernamelist')
-        pub_date=timezone.now()
-        tc = Track(track_title = trackName, started_date=pub_date)
-        tc.save()
-    # involve selected users to task
-    for id in selectedNames:
-        u = User.objects.get(id=id)
-        tkroster = TaskRoster(user_identifier_id = u.id, task_identifier_id = tk.id, task_role = 'labeler')
-        tkroster.save()
-    return redirect('/basicsite/tasks/') # Redirect after POST    
+    comment2 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) ) 
     
 # Load all tools, descending by version number, then display tools page
 def tools(request):
@@ -612,3 +454,55 @@ def handleaddtoevent(request, event_id):
         zf.close()
     
     return redirect('/basicsite/videos/')
+    
+def specificevent(request, event_id):
+    event_id = int(event_id)
+    ev = Event.objects.get(id=event_id)
+    allvideos = Video.objects.all()
+    eventvideos = []
+    for video in allvideos:
+        if video.event_id == ev.id:
+            sorted = video.checkprocesstool.split(",")
+            checkprocessminor = []
+            intermediary = []
+            for toolid in sorted:
+                if toolid != '':
+                    tool = ToolFile.objects.get(id=toolid)
+                    checkprocessminor.append(tool)
+            intermediary.append(video)
+            intermediary.append(checkprocessminor)
+            eventvideos.append(intermediary)
+    return render_to_response(SPECIFICEVENTPAGETEMPLATE, {'event':ev, 'eventvideos':eventvideos}, context_instance=RequestContext(request))
+    
+def home(request):
+    u = request.session['user']
+    user = User.objects.get(user_name=u)
+    return render_to_response(HOMEPAGETEMPLATE, {'user':user}, context_instance=RequestContext(request))
+    
+def pipelines(request):
+    allpipelines = Pipeline.objects.all()
+    now = timezone.now()
+    return render_to_response(ALLPIPELINESPAGETEMPLATE, {'allpipelines':allpipelines, 'now':now}, context_instance=RequestContext(request))
+    
+def constructpipeline(request):
+    form = ConstructPipelineForm()
+    return render_to_response(CONSTRUCTPIPELINEPAGETEMPLATE, {'form':form}, context_instance=RequestContext(request))
+    
+class ConstructPipelineForm(forms.Form):
+    title = forms.CharField(max_length=30)
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}))
+    
+def pipelinefilterpage(request):
+    return render_to_response(PIPELINEFILTERPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    
+def mypipelines(request):
+    return render_to_response(MYPIPELINESPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    
+def submitpipeline(request):
+    title = request.POST['title']
+    descript = request.POST['description']
+    now = timezone.now()
+    p = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now)
+    p.save()
+    
+    return redirect('/basicsite/pipelines/')
