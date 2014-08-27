@@ -62,12 +62,21 @@ span.pipelinetitle {
     font-size:30px;
     color: #31649E;
 }
+div.tracklist {
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    padding-left:20px;
+}
+div.trackrow {
+    
+}
 </style>
 
 <body>
 <div class="headerstuff">
     <div class="toolswrapper">
-    <div class="toolsh1"> All Pipelines</div>
+    <div class="toolsh1"> {{pipeline.pipeline_title}}</div>
     </div>
 
     <div class="toolsections">
@@ -75,14 +84,12 @@ span.pipelinetitle {
         <span><a class="sectionbuttons" href="/basicsite/pipelines/">All Pipelines</a></span>
         <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/filterpage/">Filter Page</a></span>
         <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/mypipelines/">My Pipelines</a></span>
-        <span><a style="color: #0CE84D" class="sectionbuttons" href="/basicsite/constructpipeline/">Construct Pipeline</a></span>
+        <span><a style="color: #0CE84D;" class="sectionbuttons" href="/basicsite/constructpipeline/">Construct Pipeline</a></span>
     </div>
 </div>
 
 <div class="bodywrapper">
-
-{% for pipeline in allpipelines %}
-    <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
+    <div class="pipelinerow">
         <div class="pipelinetitlestuff">
             <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
             <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
@@ -93,10 +100,17 @@ span.pipelinetitle {
             <span class="pipelinedescription">{{ pipeline.description }}</span>
         </div>
     </div>
-{% endfor %}
-
+    <br>
+    <div class="tracklist">
+        <div class="trackcreation">
+            <span style=""> <a style="color: #0CE84D;" href="/basicsite/createtrack/"> Create Track </a></span>
+        </div>
+        <div class="trackrow">
+        
+        </div>
+    
+    </div>
 </div>
-
 
 
 </body>

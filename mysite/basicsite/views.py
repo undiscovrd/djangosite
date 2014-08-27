@@ -502,7 +502,58 @@ def submitpipeline(request):
     title = request.POST['title']
     descript = request.POST['description']
     now = timezone.now()
-    p = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now)
+    u = User.objects.get(user_name=request.session['user'])
+    p = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now,creator=u)
     p.save()
     
     return redirect('/basicsite/pipelines/')
+    
+def specificpipeline(request, pipeline_id):
+    pipeline_id = int(pipeline_id)
+    p = Pipeline.objects.get(id=pipeline_id)
+    now = timezone.now()
+    request.session['currentpipeline']=pipeline_id
+    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now}, context_instance=RequestContext(request))
+    
+#class CreateTrackForm(forms.Form):
+    
+ 
+def createtrack(request):
+    pipeline_id = int(request.session['currentpipeline'])
+    p = Pipeline.objects.get(id=pipeline_id)
+    now = timezone.now()
+    allvideos = Video.objects.all()
+    allevents = Event.objects.order_by("-event_date")
+    finalListMajor = []
+    for event in allevents:
+        finalListMinor = []
+        for video in allvideos:
+            if video.event_id == event.id:
+                sorted = video.checkprocesstool.split(",")
+                checkprocessminor = []
+                intermediary = []
+                for toolid in sorted:
+                    if toolid != '':
+                        tool = ToolFile.objects.get(id=toolid)
+                        checkprocessminor.append(tool)
+                intermediary.append(video)
+                intermediary.append(checkprocessminor)
+                finalListMinor.append(intermediary)
+        intermediarymajor = []
+        intermediarymajor.append(event)
+        intermediarymajor.append(finalListMinor)
+        finalListMajor.append(intermediarymajor)
+    return render_to_response(CREATETRACKPAGETEMPLATE, {'pipeline':p,'now':now,'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
+    
+def addtracks(request):
+    pipeline_id = int(request.session['currentpipeline'])
+    p = Pipeline.objects.get(id=pipeline_id)
+    now = timezone.now()
+    stringlist = request.POST['selectedfields']
+    list = stringlist.split(",")
+    for video_id in list:
+        v = Video.objects.get(id=int(video_id))
+        tk = Track(pipeline_identifier_id=p.id,video_identifier_id=v.id,status='created',started_date=now)
+        tk.save()
+    
+    return redirect('/basicsite/pipelines')
