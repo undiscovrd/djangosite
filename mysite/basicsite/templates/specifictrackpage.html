@@ -24,6 +24,11 @@ function submitComment() {
     elm.submit();
 }
 </script>
+<script type="text/javascript">
+window.onload = function () {
+document.getElementById("containah21").scrollTop = 9999999;
+};
+</script>
 <style>
 body {
     background-color: white;
@@ -223,7 +228,16 @@ li {
             <br>
         </div>
     </div>
-    <div class="comment-container" id="containah">
+    <div class="changestatus">
+        <form name="statusform" id="statusformid" method="POST" action="/basicsite/updatetrackstatus/" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <span style="">Current Status is: {{track.status}} <span><br>
+            <span style="">Set New Status of Track: </span><input type="text" name="newstatus"/>
+            <input type="submit" action="submit">
+        </form>
+    </div>
+    <div class="comment-container" id="containah21">
+        <div style="background-color:#008B8B;padding-left:10px;color:#CAE1FF;">Board</div>
         {% for comment in comments %}
         <div class="commentrow">
             <span class="author"> - {{comment.author.user_name}} - </span><span class="commentdate">{{comment.posted_date}}, {{ comment.posted_date|timesince:now }} ago</span><br>
@@ -243,7 +257,7 @@ li {
             <span class="relatedfilestitle">Related Files</span> | <span style="" >(click to upload more)</span>
         </div>
         <div class="uploadrelatedfilediv" id="uploadrelatedfileid" style="display: none;">
-            <form name="formname" id="formid" method="POST" action="/basicsite/uploadrelatedfile/" enctype="multipart/form-data" >
+            <form name="uploadformname" id="uploadformid" method="POST" action="/basicsite/uploadrelatedfile/" enctype="multipart/form-data" >
                 {% csrf_token %}
                 <div style="">Purpose of upload? {{uploadform.eventname}}</div>
                 <br>
@@ -277,14 +291,19 @@ li {
     </div>
 </div>
 <style>
+div.changestatus {
+    border-width: 1px;
+    border-style: solid;
+    background-color:#F7F7F7;
+}
 div.relatedfile {
     padding: 2px 2px 2px 2px;
-    height:200px;
     width:600px;
     margin-left:auto;
     margin-right:auto;
     border-width: 1px;
     border-style: solid;
+    background-color:#F7F7F7;
 }
 div.eventname {
     color:#104E8B;
@@ -292,6 +311,8 @@ div.eventname {
 }
 div.eventdescription {
     border-left:3px solid #BCEE68;
+    color:#282828;
+    font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif;
 }
 </style>
 </body>

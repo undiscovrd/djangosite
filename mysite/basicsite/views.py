@@ -763,7 +763,14 @@ def deleterelatedfile(request, relatedfile_id):
     
     return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
         
-        
+def updatetrackstatus(request):
+    currenttrack_id = int(request.session['currenttrack'])
+    currenttrack = Track.objects.get(id=currenttrack_id)
+    
+    currenttrack.status = request.POST['newstatus']
+    currenttrack.save()
+
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
         
         
         
