@@ -22,6 +22,7 @@ from django.dispatch.dispatcher import receiver
 import zipfile
 import StringIO
 from django.forms import widgets
+import shutil
 
 # Landing page to let user login or create new account
 def login(request):
@@ -572,8 +573,8 @@ class ReplyBox(forms.Form):
 def specifictrack(request, track_id):
     request.session['currenttrack'] = track_id
     trackid = int(track_id)
-    track = Track.objects.get(id=trackid)
-    video = Video.objects.get(id=track.video_identifier_id)
+    tk = Track.objects.get(id=trackid)
+    video = Video.objects.get(id=tk.video_identifier_id)
     now=timezone.now()
     replybox = ReplyBox()
     allcomments = CommentTrack.objects.all()
@@ -582,17 +583,34 @@ def specifictrack(request, track_id):
         if comment.track_id == trackid:
             comments.append(comment)
     uploadform = UploadRelatedFilesEventForm()
-    return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':track,'video':video,'now':now,'replybox':replybox,'comments':comments,'uploadform':uploadform}, context_instance=RequestContext(request))
+    alltrackfilevents = TrackFileEvent.objects.all()
+    alltrackfiles = TrackFiles.objects.all()
+    trackfilevents = []
+    relatedMajor = []
+    for trackfilevent in alltrackfilevents:
+        strg = trackfilevent.track.id
+        if trackfilevent.track.id == trackid:
+            trackfilevents.append(trackfilevent)
+            trackfiles = []
+            for trackfile in alltrackfiles:
+                if trackfile.trackfilevent.id == trackfilevent.id:
+                    trackfiles.append(trackfile)
+            minor = []
+            minor.append(trackfilevent)
+            minor.append(trackfiles)
+            relatedMajor.append(minor)
+    return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':tk,'video':video,'now':now,'replybox':replybox,'comments':comments,'uploadform':uploadform,'relatedMajor':relatedMajor}, context_instance=RequestContext(request))
     
 def posttrackcomment(request):
     commenttext = request.POST['comment1']
-    username = request.session['user']
-    user = User.objects.get(user_name=username)
-    now = timezone.now()
-    trackid = int(request.session['currenttrack'])
-    trackobject = Track.objects.get(id=trackid)
-    comment = CommentTrack(text=commenttext,author=user,posted_date=now,track_id=trackobject.id)
-    comment.save()
+    if commenttext != '':
+        username = request.session['user']
+        user = User.objects.get(user_name=username)
+        now = timezone.now()
+        trackid = int(request.session['currenttrack'])
+        trackobject = Track.objects.get(id=trackid)
+        comment = CommentTrack(text=commenttext,author=user,posted_date=now,track_id=trackobject.id)
+        comment.save()
     return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
 
 class UploadRelatedFilesEventForm(forms.Form):
@@ -666,12 +684,84 @@ def uploadrelatedfile(request):
     
     return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
         
+def downloadrelatedevent(request, relatedevent_id):
+    relatedevent_id = int(relatedevent_id)
+    trackfilevent = TrackFileEvent.objects.get(id=relatedevent_id)
+
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    zip_filename = pathtouploadeventfolder + '/' + trackfilevent.eventname + '.zip'
+    
+    event_handle = open(zip_filename, 'rb')
+    response = HttpResponse(event_handle, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=' + trackfilevent.eventname + '.zip'
+    return response
+
+def downloadrelatedfile(request, relatedfile_id):
+    relatedfile_id = int(relatedfile_id)
+    trackfile = TrackFiles.objects.get(id=relatedfile_id)
+    trackfilevent_id = trackfile.trackfilevent.id
+    trackfilevent = TrackFileEvent.objects.get(id=trackfilevent_id)
+    
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    zip_filename = pathtouploadeventfolder + '/' + trackfile.filename
+
+    event_handle = open(zip_filename, 'rb')
+    response = HttpResponse(event_handle)
+    response['Content-Disposition'] = 'attachment; filename=' + trackfile.filename
+    return response
+       
+def deletefilevent(request, relatedevent_id):
+    relatedevent_id = int(relatedevent_id)
+    trackfilevent = TrackFileEvent.objects.get(id=relatedevent_id)
+
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    shutil.rmtree(pathtouploadeventfolder)
+ 
+    alltrackfiles = TrackFiles.objects.all()
+    for trackfile in alltrackfiles:
+        if trackfile.trackfilevent.id == trackfilevent.id:
+            trackfile.delete()
+    
+    trackfilevent.delete()
+    
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
         
+def deleterelatedfile(request, relatedfile_id):
+    relatedfile_id = int(relatedfile_id)
+    trackfile = TrackFiles.objects.get(id=relatedfile_id)
+    trackfilevent_id = trackfile.trackfilevent.id
+    trackfilevent = TrackFileEvent.objects.get(id=trackfilevent_id)
+    
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    fileinfolder = pathtouploadeventfolder + '/' + trackfile.filename
+    os.remove(fileinfolder)
+    
+    trackfile.delete()
+    
+    alltrackfiles = TrackFiles.objects.all()
+    filenames = []
+    for trackfile in alltrackfiles:
+        if trackfile.trackfilevent.id == trackfilevent.id:
+            filename = pathtouploadeventfolder + '/' + trackfile.filename
+            filenames.append(filename)
+    
+    zip_filename = pathtouploadeventfolder + '/' + trackfilevent.eventname + '.zip'
+    try:
+        os.remove(zip_filename)
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    except:
+        #do nothing
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(trackfilevent.eventname, fname)
+        zf.write(fpath, zip_path)
+    zf.close()
         
-        
-        
-        
-        
+
+    
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
         
         
         
