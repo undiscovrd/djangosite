@@ -39,3 +39,4 @@ PIPELINEFILTERPAGETEMPLATE = CURRENTLOCATION + 'templates/pipelinefilterpage.htm
 MYPIPELINESPAGETEMPLATE = CURRENTLOCATION + 'templates/mypipelinespage.html'
 CONSTRUCTPIPELINEPAGETEMPLATE = CURRENTLOCATION + 'templates/constructpipelinepage.html'
 SPECIFICPIPELINEPAGETEMPLATE = CURRENTLOCATION + 'templates/specificpipeline.html'
+SPECIFICTRACKPAGETEMPLATE = CURRENTLOCATION + 'templates/specifictrackpage.html'

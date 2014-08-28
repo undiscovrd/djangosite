@@ -79,3 +79,16 @@ class Track(models.Model):
     video_identifier = models.ForeignKey(Video)
     status = models.CharField(max_length=50)
     started_date = models.DateTimeField()
+    
+class CommentTrack(models.Model):
+    text = models.CharField(max_length=2000)
+    author = models.ForeignKey(User)
+    posted_date = models.DateTimeField()
+    track = models.ForeignKey(Track)
+    
+class TrackFiles(models.Model):
+    filetype = models.CharField(max_length=200)
+    filename = models.CharField(max_length=200)
+    track = models.ForeignKey(Track)
+    uploader = models.ForeignKey(User)
+    description = models.CharField(max_length=2000)

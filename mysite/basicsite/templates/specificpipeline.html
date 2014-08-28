@@ -68,8 +68,18 @@ div.tracklist {
     background-repeat: no-repeat;
     padding-left:20px;
 }
-div.trackrow {
+div.trackrowcontainer {
     
+}
+div.trackrow {
+
+}
+div.colmaster {
+    width:100%;
+    height:85px;
+    background-color: #31649e;
+    border-width: 1px;
+    border-style: solid;
 }
 </style>
 
@@ -105,10 +115,25 @@ div.trackrow {
         <div class="trackcreation">
             <span style=""> <a style="color: #0CE84D;" href="/basicsite/createtrack/"> Create Track </a></span>
         </div>
-        <div class="trackrow">
-        
-        </div>
-    
+        <div class="trackrowcontainer">
+        {% for track, video in finalListMajor %}
+            <div class="colmaster" id="idcolmaster{{video.id}}" onclick="window.location.href='/basicsite/specifictrack/{{track.id}}/';">
+                <div class="col" id="colvideo">
+                    <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/{{ event.id }}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
+                </div>
+                <div class="col" id="coldata">
+                    <span class="videotablesegmentdata" id="uploaddate" ><span style="font-size:14px; color: #97FFFF;"> Uploaded on: </span> {{ video.uploaded_date }}</span>
+                    <span class="videotablesegmentdata" id="collectiontoolused" ><span style="font-size:14px; color: #97FFFF;">Collection Tool:</span> {{ video.collectiontool.tooltitle }}</span>
+                    <span style="font-size:14px; color: #97FFFF;padding-left:5px;">Checking/Processing Tools:</span>
+                    <br>
+                    <span style=""> status is </span><span style="color:white;">{{track.status}} </span>
+                    <div class="relatedfilescontainer">
+                        <div class="relatedfile">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
     </div>
 </div>
 

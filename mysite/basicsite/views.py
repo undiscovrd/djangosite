@@ -513,10 +513,18 @@ def specificpipeline(request, pipeline_id):
     p = Pipeline.objects.get(id=pipeline_id)
     now = timezone.now()
     request.session['currentpipeline']=pipeline_id
-    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now}, context_instance=RequestContext(request))
-    
-#class CreateTrackForm(forms.Form):
-    
+    alltracks = Track.objects.all()
+    finalListMajor = []
+    tracks = []
+    videos = []
+    for track in alltracks:
+        intermediary = []
+        if track.pipeline_identifier_id == pipeline_id:
+            intermediary.append(track)
+            v = Video.objects.get(id=track.video_identifier_id)
+            intermediary.append(v)
+            finalListMajor.append(intermediary)
+    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
  
 def createtrack(request):
     pipeline_id = int(request.session['currentpipeline'])
@@ -557,3 +565,31 @@ def addtracks(request):
         tk.save()
     
     return redirect('/basicsite/pipelines')
+    
+class ReplyBox(forms.Form):
+    comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 90, 'rows': 5}) )
+    
+def specifictrack(request, track_id):
+    request.session['currenttrack'] = track_id
+    trackid = int(track_id)
+    track = Track.objects.get(id=trackid)
+    video = Video.objects.get(id=track.video_identifier_id)
+    now=timezone.now()
+    replybox = ReplyBox()
+    allcomments = CommentTrack.objects.all()
+    comments = []
+    for comment in allcomments:
+        if comment.track_id == trackid:
+            comments.append(comment)
+    return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':track,'video':video,'now':now,'replybox':replybox,'comments':comments}, context_instance=RequestContext(request))
+    
+def posttrackcomment(request):
+    commenttext = request.POST['comment1']
+    username = request.session['user']
+    user = User.objects.get(user_name=username)
+    now = timezone.now()
+    trackid = int(request.session['currenttrack'])
+    trackobject = Track.objects.get(id=trackid)
+    comment = CommentTrack(text=commenttext,author=user,posted_date=now,track_id=trackobject.id)
+    comment.save()
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
