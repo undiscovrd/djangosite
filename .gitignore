@@ -54,3 +54,6 @@ docs/_build/
 
 *.zip
 C:/Users/mike/Documents/djangosite/mysite/versionlogs/*
+C:/Users/mike/Documents/djangosite/mysite/basicsite/relatedfiles/*
+C:/Users/mike/Documents/djangosite/mysite/basicsite/videos/*
+C:/Users/mike/Documents/djangosite/mysite/tools/*
