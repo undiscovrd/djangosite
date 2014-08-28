@@ -3,6 +3,15 @@
 <head>
 <meta charset=utf-8 />
 </head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $( "#relatedfilesheaderid" ).click(function(){
+       $( "#uploadrelatedfileid" ).show();
+    });
+
+});
+</script>
 <script>
 function submitComment() {
     var elm = document.getElementById("formid");
@@ -160,6 +169,19 @@ span.commentdate {
 span.author {
     color:#104E8B
 }
+div.relatedfiles-container {
+    height:300px;
+}
+div.relatedfilesheader {
+    width:70%
+    height:40px;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
+}
 </style>
 
 <body>
@@ -192,7 +214,7 @@ span.author {
             <br>
         </div>
     </div>
-    <div class="comment-container">
+    <div class="comment-container" id="containah">
         {% for comment in comments %}
         <div class="commentrow">
             <span class="author"> - {{comment.author.user_name}} - </span><span class="commentdate">{{comment.posted_date}}, {{ comment.posted_date|timesince:now }} ago</span><br>
@@ -206,6 +228,14 @@ span.author {
              {{replybox.comment1}}
             <img id="send2" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment();">
         </form>
+    </div>
+    <div class="relatedfiles-container" id="jah" >
+        <div class="relatedfilesheader" id="relatedfilesheaderid">
+            <span class="relatedfilestitle">Related Files</span> | <span style="" >(click to upload more)</span>
+        </div>
+        <div class="uploadrelatedfilediv" id="uploadrelatedfileid" style="display: none;">
+            ASDASDASDASD
+        </div>
     </div>
 </div>
 
