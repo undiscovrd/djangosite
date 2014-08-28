@@ -581,7 +581,8 @@ def specifictrack(request, track_id):
     for comment in allcomments:
         if comment.track_id == trackid:
             comments.append(comment)
-    return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':track,'video':video,'now':now,'replybox':replybox,'comments':comments}, context_instance=RequestContext(request))
+    uploadform = UploadRelatedFilesEventForm()
+    return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':track,'video':video,'now':now,'replybox':replybox,'comments':comments,'uploadform':uploadform}, context_instance=RequestContext(request))
     
 def posttrackcomment(request):
     commenttext = request.POST['comment1']
@@ -593,3 +594,105 @@ def posttrackcomment(request):
     comment = CommentTrack(text=commenttext,author=user,posted_date=now,track_id=trackobject.id)
     comment.save()
     return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
+
+class UploadRelatedFilesEventForm(forms.Form):
+    eventname = forms.CharField(max_length=200)
+    collection = forms.ChoiceField(widget=forms.RadioSelect)
+    checkprocess = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}))
+    
+    def __init__(self, *args, **kwargs):
+        super(UploadRelatedFilesEventForm, self).__init__(*args, **kwargs)
+        alltools = ToolFile.objects.order_by('-versionnumber')
+        collectiontools = []
+        checkprocesstools = []
+        for tool in alltools:
+            if tool.purpose == '1':
+                collectiontools.append(tool)
+            if tool.purpose == '2':
+                checkprocesstools.append(tool)
+        self.fields['collection'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in collectiontools])
+        self.fields['checkprocess'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), choices=[ (o.id, o.tooltitle + ' ->    v' + str(o.versionnumber) ) for o in checkprocesstools])
+        
+def uploadrelatedfile(request):
+    event_name = request.POST['eventname']
+    descript = request.POST['description']
+    fileList = request.FILES.getlist('selectedfiles')
+    u = User.objects.get(user_name=request.session['user'])
+    current_track = int(request.session['currenttrack'])
+    
+    now=timezone.now()
+    
+    selectedcheckprocesslist = ''
+    for toolid in request.POST.getlist('checkprocess'):
+        selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
+    try:
+        selectedcollect = request.POST['collection']
+        selectedtools = selectedcheckprocesslist + ',' + str(selectedcollect)
+    except:
+        selectedtools = ''
+    
+    currentrack = Track.objects.get(id=int(current_track))
+    
+    trackevent = TrackFileEvent(eventname=event_name,uploader=u,track=currentrack,description=descript,uploaded_date=now,toolsused=selectedtools)
+    trackevent.save()
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + event_name
+    os.mkdir(pathtouploadeventfolder)
+    filenames = []
+    for file in fileList:
+        withproperpath = pathtouploadeventfolder + '/' + file.name
+        fd = open(withproperpath, 'wb+')
+        for chunk in file.chunks():
+            fd.write(chunk)
+        fd.close()
+        trackfile = TrackFiles(filename=file.name,trackfilevent=trackevent,toolsused=selectedtools)
+        trackfile.save()
+        withproperpath = pathtouploadeventfolder + '/' + str(file.name)
+        filenames.append(withproperpath)    
+    
+    zip_filename = pathtouploadeventfolder + '/' + event_name + '.zip'
+    try:
+        os.remove(zip_filename)
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    except:
+        #do nothing
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(event_name, fname)
+        zf.write(fpath, zip_path)
+    zf.close()
+    
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

@@ -188,6 +188,9 @@ div.relatedfilesheader {
     background-size: 100% 120px;
     background-repeat: no-repeat;
 }
+li {
+    list-style-type:none
+}
 </style>
 
 <body>
@@ -240,7 +243,25 @@ div.relatedfilesheader {
             <span class="relatedfilestitle">Related Files</span> | <span style="" >(click to upload more)</span>
         </div>
         <div class="uploadrelatedfilediv" id="uploadrelatedfileid" style="display: none;">
-            ASDASDASDASD
+            <form name="formname" id="formid" method="POST" action="/basicsite/uploadrelatedfile/" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <div style="">Purpose of upload? {{uploadform.eventname}}</div>
+                <br>
+                <div style="">Description? {{uploadform.description}}</div>
+                <br>
+                <div style=""> Collection Tools used (if any)? {{uploadform.collection}}</div>
+                <br>
+                <div style=""> Checking/Processing Tools used (if any)? {{uploadform.checkprocess}}</div>
+                <br>
+                <input type="file" name="selectedfiles" multiple />
+                <p><input type="submit" value="Upload" /></p>
+            </form>
+        </div>
+        <div class="relatedfiles">
+            <div class="relatedfile">
+            
+            </div>
+        
         </div>
     </div>
 </div>

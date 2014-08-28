@@ -86,9 +86,15 @@ class CommentTrack(models.Model):
     posted_date = models.DateTimeField()
     track = models.ForeignKey(Track)
     
-class TrackFiles(models.Model):
-    filetype = models.CharField(max_length=200)
-    filename = models.CharField(max_length=200)
-    track = models.ForeignKey(Track)
+class TrackFileEvent(models.Model):
+    eventname = models.CharField(max_length=200)
     uploader = models.ForeignKey(User)
-    description = models.CharField(max_length=2000)
+    track = models.ForeignKey(Track)
+    description = models.CharField(max_length=500)
+    uploaded_date = models.DateTimeField()
+    toolsused = models.CharField(max_length=10)
+    
+class TrackFiles(models.Model):
+    filename = models.CharField(max_length=200)
+    trackfilevent = models.ForeignKey(TrackFileEvent)
+    toolsused = models.CharField(max_length=10)
