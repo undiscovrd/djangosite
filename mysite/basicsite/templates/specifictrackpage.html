@@ -173,7 +173,7 @@ span.commentdate {
     color:#555555;
 }
 span.author {
-    color:#104E8B
+    color:#104E8B;
 }
 div.relatedfiles-container {
     height:300px;
@@ -258,13 +258,41 @@ li {
             </form>
         </div>
         <div class="relatedfiles">
+        {% for trackevent,fileList in relatedMajor %}
             <div class="relatedfile">
-            
+                <div class="eventname">{{ trackevent.eventname }} | <a href="/basicsite/downloadrelatedevent/{{trackevent.id}}/">get all</a> | <a style="color: #FF6103" href="/basicsite/deletefilevent/{{ trackevent.id }}/">delete</a></div>
+                <br>
+                <span class="author"> - {{trackevent.uploader.user_name}} - </span><span class="commentdate">{{trackevent.uploaded_date}}, {{ trackevent.uploaded_date|timesince:now }} ago</span>
+                <br>
+                <div class="eventdescription">{{ trackevent.description }}</div>
+                {% for entry in fileList %}
+                    <div class="entry" id="entryid{{entry.id}}">
+                        <a href="/basicsite/downloadrelatedfile/{{entry.id}}/">{{entry.filename}}</a>
+                        | <a style="color: #FF6103" href="/basicsite/deleterelatedfile/{{ entry.id }}/">delete</a>
+                    </div>
+                {% endfor %}
             </div>
-        
+        {% endfor %}
         </div>
     </div>
 </div>
-
+<style>
+div.relatedfile {
+    padding: 2px 2px 2px 2px;
+    height:200px;
+    width:600px;
+    margin-left:auto;
+    margin-right:auto;
+    border-width: 1px;
+    border-style: solid;
+}
+div.eventname {
+    color:#104E8B;
+    display:inline;
+}
+div.eventdescription {
+    border-left:3px solid #BCEE68;
+}
+</style>
 </body>
 </html>
