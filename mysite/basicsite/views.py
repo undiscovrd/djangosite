@@ -478,11 +478,13 @@ def specificevent(request, event_id):
 def home(request):
     u = request.session['user']
     user = User.objects.get(user_name=u)
+    request.session['messageboard'] = 'closed'
     return render_to_response(HOMEPAGETEMPLATE, {'user':user}, context_instance=RequestContext(request))
     
 def pipelines(request):
     allpipelines = Pipeline.objects.all()
     now = timezone.now()
+    request.session['messageboard'] = 'closed'
     return render_to_response(ALLPIPELINESPAGETEMPLATE, {'allpipelines':allpipelines, 'now':now}, context_instance=RequestContext(request))
     
 def constructpipeline(request):
@@ -514,6 +516,7 @@ def mypipelines(request):
         if pipe.creator.id == u.id:
             yourcreatedpipes.append(pipe)
     now = timezone.now()
+    request.session['messageboard'] = 'closed'
     return render_to_response(MYPIPELINESPAGETEMPLATE, {'finalList':finalList,'now':now,'yourcreatedpipes':yourcreatedpipes}, context_instance=RequestContext(request))
     
 def submitpipeline(request):
@@ -523,8 +526,8 @@ def submitpipeline(request):
     u = User.objects.get(user_name=request.session['user'])
     p = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now,creator=u)
     p.save()
-    
-    return redirect('/basicsite/pipelines/')
+    request.session['messageboard'] = 'closed'
+    return redirect('/basicsite/specificpipeline/' + str(p.id) +'/')
     
 def specificpipeline(request, pipeline_id):
     pipeline_id = int(pipeline_id)
@@ -556,8 +559,16 @@ def specificpipeline(request, pipeline_id):
         if person.pipeline_identifier.id == p.id:
             roster.append(person)
             
+    allcomments = CommentPipeline.objects.all()
+    comments = []
+    for comment in allcomments:
+        if comment.pipeline.id == p.id:
+            comments.append(comment)
+            
+    replybox = ReplyBox()
     form = AddToRosterForm()
-    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form}, context_instance=RequestContext(request))
+    messageboard = request.session['messageboard']
+    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form,'comments':comments,'replybox':replybox,'messageboard':messageboard}, context_instance=RequestContext(request))
  
 def createtrack(request):
     pipeline_id = int(request.session['currentpipeline'])
@@ -842,9 +853,18 @@ def assigntopipeline(request):
     
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
         
-        
-        
-        
+def postpipelinecomment(request):
+    commenttext = request.POST['comment1']
+    if commenttext != '':
+        username = request.session['user']
+        user = User.objects.get(user_name=username)
+        now = timezone.now()
+        p_id = request.session['currentpipeline']
+        p = Pipeline.objects.get(id=int(p_id))
+        comment = CommentPipeline(text=commenttext,author=user,posted_date=now,pipeline=p)
+        comment.save()
+    request.session['messageboard'] = 'open'
+    return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
         
         
         
