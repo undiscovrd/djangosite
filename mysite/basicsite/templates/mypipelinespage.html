@@ -46,6 +46,28 @@ div.toolswrapper {
     width: 70%;
     #background-color: #5F9EA0;
 }
+div.bodywrapper {
+    padding-top:100px;
+    width: 800px;
+    margin-left:auto;
+    margin-right:auto;
+}
+div.pipelinerow {
+    height:150px;
+    background: url("{{ STATIC_URL }}toolsectionslight.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+span.pipelinetitle {
+    font-size:30px;
+    color: #31649E;
+}
+div.createdpipestitle {
+    text-align:center;
+}
+div.assignedpipestitle {
+    text-align:center;
+}
 </style>
 
 <body>
@@ -63,6 +85,50 @@ div.toolswrapper {
     </div>
 </div>
 
+<div class="bodywrapper">
+
+    <div class="yourpipes">
+        <div class="createdpipestitle">
+            Created
+        </div>
+    {% for pipeline in yourcreatedpipes %}
+        <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
+            <div class="pipelinetitlestuff">
+                <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
+                <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
+                <br>
+                <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span>
+            </div>
+            <div class="pipelineotherstuff">
+                <span class="pipelinedescription">{{ pipeline.description }}</span>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+
+    <br>
+    <div class="assignedpipes">
+        <div class="assignedpipestitle">
+            Assigned
+        </div>
+    {% for person, pipeline in finalList %}
+        <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
+            <div class="pipelinetitlestuff">
+                <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
+                <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
+                <br>
+                <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span>
+            </div>
+            <div class="pipelineotherstuff">
+                <span class="pipelinedescription">{{ pipeline.description }}</span>
+            </div>
+        </div>
+    {%empty%}
+    You are in no lists!
+    {% endfor %}
+    </div>
+
+</div>
 
 
 

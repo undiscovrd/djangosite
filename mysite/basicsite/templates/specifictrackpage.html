@@ -107,26 +107,6 @@ span.videotablesegmentdata {
     padding-top:30px;
     padding-bottom:24px;
 }
-#uploaddate {
-    padding-left:5px;
-    font-size:18px;
-    color:white;
-    border-color: black;
-    border-top:0px;
-}
-#collectiontoolused {
-    padding-left:5px;
-    color:white;
-    border-color: black;
-    border-top:0px;
-}
-#checkprocesstoolused {
-    padding-left:7px;
-    color:white;
-    border-color: black;
-    display:inline;
-    border-style: none;
-}
 div.colmaster {
     width:100%;
     height:85px;
@@ -149,6 +129,27 @@ div.col {
     background: url("{{ STATIC_URL }}toolrowdarkblue.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
+}
+
+#uploaddate {
+    padding-left:5px;
+    font-size:18px;
+    color:white;
+    border-color: black;
+    border-top:0px;
+}
+#collectiontoolused {
+    padding-left:5px;
+    color:white;
+    border-color: black;
+    border-top:0px;
+}
+#checkprocesstoolused {
+    padding-left:7px;
+    color:white;
+    border-color: black;
+    display:inline;
+    border-style: none;
 }
 div.comment-container {
     margin-left:auto;
@@ -201,7 +202,7 @@ li {
 <body>
 <div class="headerstuff">
     <div class="toolswrapper">
-    <div class="toolsh1"> Track #{{track.id}}</div>
+    <div class="toolsh1">Pipeline: {{track.pipeline_identifier.pipeline_title}},  Track id: #{{track.id}}</div>
     </div>
 
     <div class="toolsections">
@@ -215,7 +216,7 @@ li {
 
 <div class="bodywrapper">
     <div class="trackheaderstuff">
-        <span class="trackheaderrow">Track #{{track.id}} </span>
+        <span class="trackheaderrow">Track id: #{{track.id}} </span>
     </div>
     <div class="colmaster" id="idcolmaster{{video.id}}">
         <div class="col" id="colvideo">
@@ -225,6 +226,9 @@ li {
             <span class="videotablesegmentdata" id="uploaddate" ><span style="font-size:14px; color: #97FFFF;"> Uploaded on: </span> {{ video.uploaded_date }}, {{ video.uploaded_date|timesince:now }} ago</span>
             <span class="videotablesegmentdata" id="collectiontoolused" ><span style="font-size:14px; color: #97FFFF;">Collection Tool:</span> {{ video.collectiontool.tooltitle }}</span>
             <span style="font-size:14px; color: #97FFFF;padding-left:5px;">Checking/Processing Tools:</span>
+            {% for tup in checkprocessminor %}
+                <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" > {{ tup.tooltitle }},</span>
+            {% endfor %}
             <br>
         </div>
     </div>
@@ -236,8 +240,8 @@ li {
             <input type="submit" action="submit">
         </form>
     </div>
+    <div style="background-color:#008B8B;padding-left:10px;color:#CAE1FF;">Board</div>
     <div class="comment-container" id="containah21">
-        <div style="background-color:#008B8B;padding-left:10px;color:#CAE1FF;">Board</div>
         {% for comment in comments %}
         <div class="commentrow">
             <span class="author"> - {{comment.author.user_name}} - </span><span class="commentdate">{{comment.posted_date}}, {{ comment.posted_date|timesince:now }} ago</span><br>
