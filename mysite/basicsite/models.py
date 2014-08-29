@@ -27,6 +27,7 @@ class Pipeline(models.Model):
     description = models.CharField(max_length=400)
     started_date = models.DateTimeField()
     target_date = models.DateTimeField()
+    creator = models.ForeignKey(User)
 
 # Just maintains a record of who is assigned to the pipelines through a User->pipeline relationship. Includes role in pipeline.
 class PipelineRoster(models.Model):
@@ -77,3 +78,23 @@ class Track(models.Model):
     pipeline_identifier = models.ForeignKey(Pipeline)
     video_identifier = models.ForeignKey(Video)
     status = models.CharField(max_length=50)
+    started_date = models.DateTimeField()
+    
+class CommentTrack(models.Model):
+    text = models.CharField(max_length=2000)
+    author = models.ForeignKey(User)
+    posted_date = models.DateTimeField()
+    track = models.ForeignKey(Track)
+    
+class TrackFileEvent(models.Model):
+    eventname = models.CharField(max_length=200)
+    uploader = models.ForeignKey(User)
+    track = models.ForeignKey(Track)
+    description = models.CharField(max_length=500)
+    uploaded_date = models.DateTimeField()
+    toolsused = models.CharField(max_length=10)
+    
+class TrackFiles(models.Model):
+    filename = models.CharField(max_length=200)
+    trackfilevent = models.ForeignKey(TrackFileEvent)
+    toolsused = models.CharField(max_length=10)

@@ -53,4 +53,7 @@ coverage.xml
 docs/_build/
 
 *.zip
-C:/Users/mike/Documents/djangosite/mysite/versionlogs/*
+mysite/versionlogs/*
+mysite/basicsite/relatedfiles/*
+mysite/basicsite/videos/*
+mysite/tools/*

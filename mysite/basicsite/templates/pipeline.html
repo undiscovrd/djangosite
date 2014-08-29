@@ -82,10 +82,12 @@ span.pipelinetitle {
 <div class="bodywrapper">
 
 {% for pipeline in allpipelines %}
-    <div class="pipelinerow">
+    <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
         <div class="pipelinetitlestuff">
             <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
             <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
+            <br>
+            <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span>
         </div>
         <div class="pipelineotherstuff">
             <span class="pipelinedescription">{{ pipeline.description }}</span>

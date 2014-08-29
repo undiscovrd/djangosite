@@ -22,6 +22,7 @@ from django.dispatch.dispatcher import receiver
 import zipfile
 import StringIO
 from django.forms import widgets
+import shutil
 
 # Landing page to let user login or create new account
 def login(request):
@@ -496,13 +497,363 @@ def pipelinefilterpage(request):
     return render_to_response(PIPELINEFILTERPAGETEMPLATE, {}, context_instance=RequestContext(request))
     
 def mypipelines(request):
-    return render_to_response(MYPIPELINESPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    currentuser = request.session['user']
+    u = User.objects.get(user_name=currentuser)
+    allroster = PipelineRoster.objects.all()
+    finalList = []
+    for person in allroster:
+        intermediary = []
+        if person.user_identifier.id == u.id:
+            intermediary.append(person)
+            p = Pipeline.objects.get(id=person.pipeline_identifier.id)
+            intermediary.append(p)
+            finalList.append(intermediary)
+    allpipelines = Pipeline.objects.all()
+    yourcreatedpipes=[]
+    for pipe in allpipelines:
+        if pipe.creator.id == u.id:
+            yourcreatedpipes.append(pipe)
+    now = timezone.now()
+    return render_to_response(MYPIPELINESPAGETEMPLATE, {'finalList':finalList,'now':now,'yourcreatedpipes':yourcreatedpipes}, context_instance=RequestContext(request))
     
 def submitpipeline(request):
     title = request.POST['title']
     descript = request.POST['description']
     now = timezone.now()
-    p = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now)
+    u = User.objects.get(user_name=request.session['user'])
+    p = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now,creator=u)
     p.save()
     
     return redirect('/basicsite/pipelines/')
+    
+def specificpipeline(request, pipeline_id):
+    pipeline_id = int(pipeline_id)
+    p = Pipeline.objects.get(id=pipeline_id)
+    now = timezone.now()
+    request.session['currentpipeline']=pipeline_id
+    alltracks = Track.objects.all()
+    finalListMajor = []
+    tracks = []
+    videos = []
+    for track in alltracks:
+        intermediary = []
+        if track.pipeline_identifier_id == pipeline_id:
+            intermediary.append(track)
+            v = Video.objects.get(id=track.video_identifier_id)
+            intermediary.append(v)
+            sorted = v.checkprocesstool.split(",")
+            checkprocessminor = []
+            for toolid in sorted:
+                if toolid != '':
+                    tool = ToolFile.objects.get(id=toolid)
+                    checkprocessminor.append(tool)
+            intermediary.append(checkprocessminor)
+            finalListMajor.append(intermediary)
+    
+    allroster = PipelineRoster.objects.all()
+    roster = []
+    for person in allroster:
+        if person.pipeline_identifier.id == p.id:
+            roster.append(person)
+            
+    form = AddToRosterForm()
+    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form}, context_instance=RequestContext(request))
+ 
+def createtrack(request):
+    pipeline_id = int(request.session['currentpipeline'])
+    p = Pipeline.objects.get(id=pipeline_id)
+    now = timezone.now()
+    allvideos = Video.objects.all()
+    allevents = Event.objects.order_by("-event_date")
+    finalListMajor = []
+    for event in allevents:
+        finalListMinor = []
+        for video in allvideos:
+            if video.event_id == event.id:
+                sorted = video.checkprocesstool.split(",")
+                checkprocessminor = []
+                intermediary = []
+                for toolid in sorted:
+                    if toolid != '':
+                        tool = ToolFile.objects.get(id=toolid)
+                        checkprocessminor.append(tool)
+                intermediary.append(video)
+                intermediary.append(checkprocessminor)
+                finalListMinor.append(intermediary)
+        intermediarymajor = []
+        intermediarymajor.append(event)
+        intermediarymajor.append(finalListMinor)
+        finalListMajor.append(intermediarymajor)
+    return render_to_response(CREATETRACKPAGETEMPLATE, {'pipeline':p,'now':now,'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
+    
+def addtracks(request):
+    pipeline_id = int(request.session['currentpipeline'])
+    p = Pipeline.objects.get(id=pipeline_id)
+    now = timezone.now()
+    stringlist = request.POST['selectedfields']
+    list = stringlist.split(",")
+    for video_id in list:
+        v = Video.objects.get(id=int(video_id))
+        tk = Track(pipeline_identifier_id=p.id,video_identifier_id=v.id,status='created',started_date=now)
+        tk.save()
+    
+    return redirect('/basicsite/specificpipeline/' + request.session['currentpipeline'] +'/')
+    
+class ReplyBox(forms.Form):
+    comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 90, 'rows': 5}) )
+    
+def specifictrack(request, track_id):
+    request.session['currenttrack'] = track_id
+    trackid = int(track_id)
+    tk = Track.objects.get(id=trackid)
+    video = Video.objects.get(id=tk.video_identifier_id)
+    now=timezone.now()
+    replybox = ReplyBox()
+    allcomments = CommentTrack.objects.all()
+    comments = []
+    for comment in allcomments:
+        if comment.track_id == trackid:
+            comments.append(comment)
+    uploadform = UploadRelatedFilesEventForm()
+    alltrackfilevents = TrackFileEvent.objects.all()
+    alltrackfiles = TrackFiles.objects.all()
+    trackfilevents = []
+    relatedMajor = []
+    for trackfilevent in alltrackfilevents:
+        strg = trackfilevent.track.id
+        if trackfilevent.track.id == trackid:
+            trackfilevents.append(trackfilevent)
+            trackfiles = []
+            for trackfile in alltrackfiles:
+                if trackfile.trackfilevent.id == trackfilevent.id:
+                    trackfiles.append(trackfile)
+            minor = []
+            minor.append(trackfilevent)
+            minor.append(trackfiles)
+            relatedMajor.append(minor)
+            
+    sorted = video.checkprocesstool.split(",")
+    checkprocessminor = []
+    for toolid in sorted:
+        if toolid != '':
+            tool = ToolFile.objects.get(id=toolid)
+            checkprocessminor.append(tool)
+    return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':tk,'video':video,'now':now,'replybox':replybox,'comments':comments,'uploadform':uploadform,'relatedMajor':relatedMajor,'checkprocessminor':checkprocessminor}, context_instance=RequestContext(request))
+    
+def posttrackcomment(request):
+    commenttext = request.POST['comment1']
+    if commenttext != '':
+        username = request.session['user']
+        user = User.objects.get(user_name=username)
+        now = timezone.now()
+        trackid = int(request.session['currenttrack'])
+        trackobject = Track.objects.get(id=trackid)
+        comment = CommentTrack(text=commenttext,author=user,posted_date=now,track_id=trackobject.id)
+        comment.save()
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
+
+class UploadRelatedFilesEventForm(forms.Form):
+    eventname = forms.CharField(max_length=200)
+    collection = forms.ChoiceField(widget=forms.RadioSelect)
+    checkprocess = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+    description = forms.CharField(widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}))
+    
+    def __init__(self, *args, **kwargs):
+        super(UploadRelatedFilesEventForm, self).__init__(*args, **kwargs)
+        alltools = ToolFile.objects.order_by('-versionnumber')
+        collectiontools = []
+        checkprocesstools = []
+        for tool in alltools:
+            if tool.purpose == '1':
+                collectiontools.append(tool)
+            if tool.purpose == '2':
+                checkprocesstools.append(tool)
+        self.fields['collection'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in collectiontools])
+        self.fields['checkprocess'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(), choices=[ (o.id, o.tooltitle + ' ->    v' + str(o.versionnumber) ) for o in checkprocesstools])
+        
+def uploadrelatedfile(request):
+    event_name = request.POST['eventname']
+    descript = request.POST['description']
+    fileList = request.FILES.getlist('selectedfiles')
+    u = User.objects.get(user_name=request.session['user'])
+    current_track = int(request.session['currenttrack'])
+    
+    now=timezone.now()
+    
+    selectedcheckprocesslist = ''
+    for toolid in request.POST.getlist('checkprocess'):
+        selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
+    try:
+        selectedcollect = request.POST['collection']
+        selectedtools = selectedcheckprocesslist + ',' + str(selectedcollect)
+    except:
+        selectedtools = ''
+    
+    currentrack = Track.objects.get(id=int(current_track))
+    
+    trackevent = TrackFileEvent(eventname=event_name,uploader=u,track=currentrack,description=descript,uploaded_date=now,toolsused=selectedtools)
+    trackevent.save()
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + event_name
+    os.mkdir(pathtouploadeventfolder)
+    filenames = []
+    for file in fileList:
+        withproperpath = pathtouploadeventfolder + '/' + file.name
+        fd = open(withproperpath, 'wb+')
+        for chunk in file.chunks():
+            fd.write(chunk)
+        fd.close()
+        trackfile = TrackFiles(filename=file.name,trackfilevent=trackevent,toolsused=selectedtools)
+        trackfile.save()
+        withproperpath = pathtouploadeventfolder + '/' + str(file.name)
+        filenames.append(withproperpath)    
+    
+    zip_filename = pathtouploadeventfolder + '/' + event_name + '.zip'
+    try:
+        os.remove(zip_filename)
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    except:
+        #do nothing
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(event_name, fname)
+        zf.write(fpath, zip_path)
+    zf.close()
+    
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
+        
+def downloadrelatedevent(request, relatedevent_id):
+    relatedevent_id = int(relatedevent_id)
+    trackfilevent = TrackFileEvent.objects.get(id=relatedevent_id)
+
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    zip_filename = pathtouploadeventfolder + '/' + trackfilevent.eventname + '.zip'
+    
+    event_handle = open(zip_filename, 'rb')
+    response = HttpResponse(event_handle, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=' + trackfilevent.eventname + '.zip'
+    return response
+
+def downloadrelatedfile(request, relatedfile_id):
+    relatedfile_id = int(relatedfile_id)
+    trackfile = TrackFiles.objects.get(id=relatedfile_id)
+    trackfilevent_id = trackfile.trackfilevent.id
+    trackfilevent = TrackFileEvent.objects.get(id=trackfilevent_id)
+    
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    zip_filename = pathtouploadeventfolder + '/' + trackfile.filename
+
+    event_handle = open(zip_filename, 'rb')
+    response = HttpResponse(event_handle)
+    response['Content-Disposition'] = 'attachment; filename=' + trackfile.filename
+    return response
+       
+def deletefilevent(request, relatedevent_id):
+    relatedevent_id = int(relatedevent_id)
+    trackfilevent = TrackFileEvent.objects.get(id=relatedevent_id)
+
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    shutil.rmtree(pathtouploadeventfolder)
+ 
+    alltrackfiles = TrackFiles.objects.all()
+    for trackfile in alltrackfiles:
+        if trackfile.trackfilevent.id == trackfilevent.id:
+            trackfile.delete()
+    
+    trackfilevent.delete()
+    
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
+        
+def deleterelatedfile(request, relatedfile_id):
+    relatedfile_id = int(relatedfile_id)
+    trackfile = TrackFiles.objects.get(id=relatedfile_id)
+    trackfilevent_id = trackfile.trackfilevent.id
+    trackfilevent = TrackFileEvent.objects.get(id=trackfilevent_id)
+    
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    fileinfolder = pathtouploadeventfolder + '/' + trackfile.filename
+    os.remove(fileinfolder)
+    
+    trackfile.delete()
+    
+    alltrackfiles = TrackFiles.objects.all()
+    filenames = []
+    for trackfile in alltrackfiles:
+        if trackfile.trackfilevent.id == trackfilevent.id:
+            filename = pathtouploadeventfolder + '/' + trackfile.filename
+            filenames.append(filename)
+    
+    zip_filename = pathtouploadeventfolder + '/' + trackfilevent.eventname + '.zip'
+    try:
+        os.remove(zip_filename)
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    except:
+        #do nothing
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(trackfilevent.eventname, fname)
+        zf.write(fpath, zip_path)
+    zf.close()
+        
+
+    
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
+        
+def updatetrackstatus(request):
+    currenttrack_id = int(request.session['currenttrack'])
+    currenttrack = Track.objects.get(id=currenttrack_id)
+    
+    currenttrack.status = request.POST['newstatus']
+    currenttrack.save()
+
+    return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
+        
+class AddToRosterForm(forms.Form):
+    users = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
+    role = forms.CharField(max_length=30)
+    
+    def __init__(self, *args, **kwargs):
+        super(AddToRosterForm, self).__init__(*args, **kwargs)
+        allusers = User.objects.all()
+        allroster = PipelineRoster.objects.all()
+                
+        newArr=[]
+        for user in allusers:
+            found = 'false'
+            for person in allroster: 
+               if person.user_identifier.id == user.id:
+                   found = 'true'
+                   break
+            if found == 'false':
+                newArr.append(user)
+        self.fields['users'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=[ (o.id, o.user_name ) for o in newArr])
+        
+def assigntopipeline(request):
+    selectedpeeps = request.POST.getlist('users')
+    p_id = request.session['currentpipeline']
+    p = Pipeline.objects.get(id=int(p_id))
+    for user_id in selectedpeeps:
+        u = User.objects.get(id=int(user_id))
+        pr = PipelineRoster(user_identifier=u,pipeline_identifier=p,pipeline_role=request.POST['role'])
+        pr.save()
+    
+    return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
