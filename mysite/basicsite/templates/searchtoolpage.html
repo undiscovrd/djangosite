@@ -96,18 +96,10 @@ div.bodywrapper {
 div.assignhiddendiv {
     border-width: 1px;
     border-style: solid;
-    background: url("/static/toolsectionslight.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
+    background-color:#F7F7F7;
 }
 li {
 list-style-type:none;
-}
-#id_tools {
-    width:600px;
-    margin-left:auto;
-    margin-right:auto;
-    padding-left:200px;
 }
 </style>
 
@@ -122,7 +114,7 @@ list-style-type:none;
         <span><a class="sectionbuttons" href="/basicsite/pipelines/">All Pipelines</a></span>
         <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/filterpage/">Filter Page</a></span>
         <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/mypipelines/">My Pipelines</a></span>
-        <span><a style="color: #0CE84D;" class="sectionbuttons" href="/basicsite/constructpipeline/">Construct Pipeline</a></span>
+        <span><a style="color: #0CE84D" class="sectionbuttons" href="/basicsite/constructpipeline/">Construct Pipeline</a></span>
     </div>
 </div>
 
@@ -134,12 +126,12 @@ list-style-type:none;
                 <span style="">Filter By Status</span>
             </div>
         </div>
-        <div class="assignhiddendiv" id="statusfilterhiddendivid" style="display: none;text-align:center;">
+        <div class="statusfilterhiddendiv" id="statusfilterhiddendivid" style="display: none;">
             <div class="statuslist">
-            List of possible status:
+            List of possible stati:
             <br>
             {% for status in statuslist %}
-                <br><span style="padding-left:10px;color:#473C8B;">>> {{status}}</span>
+                <br><span style="padding-left:10px;color:#388E8E;">>> {{status}}</span>
             {% endfor %}
             </div>
             <br>
@@ -150,6 +142,7 @@ list-style-type:none;
                     {{ statusform.statusfield }}
                 </div>
                 <br>
+                <span style=""> With role: {{ form.role }}</span>
                 <p><input type="submit" value="search" /></p>
             </form>
         </div>
@@ -163,11 +156,11 @@ list-style-type:none;
                 <span style="">Filter by User</span>
             </div>
         </div>
-        <div class="assignhiddendiv" id="userfilterhiddendivid" style="display: none;text-align:center;">
+        <div class="userfilterhiddendiv" id="userfilterhiddendivid" style="display: none;">
             <div class="inroster">
             List of users:
             {% for user in allusers %}
-                <br><span style="padding-left:10px;color:#473C8B;">>> {{ user.user_name }}</span>
+                <br><span style="padding-left:10px;color:#388E8E;">>> {{ user.user_name }}</span>
             {% endfor %}
             </div>
             <form name="userfilterform" id="userfilterformid" method="POST" action="/basicsite/searchuser/" enctype="multipart/form-data" >
@@ -189,7 +182,7 @@ list-style-type:none;
                 <span style="">Filter by Video</span>
             </div>
         </div>
-        <div class="assignhiddendiv" id="videofilterhiddendivid" style="display: none;text-align:center;">
+        <div class="videofilterhiddendiv" id="videofilterhiddendivid" style="display: none;">
             <div class="inroster">
             </div>
             <form name="videofilterform" id="videofilterformid" method="POST" action="/basicsite/searchvideo/" enctype="multipart/form-data" >
@@ -212,17 +205,17 @@ list-style-type:none;
                 <span style="">Filter by Tool</span>
             </div>
         </div>
-        <div class="assignhiddendiv" id="toolfilterhiddendivid" style="display: none;">
+        <div class="toolfilterhiddendiv" id="toolfilterhiddendivid" style="display: none;">
             <div class="inroster">
             </div>
             <form name="toolfilterform" id="toolfilterformid" method="POST" action="/basicsite/searchtool/" enctype="multipart/form-data" >
                 {% csrf_token %}
                 <div class="invitetoroster">
-                    <br>
+                    <span style="">select a tool</span>
                     {{ toolsform.tools }}
                 </div>
                 <br>
-                <p style="text-align:center;"><input type="submit" value="search" /></p>
+                <p><input type="submit" value="search" /></p>
             </form>
         </div>
         <br>

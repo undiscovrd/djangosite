@@ -42,9 +42,10 @@ a.sectionbuttons {
 
 div.formdiv {
     display: block;
-    width: 60%;
+    width: 800px;
     margin-left:auto;
     margin-right:auto;
+    text-align:center;
 }
 
 p {
@@ -77,23 +78,23 @@ li {
     <form action="/basicsite/receivetool/" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <p>{{ form.non_field_errors }}</p>
-            <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+            <div style="background-color: #008B8B; width:70%; margin-left:auto; margin-right:auto; height:6px;"></div>
         Tool Name:
         {{ form.title }}
         <br>
         Description:
         <br>
         {{ form.description }}
-        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        <div style="background-color: #008B8B; width:70%; margin-left:auto; margin-right:auto; height:6px;"></div>
         Type:
         {{ form.purposes }}
-        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        <div style="background-color: #008B8B; width:70%; margin-left:auto; margin-right:auto; height:6px;"></div>
         Version Number: {{ form.versionnumber }}
         <br>
-        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        <div style="background-color: #008B8B; width:70%; margin-left:auto; margin-right:auto; height:6px;"></div>
         Tool Families:
         {{ form.family }}
-        <div style="background-color: #b0cdcb; width:50%; height:2px;"></div>
+        <div style="background-color: #b0cdcb; width:70%; margin-left:auto; margin-right:auto; height:2px;"></div>
         Or if you wish to create a new tool family:
         <br>
         Tool Family Name: {{ form.newfamily }}
@@ -102,7 +103,7 @@ li {
         <br>
         {{ form.familydescription }}
         <br>
-        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        <div style="background-color: #008B8B; width:70%; margin-left:auto; margin-right:auto; height:6px;"></div>
         {{ form.fileform.label_tag }} {{ form.fileform.help_text }}
         {{ form.fileform.errors }}
         {{ form.fileform }}
@@ -111,7 +112,7 @@ li {
         {{ form.versionform.errors }}
         {{ form.versionform }}
         <p><input type="submit" value="Upload" /></p>
-        <div style="background-color: #008B8B; width:50%; height:6px;"></div>
+        <div style="background-color: #008B8B; width:70%; margin-left:auto; margin-right:auto; height:6px;"></div>
     </form>
 </div>
 

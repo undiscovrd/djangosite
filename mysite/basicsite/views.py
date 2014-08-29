@@ -473,7 +473,8 @@ def specificevent(request, event_id):
             intermediary.append(video)
             intermediary.append(checkprocessminor)
             eventvideos.append(intermediary)
-    return render_to_response(SPECIFICEVENTPAGETEMPLATE, {'event':ev, 'eventvideos':eventvideos}, context_instance=RequestContext(request))
+    now = timezone.now()
+    return render_to_response(SPECIFICEVENTPAGETEMPLATE, {'event':ev, 'eventvideos':eventvideos,'now':now}, context_instance=RequestContext(request))
     
 def home(request):
     u = request.session['user']
@@ -496,7 +497,140 @@ class ConstructPipelineForm(forms.Form):
     description = forms.CharField(widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}))
     
 def pipelinefilterpage(request):
-    return render_to_response(PIPELINEFILTERPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    alltracks = Track.objects.all()
+    statuslist = []
+    for track in alltracks:
+        if track.status not in statuslist:
+            statuslist.append(track.status)
+
+    allusers  = User.objects.all()
+    
+    statusform = StatusForm()
+    userform = UserForm()
+    videoform = VideoForm()
+    toolsform = ToolsForm()
+    return render_to_response(PIPELINEFILTERPAGETEMPLATE, {'statuslist':statuslist,'statusform':statusform, 'allusers':allusers,'userform':userform,'videoform':videoform,'toolsform':toolsform}, context_instance=RequestContext(request))
+    
+class StatusForm(forms.Form):
+    statusfield = forms.CharField(max_length=30)
+    
+class UserForm(forms.Form):
+    userfield = forms.CharField(max_length=30)
+
+class VideoForm(forms.Form):
+    videofield = forms.CharField(max_length=30)
+    
+class ToolsForm(forms.Form):
+    tools = forms.ChoiceField(widget=forms.RadioSelect)
+    
+    def __init__(self, *args, **kwargs):
+        super(ToolsForm, self).__init__(*args, **kwargs)
+        alltools = ToolFile.objects.order_by('-versionnumber')
+        self.fields['tools'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in alltools])
+        
+def searchstatus(request):
+    allpipelines = Pipeline.objects.all()
+    status2search = request.POST['statusfield']
+    alltracks = Track.objects.all()
+    trackswithstatus = []
+    for pipeline in allpipelines:
+        for track in alltracks:
+            if track.pipeline_identifier.id == pipeline.id:
+                if track.status == status2search:
+                    trackswithstatus.append(track)
+
+    finalListMajor = []
+    for track in trackswithstatus:
+        intermediary = []
+        intermediary.append(track)
+        v = Video.objects.get(id=track.video_identifier_id)
+        intermediary.append(v)
+        sorted = v.checkprocesstool.split(",")
+        checkprocessminor = []
+        for toolid in sorted:
+            if toolid != '':
+                tool = ToolFile.objects.get(id=toolid)
+                checkprocessminor.append(tool)
+        intermediary.append(checkprocessminor)
+        finalListMajor.append(intermediary)
+   
+    now = timezone.now()
+    return render_to_response(SEARCHSTATUSPAGETEMPLATE, {'trackswithstatus':trackswithstatus,'status2search':status2search,'finalListMajor':finalListMajor,'now':now}, context_instance=RequestContext(request))
+
+def searchuser(request):
+    allroster = PipelineRoster.objects.all()
+    try:
+        u = User.objects.get(user_name=request.POST['userfield'])
+        message = 'found'
+    except:
+        message = 'could not find this particular'
+        
+    if message != 'could not find this particular':
+        resultingPipelines = []
+        for person in allroster:
+            assignedPipelines = []
+            if person.user_identifier.id == u.id:
+                p = Pipeline.objects.get(id=person.pipeline_identifier.id)
+                assignedPipelines.append(p)
+                
+        allevents = Event.objects.all()
+        userevents = []
+        for event in allevents:
+            if event.uploader.id == u.id:
+                userevents.append(event)
+                
+        allTrackFileEvents = TrackFileEvent.objects.all()
+        userfevents = []
+        for filevent in allTrackFileEvents:
+            if filevent.uploader.id == u.id:
+                userfevents.append(filevent)
+        
+        alltrackfiles = TrackFiles.objects.all()
+        relatedMajor = []
+        for trackfilevent in userfevents:
+            trackfiles = []
+            for trackfile in alltrackfiles:
+                if trackfile.trackfilevent.id == trackfilevent.id:
+                    trackfiles.append(trackfile)
+            minor = []
+            minor.append(trackfilevent)
+            minor.append(trackfiles)
+            relatedMajor.append(minor)
+                
+    now = timezone.now()
+    return render_to_response(SEARCHUSERPAGETEMPLATE, {'assignedPipelines':assignedPipelines,'userevents':userevents,'user':u,'now':now,'relatedMajor':relatedMajor}, context_instance=RequestContext(request))
+
+def searchvideo(request):
+    allvideos = Video.objects.all()
+    vnum = request.POST['videofield']
+    foundvideo = Video()
+    for video in allvideos:
+        if video.video_number == int(vnum):
+            foundvideo = video
+            sorted = foundvideo.checkprocesstool.split(",")
+            checkprocessminor = []
+            for toolid in sorted:
+                if toolid != '':
+                    tool = ToolFile.objects.get(id=toolid)
+                    checkprocessminor.append(tool)
+            break
+    
+    ev = Event.objects.get(id=foundvideo.event.id)
+    now = timezone.now()
+    return render_to_response(SEARCHVIDEOPAGETEMPLATE, {'video':foundvideo,'event':ev,'checkprocessminor':checkprocessminor,'now':now}, context_instance=RequestContext(request))
+
+def searchtool(request):
+    selectedTool = request.POST['tools']
+    tool = ToolFile.objects.get(id=int(selectedTool))
+    allvideos = Video.objects.all()
+    videosWithTool = []
+    for video in allvideos:
+        if video.collectiontool.id == tool.id:
+            videosWithTool.append(video)
+        if selectedTool in video.checkprocesstool:
+            videosWithTool.append(video)
+    
+    return render_to_response(SEARCHTOOLPAGETEMPLATE, {}, context_instance=RequestContext(request))
     
 def mypipelines(request):
     currentuser = request.session['user']
@@ -808,9 +942,7 @@ def deleterelatedfile(request, relatedfile_id):
         zip_path = os.path.join(trackfilevent.eventname, fname)
         zf.write(fpath, zip_path)
     zf.close()
-        
-
-    
+ 
     return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
         
 def updatetrackstatus(request):
@@ -866,7 +998,46 @@ def postpipelinecomment(request):
     request.session['messageboard'] = 'open'
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
         
-        
+def deletevideo(request, video_id, event_id):
+    video_id = int(video_id)
+    event_id = int(event_id)
+    ev = Event.objects.get(id=event_id)
+    u = User.objects.get(user_name=request.session['user'])
+    allvideos = Video.objects.all()
+    videos = []
+    for video in allvideos:
+        if video.event.id == ev.id:
+            if video.id == video_id:
+                v = video
+            else:
+                videos.append(video)
+    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + ev.name
+    fileinfolder = pathtouploadeventfolder + '/' + str(v.video_number) + '.zip'
+    os.remove(fileinfolder)
+    
+    v.delete()
+
+    filenames = []
+    for video in videos:
+        if video.event.id == ev.id:
+            filename = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
+            filenames.append(filename)
+    
+    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    try:
+        os.remove(zip_filename)
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    except:
+        #do nothing
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(ev.name, fname)
+        zf.write(fpath, zip_path)
+    zf.close()
+ 
+    return redirect("/basicsite/videos/")
         
         
         
