@@ -136,6 +136,7 @@ list-style-type:none;
         </div>
         <div class="assignhiddendiv" id="statusfilterhiddendivid" style="display: none;text-align:center;">
             <div class="statuslist">
+            <br>
             List of possible status:
             <br>
             {% for status in statuslist %}
@@ -165,6 +166,7 @@ list-style-type:none;
         </div>
         <div class="assignhiddendiv" id="userfilterhiddendivid" style="display: none;text-align:center;">
             <div class="inroster">
+            <br>
             List of users:
             {% for user in allusers %}
                 <br><span style="padding-left:10px;color:#473C8B;">>> {{ user.user_name }}</span>
@@ -173,6 +175,7 @@ list-style-type:none;
             <form name="userfilterform" id="userfilterformid" method="POST" action="/basicsite/searchuser/" enctype="multipart/form-data" >
                 {% csrf_token %}
                 <div class="invitetoroster">
+                    <br>
                     <span style="">Look up</span>
                     {{ userform.userfield }}
                 </div>
@@ -195,6 +198,7 @@ list-style-type:none;
             <form name="videofilterform" id="videofilterformid" method="POST" action="/basicsite/searchvideo/" enctype="multipart/form-data" >
                 {% csrf_token %}
                 <div class="invitetoroster">
+                    <br>
                     <span style="">Just type in video number</span>
                     {{ videoform.videofield }}
                 </div>
@@ -221,7 +225,6 @@ list-style-type:none;
                     <br>
                     {{ toolsform.tools }}
                 </div>
-                <br>
                 <p style="text-align:center;"><input type="submit" value="search" /></p>
             </form>
         </div>

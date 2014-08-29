@@ -536,7 +536,7 @@ def searchstatus(request):
     for pipeline in allpipelines:
         for track in alltracks:
             if track.pipeline_identifier.id == pipeline.id:
-                if track.status == status2search:
+                if track.status in status2search:
                     trackswithstatus.append(track)
 
     finalListMajor = []
@@ -627,10 +627,17 @@ def searchtool(request):
     for video in allvideos:
         if video.collectiontool.id == tool.id:
             videosWithTool.append(video)
+            sorted = foundvideo.checkprocesstool.split(",")
+            checkprocessminor = []
+            for toolid in sorted:
+                if toolid != '':
+                    tool = ToolFile.objects.get(id=toolid)
+                    checkprocessminor.append(tool)
         if selectedTool in video.checkprocesstool:
             videosWithTool.append(video)
     
-    return render_to_response(SEARCHTOOLPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    now = timezone.now()
+    return render_to_response(SEARCHTOOLPAGETEMPLATE, {'videosWithTool':videosWithTool,'now':now}, context_instance=RequestContext(request))
     
 def mypipelines(request):
     currentuser = request.session['user']
