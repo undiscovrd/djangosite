@@ -358,7 +358,8 @@ def videos(request):
         intermediarymajor.append(event)
         intermediarymajor.append(finalListMinor)
         finalListMajor.append(intermediarymajor)
-    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos, 'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
+    now = timezone.now()
+    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos, 'finalListMajor':finalListMajor,'now':now}, context_instance=RequestContext(request))
 
 def videofilterpage(request):
     allevents = Event.objects.order_by('-event_date')
@@ -707,7 +708,8 @@ def specificpipeline(request, pipeline_id):
             comments.append(comment)
             
     replybox = ReplyBox()
-    form = AddToRosterForm()
+    p_id = int(p.id)
+    form = AddToRosterForm(pipeline_id=p_id)
     messageboard = request.session['messageboard']
     return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form,'comments':comments,'replybox':replybox,'messageboard':messageboard}, context_instance=RequestContext(request))
  
@@ -749,7 +751,7 @@ def addtracks(request):
         tk = Track(pipeline_identifier_id=p.id,video_identifier_id=v.id,status='created',started_date=now)
         tk.save()
     
-    return redirect('/basicsite/specificpipeline/' + request.session['currentpipeline'] +'/')
+    return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
     
 class ReplyBox(forms.Form):
     comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 90, 'rows': 5}) )
@@ -966,18 +968,24 @@ class AddToRosterForm(forms.Form):
     role = forms.CharField(max_length=30)
     
     def __init__(self, *args, **kwargs):
+        self.pipeline_id = kwargs.pop('pipeline_id')
         super(AddToRosterForm, self).__init__(*args, **kwargs)
         allusers = User.objects.all()
         allroster = PipelineRoster.objects.all()
                 
+        relevantPersons = []
+        for person in allroster:
+            if person.pipeline_identifier.id == int(self.pipeline_id):
+                relevantPersons.append(person)
+        
         newArr=[]
         for user in allusers:
-            found = 'false'
-            for person in allroster: 
+            found = False
+            for person in relevantPersons: 
                if person.user_identifier.id == user.id:
-                   found = 'true'
-                   break
-            if found == 'false':
+                   found = True
+                   #break
+            if not found:
                 newArr.append(user)
         self.fields['users'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=[ (o.id, o.user_name ) for o in newArr])
         
