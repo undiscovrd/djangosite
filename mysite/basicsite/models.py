@@ -64,6 +64,10 @@ class ToolFile(models.Model):
     versionnumber = models.FloatField()
     family = models.ForeignKey(ToolFamily)
     
+class PipelineTools(models.Model):
+    tool = models.ForeignKey(ToolFile)
+    pipeline = models.ForeignKey(Pipeline)
+    
 # Keeps track of all the upload events
 class Event(models.Model):
     name = models.CharField(max_length=100)

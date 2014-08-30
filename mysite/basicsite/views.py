@@ -476,7 +476,7 @@ def specificevent(request, event_id):
             eventvideos.append(intermediary)
     now = timezone.now()
     return render_to_response(SPECIFICEVENTPAGETEMPLATE, {'event':ev, 'eventvideos':eventvideos,'now':now}, context_instance=RequestContext(request))
-    
+
 def home(request):
     u = request.session['user']
     user = User.objects.get(user_name=u)
@@ -528,7 +528,7 @@ class ToolsForm(forms.Form):
         super(ToolsForm, self).__init__(*args, **kwargs)
         alltools = ToolFile.objects.order_by('-versionnumber')
         self.fields['tools'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in alltools])
-        
+
 def searchstatus(request):
     allpipelines = Pipeline.objects.all()
     status2search = request.POST['statusfield']
@@ -597,7 +597,7 @@ def searchuser(request):
             minor.append(trackfilevent)
             minor.append(trackfiles)
             relatedMajor.append(minor)
-                
+            
     now = timezone.now()
     return render_to_response(SEARCHUSERPAGETEMPLATE, {'assignedPipelines':assignedPipelines,'userevents':userevents,'user':u,'now':now,'relatedMajor':relatedMajor}, context_instance=RequestContext(request))
 
@@ -707,12 +707,53 @@ def specificpipeline(request, pipeline_id):
         if comment.pipeline.id == p.id:
             comments.append(comment)
             
+    allpipelinetools = PipelineTools.objects.all()
+    labelingtools = []
+    for atool in allpipelinetools:
+        if atool.pipeline.id == p.id:
+            labelingtools.append(atool)
+            
     replybox = ReplyBox()
     p_id = int(p.id)
     form = AddToRosterForm(pipeline_id=p_id)
+    pipelinetoolsform = PipelineToolsForm(pipeline_id=p_id)
     messageboard = request.session['messageboard']
-    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form,'comments':comments,'replybox':replybox,'messageboard':messageboard}, context_instance=RequestContext(request))
- 
+    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form,'comments':comments,'replybox':replybox,'messageboard':messageboard,'labelingtools':labelingtools,'pipelinetoolsform':pipelinetoolsform}, context_instance=RequestContext(request))
+    
+class PipelineToolsForm(forms.Form):
+    tools = forms.ChoiceField(widget=forms.RadioSelect)
+    
+    def __init__(self, *args, **kwargs):
+        self.pipeline_id = kwargs.pop('pipeline_id')
+        super(PipelineToolsForm, self).__init__(*args, **kwargs)
+        alltools = ToolFile.objects.order_by('-versionnumber')
+        allpipelinetools = PipelineTools.objects.all()
+        unusedtools = []
+        for atool in alltools:
+            found = False
+            for tool in allpipelinetools:
+                if atool.purpose == '3':
+                    if atool.id == tool.tool.id:
+                        if tool.pipeline.id == int(self.pipeline_id):
+                            found = True
+            if not found:
+                if atool.purpose == '3':
+                    unusedtools.append(atool)
+            
+        self.fields['tools'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in unusedtools])
+    
+def tooltopipeline(request):
+    selectedTool = request.POST['tools']
+    intTool = int(selectedTool)
+    t = ToolFile.objects.get(id=intTool)
+    currentpipeline = request.session['currentpipeline']
+    currentpipeline = int(currentpipeline)
+    p = Pipeline.objects.get(id=currentpipeline)
+    pt = PipelineTools(tool=t, pipeline=p)
+    pt.save()
+    
+    return redirect('/basicsite/specificpipeline/' + str(p.id) +'/')
+    
 def createtrack(request):
     pipeline_id = int(request.session['currentpipeline'])
     p = Pipeline.objects.get(id=pipeline_id)
