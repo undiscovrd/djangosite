@@ -152,8 +152,7 @@ span.eventuploader {
     <div class="toolsections">
         <span><a class="sectionbuttons" href="/basicsite/home/">Home</a></span>
         <span><a class="sectionbuttons" href="/basicsite/videos/">All Videos</a></span>
-        <span><a class="sectionbuttons" href="/basicsite/videocategories/filterpage/">Filter Page</a></span>
-        <span><a class="sectionbuttons" href="/basicsite/videocategories/assigntotaskpage/">Assign to Task</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/videocategories/filterpage/">All Events</a></span>
         <span><a style="color: #0CE84D" class="sectionbuttons" href="/basicsite/uploadvideo/">Upload New Event</a></span>
     </div>
 </div>
@@ -166,7 +165,7 @@ span.eventuploader {
                 <span class="eventname">{{event.name}}</span><span><a style="color: #8E388E; font-size:14px;" href="/basicsite/downloadevent/{{ event.id }}/"> download </a></span>
                 <span><a style="color: #FF4500; font-size:14px;" href="/basicsite/addtoevent/{{ event.id }}/">add to</a></span>
                 <br>
-                <span class="eventdate">{{event.event_date}} </span><span class="eventuploader">| Uploaded by: {{event.uploader.user_name}}</span>
+                <span class="eventdate">{{event.event_date}}, {{event.event_date|timesince:now}} ago </span><span class="eventuploader">| Uploaded by: {{event.uploader.user_name}}</span>
                 <br>
                 <span class="eventdescription">{{event.description}}</span>
             </div>
@@ -176,13 +175,15 @@ span.eventuploader {
                         <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/{{ event.id }}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
                     </div>
                     <div class="col" id="coldata">
-                        <span class="videotablesegmentdata" id="uploaddate" ><span style="font-size:14px; color: #97FFFF;"> Uploaded on: </span> {{ video.uploaded_date }}</span>
-                        <span class="videotablesegmentdata" id="collectiontoolused" ><span style="font-size:14px; color: #97FFFF;">Collection Tool:</span> {{ video.collectiontool.tooltitle }}</span>
+                        <span class="videotablesegmentdata" id="uploaddate" style="font-size:14px;"><span style="font-size:14px; color: #97FFFF;"> Uploaded on: </span> {{ video.uploaded_date }}</span>
+                        <span class="videotablesegmentdata" id="collectiontoolused" style="font-size:14px;"><span style="font-size:14px; color: #97FFFF;">Collection Tool:</span> {{ video.collectiontool.tooltitle }}</span>
                         <span style="font-size:14px; color: #97FFFF;padding-left:5px;">Checking/Processing Tools:</span>
                         {% for tup in subtup %}
                             <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" > {{ tup.tooltitle }},</span>
                         {% endfor %}
                         <br>
+                        <span><a style="color: #FF4500; font-size:14px; padding-left:5px;" href="/basicsite/deletevideo/{{ video.id}}/{{ event.id }}/">delete</a></span>
+                        <!--<span><a style="color: #0CE84D; font-size:14px; padding-left:5px;" href="/basicsite/readnotes/{{ video.id}} /{{ event.id }}/">read notes</a></span>-->
                     </div>
                 </div>
             {% endfor %}

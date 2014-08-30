@@ -3,6 +3,47 @@
 <head>
 <meta charset=utf-8 />
 </head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $("#statusfilterdiv").click(function(){
+       if($('#statusfilterhiddendivid').is(':visible')){
+           $("#statusfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#statusfilterhiddendivid").show(); 
+       }; 
+    });
+    $("#userfilterdiv").click(function(){
+       if($('#userfilterhiddendivid').is(':visible')){
+           $("#userfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#userfilterhiddendivid").show(); 
+       }; 
+    });
+    $("#videofilterdiv").click(function(){
+       if($('#videofilterhiddendivid').is(':visible')){
+           $("#videofilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#videofilterhiddendivid").show(); 
+       }; 
+    });
+    $("#toolfilterdiv").click(function(){
+       if($('#toolfilterhiddendivid').is(':visible')){
+           $("#toolfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#toolfilterhiddendivid").show(); 
+       }; 
+    });
+});
+</script>
 <style>
 body {
     background-color: white;
@@ -52,23 +93,20 @@ div.bodywrapper {
     margin-left:auto;
     margin-right:auto;
 }
-div.pipelinerow {
-    height:150px;
-    background: url("{{ STATIC_URL }}toolsectionslight.png");
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
+div.assignhiddendiv {
+    border-width: 1px;
+    border-style: solid;
+    background-color:#F7F7F7;
 }
-span.pipelinetitle {
-    font-size:30px;
-    color: #31649E;
+li {
+list-style-type:none;
 }
-
 </style>
 
 <body>
 <div class="headerstuff">
     <div class="toolswrapper">
-    <div class="toolsh1"> All Pipelines</div>
+    <div class="toolsh1"> Pipeline Filter Page</div>
     </div>
 
     <div class="toolsections">
@@ -81,25 +119,10 @@ span.pipelinetitle {
 </div>
 
 <div class="bodywrapper">
-
-{% for pipeline in allpipelines %}
-    <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
-        <div class="pipelinetitlestuff">
-            <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
-            <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
-            <br>
-            <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span>
-        </div>
-        <div class="pipelineotherstuff">
-            <span class="pipelinedescription">{{ pipeline.description }}</span>
-        </div>
-    </div>
-{% endfor %}
-
+    {% for video in videosWithTool %}
+    
+    {% endfor %}
 </div>
 
-
-
 </body>
-</html>
 </html>

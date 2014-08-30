@@ -358,7 +358,8 @@ def videos(request):
         intermediarymajor.append(event)
         intermediarymajor.append(finalListMinor)
         finalListMajor.append(intermediarymajor)
-    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos, 'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
+    now = timezone.now()
+    return render_to_response(VIDEOSPAGETEMPLATE, {'allvideos':allvideos, 'finalListMajor':finalListMajor,'now':now}, context_instance=RequestContext(request))
 
 def videofilterpage(request):
     allevents = Event.objects.order_by('-event_date')
@@ -473,16 +474,19 @@ def specificevent(request, event_id):
             intermediary.append(video)
             intermediary.append(checkprocessminor)
             eventvideos.append(intermediary)
-    return render_to_response(SPECIFICEVENTPAGETEMPLATE, {'event':ev, 'eventvideos':eventvideos}, context_instance=RequestContext(request))
-    
+    now = timezone.now()
+    return render_to_response(SPECIFICEVENTPAGETEMPLATE, {'event':ev, 'eventvideos':eventvideos,'now':now}, context_instance=RequestContext(request))
+
 def home(request):
     u = request.session['user']
     user = User.objects.get(user_name=u)
+    request.session['messageboard'] = 'closed'
     return render_to_response(HOMEPAGETEMPLATE, {'user':user}, context_instance=RequestContext(request))
     
 def pipelines(request):
     allpipelines = Pipeline.objects.all()
     now = timezone.now()
+    request.session['messageboard'] = 'closed'
     return render_to_response(ALLPIPELINESPAGETEMPLATE, {'allpipelines':allpipelines, 'now':now}, context_instance=RequestContext(request))
     
 def constructpipeline(request):
@@ -494,7 +498,147 @@ class ConstructPipelineForm(forms.Form):
     description = forms.CharField(widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}))
     
 def pipelinefilterpage(request):
-    return render_to_response(PIPELINEFILTERPAGETEMPLATE, {}, context_instance=RequestContext(request))
+    alltracks = Track.objects.all()
+    statuslist = []
+    for track in alltracks:
+        if track.status not in statuslist:
+            statuslist.append(track.status)
+
+    allusers  = User.objects.all()
+    
+    statusform = StatusForm()
+    userform = UserForm()
+    videoform = VideoForm()
+    toolsform = ToolsForm()
+    return render_to_response(PIPELINEFILTERPAGETEMPLATE, {'statuslist':statuslist,'statusform':statusform, 'allusers':allusers,'userform':userform,'videoform':videoform,'toolsform':toolsform}, context_instance=RequestContext(request))
+    
+class StatusForm(forms.Form):
+    statusfield = forms.CharField(max_length=30)
+    
+class UserForm(forms.Form):
+    userfield = forms.CharField(max_length=30)
+
+class VideoForm(forms.Form):
+    videofield = forms.CharField(max_length=30)
+    
+class ToolsForm(forms.Form):
+    tools = forms.ChoiceField(widget=forms.RadioSelect)
+    
+    def __init__(self, *args, **kwargs):
+        super(ToolsForm, self).__init__(*args, **kwargs)
+        alltools = ToolFile.objects.order_by('-versionnumber')
+        self.fields['tools'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in alltools])
+
+def searchstatus(request):
+    allpipelines = Pipeline.objects.all()
+    status2search = request.POST['statusfield']
+    alltracks = Track.objects.all()
+    trackswithstatus = []
+    for pipeline in allpipelines:
+        for track in alltracks:
+            if track.pipeline_identifier.id == pipeline.id:
+                if track.status in status2search:
+                    trackswithstatus.append(track)
+
+    finalListMajor = []
+    for track in trackswithstatus:
+        intermediary = []
+        intermediary.append(track)
+        v = Video.objects.get(id=track.video_identifier_id)
+        intermediary.append(v)
+        sorted = v.checkprocesstool.split(",")
+        checkprocessminor = []
+        for toolid in sorted:
+            if toolid != '':
+                tool = ToolFile.objects.get(id=toolid)
+                checkprocessminor.append(tool)
+        intermediary.append(checkprocessminor)
+        finalListMajor.append(intermediary)
+   
+    now = timezone.now()
+    return render_to_response(SEARCHSTATUSPAGETEMPLATE, {'trackswithstatus':trackswithstatus,'status2search':status2search,'finalListMajor':finalListMajor,'now':now}, context_instance=RequestContext(request))
+
+def searchuser(request):
+    allroster = PipelineRoster.objects.all()
+    try:
+        u = User.objects.get(user_name=request.POST['userfield'])
+        message = 'found'
+    except:
+        message = 'could not find this particular'
+        
+    if message != 'could not find this particular':
+        resultingPipelines = []
+        for person in allroster:
+            assignedPipelines = []
+            if person.user_identifier.id == u.id:
+                p = Pipeline.objects.get(id=person.pipeline_identifier.id)
+                assignedPipelines.append(p)
+                
+        allevents = Event.objects.all()
+        userevents = []
+        for event in allevents:
+            if event.uploader.id == u.id:
+                userevents.append(event)
+                
+        allTrackFileEvents = TrackFileEvent.objects.all()
+        userfevents = []
+        for filevent in allTrackFileEvents:
+            if filevent.uploader.id == u.id:
+                userfevents.append(filevent)
+        
+        alltrackfiles = TrackFiles.objects.all()
+        relatedMajor = []
+        for trackfilevent in userfevents:
+            trackfiles = []
+            for trackfile in alltrackfiles:
+                if trackfile.trackfilevent.id == trackfilevent.id:
+                    trackfiles.append(trackfile)
+            minor = []
+            minor.append(trackfilevent)
+            minor.append(trackfiles)
+            relatedMajor.append(minor)
+            
+    now = timezone.now()
+    return render_to_response(SEARCHUSERPAGETEMPLATE, {'assignedPipelines':assignedPipelines,'userevents':userevents,'user':u,'now':now,'relatedMajor':relatedMajor}, context_instance=RequestContext(request))
+
+def searchvideo(request):
+    allvideos = Video.objects.all()
+    vnum = request.POST['videofield']
+    foundvideo = Video()
+    for video in allvideos:
+        if video.video_number == int(vnum):
+            foundvideo = video
+            sorted = foundvideo.checkprocesstool.split(",")
+            checkprocessminor = []
+            for toolid in sorted:
+                if toolid != '':
+                    tool = ToolFile.objects.get(id=toolid)
+                    checkprocessminor.append(tool)
+            break
+    
+    ev = Event.objects.get(id=foundvideo.event.id)
+    now = timezone.now()
+    return render_to_response(SEARCHVIDEOPAGETEMPLATE, {'video':foundvideo,'event':ev,'checkprocessminor':checkprocessminor,'now':now}, context_instance=RequestContext(request))
+
+def searchtool(request):
+    selectedTool = request.POST['tools']
+    tool = ToolFile.objects.get(id=int(selectedTool))
+    allvideos = Video.objects.all()
+    videosWithTool = []
+    for video in allvideos:
+        if video.collectiontool.id == tool.id:
+            videosWithTool.append(video)
+            sorted = foundvideo.checkprocesstool.split(",")
+            checkprocessminor = []
+            for toolid in sorted:
+                if toolid != '':
+                    tool = ToolFile.objects.get(id=toolid)
+                    checkprocessminor.append(tool)
+        if selectedTool in video.checkprocesstool:
+            videosWithTool.append(video)
+    
+    now = timezone.now()
+    return render_to_response(SEARCHTOOLPAGETEMPLATE, {'videosWithTool':videosWithTool,'now':now}, context_instance=RequestContext(request))
     
 def mypipelines(request):
     currentuser = request.session['user']
@@ -514,6 +658,7 @@ def mypipelines(request):
         if pipe.creator.id == u.id:
             yourcreatedpipes.append(pipe)
     now = timezone.now()
+    request.session['messageboard'] = 'closed'
     return render_to_response(MYPIPELINESPAGETEMPLATE, {'finalList':finalList,'now':now,'yourcreatedpipes':yourcreatedpipes}, context_instance=RequestContext(request))
     
 def submitpipeline(request):
@@ -523,8 +668,8 @@ def submitpipeline(request):
     u = User.objects.get(user_name=request.session['user'])
     p = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now,creator=u)
     p.save()
-    
-    return redirect('/basicsite/pipelines/')
+    request.session['messageboard'] = 'closed'
+    return redirect('/basicsite/specificpipeline/' + str(p.id) +'/')
     
 def specificpipeline(request, pipeline_id):
     pipeline_id = int(pipeline_id)
@@ -556,9 +701,59 @@ def specificpipeline(request, pipeline_id):
         if person.pipeline_identifier.id == p.id:
             roster.append(person)
             
-    form = AddToRosterForm()
-    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form}, context_instance=RequestContext(request))
- 
+    allcomments = CommentPipeline.objects.all()
+    comments = []
+    for comment in allcomments:
+        if comment.pipeline.id == p.id:
+            comments.append(comment)
+            
+    allpipelinetools = PipelineTools.objects.all()
+    labelingtools = []
+    for atool in allpipelinetools:
+        if atool.pipeline.id == p.id:
+            labelingtools.append(atool)
+            
+    replybox = ReplyBox()
+    p_id = int(p.id)
+    form = AddToRosterForm(pipeline_id=p_id)
+    pipelinetoolsform = PipelineToolsForm(pipeline_id=p_id)
+    messageboard = request.session['messageboard']
+    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form,'comments':comments,'replybox':replybox,'messageboard':messageboard,'labelingtools':labelingtools,'pipelinetoolsform':pipelinetoolsform}, context_instance=RequestContext(request))
+    
+class PipelineToolsForm(forms.Form):
+    tools = forms.ChoiceField(widget=forms.RadioSelect)
+    
+    def __init__(self, *args, **kwargs):
+        self.pipeline_id = kwargs.pop('pipeline_id')
+        super(PipelineToolsForm, self).__init__(*args, **kwargs)
+        alltools = ToolFile.objects.order_by('-versionnumber')
+        allpipelinetools = PipelineTools.objects.all()
+        unusedtools = []
+        for atool in alltools:
+            found = False
+            for tool in allpipelinetools:
+                if atool.purpose == '3':
+                    if atool.id == tool.tool.id:
+                        if tool.pipeline.id == int(self.pipeline_id):
+                            found = True
+            if not found:
+                if atool.purpose == '3':
+                    unusedtools.append(atool)
+            
+        self.fields['tools'] = forms.ChoiceField(widget=forms.RadioSelect, choices=[ (o.id, o.tooltitle + ' ->   v' + str(o.versionnumber) ) for o in unusedtools])
+    
+def tooltopipeline(request):
+    selectedTool = request.POST['tools']
+    intTool = int(selectedTool)
+    t = ToolFile.objects.get(id=intTool)
+    currentpipeline = request.session['currentpipeline']
+    currentpipeline = int(currentpipeline)
+    p = Pipeline.objects.get(id=currentpipeline)
+    pt = PipelineTools(tool=t, pipeline=p)
+    pt.save()
+    
+    return redirect('/basicsite/specificpipeline/' + str(p.id) +'/')
+    
 def createtrack(request):
     pipeline_id = int(request.session['currentpipeline'])
     p = Pipeline.objects.get(id=pipeline_id)
@@ -597,7 +792,7 @@ def addtracks(request):
         tk = Track(pipeline_identifier_id=p.id,video_identifier_id=v.id,status='created',started_date=now)
         tk.save()
     
-    return redirect('/basicsite/specificpipeline/' + request.session['currentpipeline'] +'/')
+    return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
     
 class ReplyBox(forms.Form):
     comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 90, 'rows': 5}) )
@@ -797,9 +992,7 @@ def deleterelatedfile(request, relatedfile_id):
         zip_path = os.path.join(trackfilevent.eventname, fname)
         zf.write(fpath, zip_path)
     zf.close()
-        
-
-    
+ 
     return redirect("/basicsite/specifictrack/" + request.session['currenttrack'] +"/")
         
 def updatetrackstatus(request):
@@ -816,18 +1009,24 @@ class AddToRosterForm(forms.Form):
     role = forms.CharField(max_length=30)
     
     def __init__(self, *args, **kwargs):
+        self.pipeline_id = kwargs.pop('pipeline_id')
         super(AddToRosterForm, self).__init__(*args, **kwargs)
         allusers = User.objects.all()
         allroster = PipelineRoster.objects.all()
                 
+        relevantPersons = []
+        for person in allroster:
+            if person.pipeline_identifier.id == int(self.pipeline_id):
+                relevantPersons.append(person)
+        
         newArr=[]
         for user in allusers:
-            found = 'false'
-            for person in allroster: 
+            found = False
+            for person in relevantPersons: 
                if person.user_identifier.id == user.id:
-                   found = 'true'
-                   break
-            if found == 'false':
+                   found = True
+                   #break
+            if not found:
                 newArr.append(user)
         self.fields['users'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=[ (o.id, o.user_name ) for o in newArr])
         
@@ -842,11 +1041,59 @@ def assigntopipeline(request):
     
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
         
+def postpipelinecomment(request):
+    commenttext = request.POST['comment1']
+    if commenttext != '':
+        username = request.session['user']
+        user = User.objects.get(user_name=username)
+        now = timezone.now()
+        p_id = request.session['currentpipeline']
+        p = Pipeline.objects.get(id=int(p_id))
+        comment = CommentPipeline(text=commenttext,author=user,posted_date=now,pipeline=p)
+        comment.save()
+    request.session['messageboard'] = 'open'
+    return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
         
-        
-        
-        
-        
+def deletevideo(request, video_id, event_id):
+    video_id = int(video_id)
+    event_id = int(event_id)
+    ev = Event.objects.get(id=event_id)
+    u = User.objects.get(user_name=request.session['user'])
+    allvideos = Video.objects.all()
+    videos = []
+    for video in allvideos:
+        if video.event.id == ev.id:
+            if video.id == video_id:
+                v = video
+            else:
+                videos.append(video)
+    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + ev.name
+    fileinfolder = pathtouploadeventfolder + '/' + str(v.video_number) + '.zip'
+    os.remove(fileinfolder)
+    
+    v.delete()
+
+    filenames = []
+    for video in videos:
+        if video.event.id == ev.id:
+            filename = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
+            filenames.append(filename)
+    
+    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    try:
+        os.remove(zip_filename)
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    except:
+        #do nothing
+        zf = zipfile.ZipFile(zip_filename, 'w')
+    
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(ev.name, fname)
+        zf.write(fpath, zip_path)
+    zf.close()
+ 
+    return redirect("/basicsite/videos/")
         
         
         

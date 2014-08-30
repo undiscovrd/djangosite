@@ -52,7 +52,9 @@ a.sectionbuttons {
 }
 
 div.alltoolswrapper {
-    
+    width:800px;
+    margin-left:auto;
+    margin-right:auto;
 }
 
 div.toolrow {
@@ -173,7 +175,7 @@ div.headerstuff {
         {% endfor %}
     </div>
 
-    <div class="categorizedtoolsheader">
+    <div class="alltoolswrapper">
         <p class="alltoolsheader">Collection</p>
         
         {% for tool in alltools %}
@@ -202,7 +204,7 @@ div.headerstuff {
             {% endif %}
         {% endfor %}
     </div>
-    <div class="categorizedtoolsheader">
+    <div class="alltoolswrapper">
         <p class="alltoolsheader">Check-Processing</p>
         {% for tool in alltools %}
             {% if "2" in tool.purpose %}
@@ -230,7 +232,7 @@ div.headerstuff {
             {% endif %}
         {% endfor %}
     </div>
-    <div class="categorizedtoolsheader">
+    <div class="alltoolswrapper">
         <p class="alltoolsheader">Labeling</p>
         
         {% for tool in alltools %}

@@ -34,6 +34,12 @@ class PipelineRoster(models.Model):
     user_identifier = models.ForeignKey(User)
     pipeline_identifier = models.ForeignKey(Pipeline)
     pipeline_role = models.CharField(max_length=30)
+    
+class CommentPipeline(models.Model):
+    text = models.CharField(max_length=2000)
+    author = models.ForeignKey(User)
+    posted_date = models.DateTimeField()
+    pipeline = models.ForeignKey(Pipeline)
 
 class VideoFamily(models.Model):
     familyname = models.CharField(max_length=200)
@@ -57,6 +63,10 @@ class ToolFile(models.Model):
     purpose = models.CharField(max_length=50)
     versionnumber = models.FloatField()
     family = models.ForeignKey(ToolFamily)
+    
+class PipelineTools(models.Model):
+    tool = models.ForeignKey(ToolFile)
+    pipeline = models.ForeignKey(Pipeline)
     
 # Keeps track of all the upload events
 class Event(models.Model):

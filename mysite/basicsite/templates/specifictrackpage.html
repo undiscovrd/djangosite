@@ -202,7 +202,7 @@ li {
 <body>
 <div class="headerstuff">
     <div class="toolswrapper">
-    <div class="toolsh1">Pipeline: {{track.pipeline_identifier.pipeline_title}},  Track id: #{{track.id}}</div>
+    <div class="toolsh1">Pipeline: <a href="/basicsite/specificpipeline/{{track.pipeline_identifier.id }}/">{{track.pipeline_identifier.pipeline_title}}</a>,  Track id: #{{track.id}}</div>
     </div>
 
     <div class="toolsections">
@@ -240,6 +240,9 @@ li {
             <input type="submit" action="submit">
         </form>
     </div>
+    <div class="changestatus">
+        
+    </div>
     <div style="background-color:#008B8B;padding-left:10px;color:#CAE1FF;">Board</div>
     <div class="comment-container" id="containah21">
         {% for comment in comments %}
@@ -258,7 +261,7 @@ li {
     </div>
     <div class="relatedfiles-container" id="jah" >
         <div class="relatedfilesheader" id="relatedfilesheaderid">
-            <span class="relatedfilestitle">Related Files</span> | <span style="" >(click to upload more)</span>
+            <span class="relatedfilestitle" style="user-select: none;">Related Files</span> | <span style="" >(click to upload more)</span>
         </div>
         <div class="uploadrelatedfilediv" id="uploadrelatedfileid" style="display: none;">
             <form name="uploadformname" id="uploadformid" method="POST" action="/basicsite/uploadrelatedfile/" enctype="multipart/form-data" >
@@ -291,6 +294,8 @@ li {
                 {% endfor %}
             </div>
         {% endfor %}
+        </div>
+        <div style="height:40px;">
         </div>
     </div>
 </div>
