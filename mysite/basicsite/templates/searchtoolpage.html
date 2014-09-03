@@ -169,6 +169,16 @@ div.col {
     background-size: 100% 100%;
     background-repeat: no-repeat;
 }
+div.pipelinerow {
+    height:150px;
+    background: url("{{ STATIC_URL }}toolsectionslight.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+span.pipelinetitle {
+    font-size:30px;
+    color: #31649E;
+}
 </style>
 
 <body>
@@ -187,7 +197,24 @@ div.col {
 </div>
 
 <div class="bodywrapper">
+    <div class="pipelinelistwrapper">
+    <h1 style="text-align:center;">Pipelines that use this tool</h1>
+    {% for pipeline in relatedpipes %}
+        <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
+            <div class="pipelinetitlestuff">
+                <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
+                <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
+                <br>
+                <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span>
+            </div>
+            <div class="pipelineotherstuff">
+                <span class="pipelinedescription">{{ pipeline.description }}</span>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
     <div class="videolistwrapper">
+        <h1 style="text-align:center;">Videos that used this tool</h1>
         {% for video, subtup  in formattedList %}
             <div class="colmaster">
                 <div class="col" id="colvideo">
@@ -201,8 +228,7 @@ div.col {
                         <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" > {{ tup.tooltitle }},</span>
                     {% endfor %}
                     <br>
-                    <span><a style="color: #FF4500; font-size:14px; padding-left:5px;" href="/basicsite/deletevideo/{{ video.id}}/{{ event.id }}/">delete</a></span>
-                    <!--<span><a style="color: #0CE84D; font-size:14px; padding-left:5px;" href="/basicsite/readnotes/{{ video.id}} /{{ event.id }}/">read notes</a></span>-->
+                    <span><a style="color: #0CE84D; font-size:14px; padding-left:5px;" href="/basicsite/specificevent/{{ video.event_id }}/">go to event: {{ video.event_id }}</a></span>
                 </div>
             </div>
         {% endfor %}

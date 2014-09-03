@@ -577,9 +577,9 @@ def searchuser(request):
             tempPipelines = []
             if person.user_identifier.id == u.id:
                 p = Pipeline.objects.get(id=person.pipeline_identifier.id)
-                tempPipelines.append(p)
+                resultingPipelines.append(p)
         assignedPipelines = []
-        for ap in reversed(assignedPipelines):
+        for ap in reversed(resultingPipelines):
             assignedPipelines.append(ap)
         allevents = Event.objects.order_by('-event_date')
         userevents = []
@@ -628,7 +628,7 @@ def searchvideo(request):
 def searchtool(request):
     selectedTool = request.POST['tools']
     tool = ToolFile.objects.get(id=int(selectedTool))
-    allvideos = Video.objects.all()
+    allvideos = Video.objects.order_by('-uploaded_date')
     videosWithTool = []
     for video in allvideos:
         if video.collectiontool.id == tool.id:
@@ -647,9 +647,17 @@ def searchtool(request):
         intermediary.append(video)
         intermediary.append(checkprocessminor)
         formattedList.append(intermediary)
-    
+    allptools= PipelineTools.objects.all()
+    matchedtools = []
+    for pipelinetool in allptools:
+        if pipelinetool.tool_id == tool.id:
+            matchedtools.append(pipelinetool)
+    relatedpipes = []
+    for mt in matchedtools:
+        p = Pipeline.objects.get(id=mt.pipeline_id)
+        relatedpipes.append(p)
     now = timezone.now()
-    return render_to_response(SEARCHTOOLPAGETEMPLATE, {'now':now,'formattedList':formattedList}, context_instance=RequestContext(request))
+    return render_to_response(SEARCHTOOLPAGETEMPLATE, {'now':now,'formattedList':formattedList,'relatedpipes':relatedpipes}, context_instance=RequestContext(request))
    
 # Returns a list of pipelines the user created and a list that the user is assigned to
 def mypipelines(request):
