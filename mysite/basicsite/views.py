@@ -26,32 +26,41 @@ import shutil
 
 # Landing page to let user login or create new account
 def login(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            request.session['user'] = user
-            request.session['password'] = password
-            try:
-                testuser = User.objects.get(user_name=user)
-                if (testuser.user_name != user):
-                    u = User(user_name=user, password=password, rights="user")
-                    u.save()
-            except:
-                u = User(user_name=user, password=password, rights="user")
-                u.save()
-            return redirect('/basicsite/home/')
-            
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        request.session['user'] = user
-        request.session['password'] = password
+    try:
+        userexists = request.session['userexists']
+    except:
+        userexists = 'notsubmitted'
+    return render(request, LOGINPAGETEMPLATE, {'userexists':userexists})
+    
+def createnewuser(request):
+    username = request.POST['username']
+    email = request.POST['email']
+    passw = request.POST['pwd']
+
+    try:
+        u = User.objects.get(user_name=username)
+        request.session['userexists'] = 'yes'
+        return redirect('/basicsite/login/')
+    except:
+        u = User(user_name=username,password=passw,rights='user')
+        u.save()
+        request.session['userexists'] = 'no'
+        request.session['user'] = u.user_name
+        return redirect('/basicsite/home/')
+
+def logwithuser(request):
+    username = request.POST['username']
+    passw = request.POST['pwd']
+    
+    try:
+        u = User.objects.get(user_name=username,password=passw)
+        request.session['user'] = u.user_name
+        request.session['userexists'] = 'oklogin'
+        return redirect('/basicsite/home/')
+    except:
+        request.session['userexists'] = 'incorrectlogin'
+        return redirect('/basicsite/login/')
         
-    else:
-        form = LoginForm()
-    # Renders and displays the login page, passing LoginForm
-    return render(request, LOGINPAGETEMPLATE, {'form': form,})
     
 # Defines the Login Form data for validation
 class LoginForm(forms.Form):
@@ -66,11 +75,6 @@ def thanks(request):
         taskName = request.POST['taskname']
         selectedNames = request.POST.getlist('usernamelist')
     return render(request,THANKSPAGETEMPLATE, {"username" : user, "password" : password, 'taskName' : taskName, 'selectedNames' : selectedNames });
-    
-# Form for the comment submission, one correlates to task, two to track
-class ReplyBox(forms.Form):
-    comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) )
-    comment2 = forms.CharField( widget=forms.Textarea(attrs={'cols': 40, 'rows': 5}) ) 
     
 # Load all tools, descending by version number, then display tools page
 def tools(request):
@@ -259,40 +263,39 @@ def handleuploadrequest(request):
     u = User.objects.get(user_name=request.session['user'])
     ev = Event(name=uploadeventtitle, description=request.POST['description'],event_date=timezone.now(), uploader_id=u.id)
     ev.save()
-    if request.POST['upload_multiple'] == '2':
-        for file in fileList:
-            videoname = request.POST['videotitle']
-            withproperpath = pathtouploadeventfolder + '/' + file.name
-            fd = open(withproperpath, 'wb+')  # or 'wb+' for binary file
-            for chunk in file.chunks():
-                fd.write(chunk)
-            fd.close()
-            
-            selectedcheckprocesslist = ''
-            for toolid in request.POST.getlist('checkprocess'):
-                selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
+    for file in fileList:
+        videoname = request.POST['videotitle']
+        withproperpath = pathtouploadeventfolder + '/' + file.name
+        fd = open(withproperpath, 'wb+')  # or 'wb+' for binary file
+        for chunk in file.chunks():
+            fd.write(chunk)
+        fd.close()
+        
+        selectedcheckprocesslist = ''
+        for toolid in request.POST.getlist('checkprocess'):
+            selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
 
-            selectedcollect = ToolFile.objects.get(id=request.POST['collection'])
+        selectedcollect = ToolFile.objects.get(id=request.POST['collection'])
 
-            cleanedvideoname = file.name.replace('.zip', '')
+        cleanedvideoname = file.name.replace('.zip', '')
 
-            v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
-            v.save()
-        allvideos = Video.objects.all()
-        filenames = []
-        pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + ev.name
-        for video in allvideos:
-            if video.event_id == ev.id:
-                withproperpath = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
-                filenames.append(withproperpath)
+        v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
+        v.save()
+    allvideos = Video.objects.all()
+    filenames = []
+    pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + ev.name
+    for video in allvideos:
+        if video.event_id == ev.id:
+            withproperpath = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
+            filenames.append(withproperpath)
 
-        zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
-        zf = zipfile.ZipFile(zip_filename, 'w')
-        for fpath in filenames:
-            fdir, fname = os.path.split(fpath)
-            zip_path = os.path.join(ev.name, fname)
-            zf.write(fpath, zip_path)
-        zf.close()
+    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    zf = zipfile.ZipFile(zip_filename, 'w')
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(ev.name, fname)
+        zf.write(fpath, zip_path)
+    zf.close()
     return redirect('/basicsite/uploadvideo/')
     
     
@@ -421,39 +424,38 @@ def handleaddtoevent(request, event_id):
     u = User.objects.get(user_name=request.session['user'])
     ev = Event.objects.get(id=event_id)
     pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + ev.name
-    if request.POST['upload_multiple'] == '2':
-        for file in fileList:
-            withproperpath = pathtouploadeventfolder + '/' + file.name
-            fd = open(withproperpath, 'wb+')
-            for chunk in file.chunks():
-                fd.write(chunk)
-            fd.close()
-            
-            selectedcheckprocesslist = ''
-            for toolid in request.POST.getlist('checkprocess'):
-                selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
+    for file in fileList:
+        withproperpath = pathtouploadeventfolder + '/' + file.name
+        fd = open(withproperpath, 'wb+')
+        for chunk in file.chunks():
+            fd.write(chunk)
+        fd.close()
+        
+        selectedcheckprocesslist = ''
+        for toolid in request.POST.getlist('checkprocess'):
+            selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
 
-            selectedcollect = ToolFile.objects.get(id=request.POST['collection'])
+        selectedcollect = ToolFile.objects.get(id=request.POST['collection'])
 
-            cleanedvideoname = file.name.replace('.zip', '')
+        cleanedvideoname = file.name.replace('.zip', '')
 
-            v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
-            v.save()
-        allvideos = Video.objects.all()
-        filenames = []
-        pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + ev.name
-        for video in allvideos:
-            if video.event_id == ev.id:
-                withproperpath = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
-                filenames.append(withproperpath)
-        zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
-        os.remove(zip_filename)
-        zf = zipfile.ZipFile(zip_filename, 'w')
-        for fpath in filenames:
-            fdir, fname = os.path.split(fpath)
-            zip_path = os.path.join(ev.name, fname)
-            zf.write(fpath, zip_path)
-        zf.close()
+        v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
+        v.save()
+    allvideos = Video.objects.all()
+    filenames = []
+    pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + ev.name
+    for video in allvideos:
+        if video.event_id == ev.id:
+            withproperpath = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
+            filenames.append(withproperpath)
+    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    os.remove(zip_filename)
+    zf = zipfile.ZipFile(zip_filename, 'w')
+    for fpath in filenames:
+        fdir, fname = os.path.split(fpath)
+        zip_path = os.path.join(ev.name, fname)
+        zf.write(fpath, zip_path)
+    zf.close()
     
     return redirect('/basicsite/videos/')
     
@@ -569,18 +571,21 @@ def searchuser(request):
     if message != 'could not find this particular':
         resultingPipelines = []
         for person in allroster:
-            assignedPipelines = []
+            tempPipelines = []
             if person.user_identifier.id == u.id:
                 p = Pipeline.objects.get(id=person.pipeline_identifier.id)
-                assignedPipelines.append(p)
+                tempPipelines.append(p)
+        assignedPipelines = []
+        for ap in reversed(assignedPipelines):
+            assignedPipelines.append(ap)
                 
-        allevents = Event.objects.all()
+        allevents = Event.objects.order_by('-event_date')
         userevents = []
         for event in allevents:
             if event.uploader.id == u.id:
                 userevents.append(event)
                 
-        allTrackFileEvents = TrackFileEvent.objects.all()
+        allTrackFileEvents = TrackFileEvent.objects.order_by('-uploaded_date')
         userfevents = []
         for filevent in allTrackFileEvents:
             if filevent.uploader.id == u.id:
@@ -795,7 +800,7 @@ def addtracks(request):
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
     
 class ReplyBox(forms.Form):
-    comment1 = forms.CharField( widget=forms.Textarea(attrs={'cols': 90, 'rows': 5}) )
+    commentbox = forms.CharField( widget=forms.Textarea(attrs={'cols': 90, 'rows': 5}) )
     
 def specifictrack(request, track_id):
     request.session['currenttrack'] = track_id
@@ -836,7 +841,7 @@ def specifictrack(request, track_id):
     return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':tk,'video':video,'now':now,'replybox':replybox,'comments':comments,'uploadform':uploadform,'relatedMajor':relatedMajor,'checkprocessminor':checkprocessminor}, context_instance=RequestContext(request))
     
 def posttrackcomment(request):
-    commenttext = request.POST['comment1']
+    commenttext = request.POST['commentbox']
     if commenttext != '':
         username = request.session['user']
         user = User.objects.get(user_name=username)
@@ -1042,7 +1047,7 @@ def assigntopipeline(request):
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
         
 def postpipelinecomment(request):
-    commenttext = request.POST['comment1']
+    commenttext = request.POST['commentbox']
     if commenttext != '':
         username = request.session['user']
         user = User.objects.get(user_name=username)

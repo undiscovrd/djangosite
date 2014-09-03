@@ -203,6 +203,8 @@ div.eventdescription {
                 <span class="pipelinedescription">{{ pipeline.description }}</span>
             </div>
         </div>
+    {% empty %}
+        <div style="text-align:center;">Assigned to None</div>
     {% endfor %}
     </div>
     <h3 style="text-align:center;"> Events </h3>
@@ -217,13 +219,15 @@ div.eventdescription {
             <br>
             <span class="eventdescription">{{event.description}}</span>
         </div>
+    {% empty %}
+        <div style="text-align:center;">Uploaded none</div>
     {% endfor %}
     </div>
     <h3 style="text-align:center;"> Uploaded Track Files </h3>
     <div class="trackfilecontainer">
     {% for trackevent,fileList in relatedMajor %}
         <div class="relatedfile">
-            <div class="eventname">{{ trackevent.eventname }} | <a href="/basicsite/downloadrelatedevent/{{trackevent.id}}/">get all</a> | <a style="color: #FF6103" href="/basicsite/deletefilevent/{{ trackevent.id }}/">delete</a></div> | <a style="color: #8E388E; font-size:14px;" href="/basicsite/specifictrack/{{trackevent.track.id}}/"> go to event </a>
+            <div class="eventname">{{ trackevent.eventname }} | <a href="/basicsite/downloadrelatedevent/{{trackevent.id}}/">get all</a> | <a style="color: #FF6103" href="/basicsite/deletefilevent/{{ trackevent.id }}/">delete</a></div> | <a style="color: #8E388E; font-size:14px;" href="/basicsite/specifictrack/{{trackevent.track.id}}/"> go to pipeline: #{{trackevent.track.pipeline_identifier_id}}, track #{{trackevent.track.id}} </a>
             <br>
             <span class="author"> - {{trackevent.uploader.user_name}} - </span><span class="commentdate">{{trackevent.uploaded_date}}, {{ trackevent.uploaded_date|timesince:now }} ago</span>
             <br>
@@ -235,6 +239,8 @@ div.eventdescription {
                 </div>
             {% endfor %}
         </div>
+    {% empty %}
+        <div style="text-align:center;">Uploaded none</div>
     {% endfor %}
     </div>
 </div>
