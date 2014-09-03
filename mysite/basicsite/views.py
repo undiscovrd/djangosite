@@ -1064,7 +1064,7 @@ def deleteVideo(request, video_id, event_id):
     pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + eventObj.name
     fileinfolder = pathtouploadeventfolder + '/' + str(targetVideo.video_number) + '.zip'
     os.remove(fileinfolder)
-    v.delete()
+    targetVideo.delete()
     filenames = []
     for video in videos:
         if video.event.id == eventObj.id:
