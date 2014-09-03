@@ -348,7 +348,7 @@ div.toolrow {
             <div class="createcomment-container">
                 <form name="formname" id="formid" method="POST" action="/basicsite/postpipelinecomment/" >
                      {% csrf_token %}
-                     {{replybox.comment1}}
+                     {{replybox.commentbox}}
                     <img id="send2" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment();">
                 </form>
             </div>
