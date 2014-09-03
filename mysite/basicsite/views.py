@@ -41,22 +41,22 @@ def createNewUser(request):
     email = request.POST['email']
     passw = request.POST['pwd']
     try:
-        u = User.objects.get(user_name=username)
+        userObj = User.objects.get(user_name=username)
         request.session['userexists'] = 'yes'
         return redirect('/basicsite/login/')
     except:
-        u = User(user_name=username,password=passw,rights='user')
-        u.save()
+        userObj = User(user_name=username,password=passw,rights='user')
+        userObj.save()
         request.session['userexists'] = 'no'
-        request.session['user'] = u.user_name
+        request.session['user'] = userObj.user_name
         return redirect('/basicsite/home/')
 
 def logWithUser(request):
     username = request.POST['username']
     passw = request.POST['pwd']
     try:
-        u = User.objects.get(user_name=username,password=passw)
-        request.session['user'] = u.user_name
+        userObj = User.objects.get(user_name=username,password=passw)
+        request.session['user'] = userObj.user_name
         request.session['userexists'] = 'oklogin'
         return redirect('/basicsite/home/')
     except:
@@ -101,7 +101,7 @@ def uploadTool(request):
                 specificfamily.save()
         else:
             specificfamily = ToolFamily.objects.get(id=request.POST['family'])
-        newtf = ToolFile(
+        newToolFileObject = ToolFile(
             tf = request.FILES['fileform'],
             versionlog = request.FILES['versionform'],
             tooltitle = request.POST['title'],
@@ -112,7 +112,7 @@ def uploadTool(request):
             versionnumber = request.POST['versionnumber'],
             family = specificfamily
             )
-        newtf.save()
+        newToolFileObject.save()
     else:
         form = DocumentForm()
     return redirect('/basicsite/tools/')
@@ -226,7 +226,6 @@ def showLabelingTools(request):
 
 # Form that contains all the fields necessary for a video upload, (does not contain the multiple file upload)
 class UploadVideoForm(forms.Form):
-    upload_multiple = forms.ChoiceField(widget=forms.RadioSelect, choices=(('1', 'One Giant Zip For Mankind',), ('2', 'One Video Per Zip',),))
     videotitle = forms.CharField(max_length=50)
     collection = forms.ChoiceField(widget=forms.RadioSelect)
     checkprocess = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple())
@@ -256,9 +255,9 @@ def uploadVideos(request):
     uploadeventtitle = request.POST['videotitle']
     pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + uploadeventtitle
     os.mkdir(pathtouploadeventfolder)
-    u = User.objects.get(user_name=request.session['user'])
-    ev = Event(name=uploadeventtitle, description=request.POST['description'],event_date=timezone.now(), uploader_id=u.id)
-    ev.save()
+    userObj = User.objects.get(user_name=request.session['user'])
+    eventObj = Event(name=uploadeventtitle, description=request.POST['description'],event_date=timezone.now(), uploader_id=userObj.id)
+    eventObj.save()
     for file in fileList:
         videoname = request.POST['videotitle']
         withproperpath = pathtouploadeventfolder + '/' + file.name
@@ -271,20 +270,20 @@ def uploadVideos(request):
             selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
         selectedcollect = ToolFile.objects.get(id=request.POST['collection'])
         cleanedvideoname = file.name.replace('.zip', '')
-        v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
-        v.save()
+        videoObj = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=eventObj)
+        videoObj.save()
     allvideos = Video.objects.all()
     filenames = []
-    pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + ev.name
+    pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + eventObj.name
     for video in allvideos:
-        if video.event_id == ev.id:
+        if video.event_id == eventObj.id:
             withproperpath = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
             filenames.append(withproperpath)
-    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    zip_filename = pathtouploadeventfolder + '/' + eventObj.name + '.zip'
     zf = zipfile.ZipFile(zip_filename, 'w')
     for fpath in filenames:
         fdir, fname = os.path.split(fpath)
-        zip_path = os.path.join(ev.name, fname)
+        zip_path = os.path.join(eventObj.name, fname)
         zf.write(fpath, zip_path)
     zf.close()
     return redirect('/basicsite/uploadvideo/')
@@ -376,20 +375,20 @@ def downloadVideo(request, videonumber, event_id):
 def downloadEvent(request, event_id):
     allvideos = Video.objects.all()
     event_id = int(event_id)
-    ev = Event.objects.get(id=event_id)
-    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + ev.name
-    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    eventObj = Event.objects.get(id=event_id)
+    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + eventObj.name
+    zip_filename = pathtouploadeventfolder + '/' + eventObj.name + '.zip'
     event_handle = open(zip_filename, 'rb')
     response = HttpResponse(event_handle, content_type='application/zip')
-    response['Content-Disposition'] = 'attachment; filename=' + ev.name + '.zip'
+    response['Content-Disposition'] = 'attachment; filename=' + eventObj.name + '.zip'
     return response
 
 # Adds a single video to a specific event
 def addVideoToEventPage(request, event_id):
     event_id = int(event_id)
-    ev = Event.objects.get(id=event_id)
+    eventObj = Event.objects.get(id=event_id)
     form = AddToEventForm()
-    return render_to_response(ADDTOEVENTPAGETEMPLATE, {'form':form, 'event':ev}, context_instance=RequestContext(request))
+    return render_to_response(ADDTOEVENTPAGETEMPLATE, {'form':form, 'event':eventObj}, context_instance=RequestContext(request))
 
 # Form that contains tool fields for adding a video to event. Multiple file input handled separately.
 class AddToEventForm(forms.Form):
@@ -413,9 +412,9 @@ class AddToEventForm(forms.Form):
 def uploadAddToVideo(request, event_id):
     event_id = int(event_id)
     fileList = request.FILES.getlist('files')
-    u = User.objects.get(user_name=request.session['user'])
-    ev = Event.objects.get(id=event_id)
-    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + ev.name
+    #userObj = User.objects.get(user_name=request.session['user'])
+    eventObj = Event.objects.get(id=event_id)
+    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + eventObj.name
     for file in fileList:
         withproperpath = pathtouploadeventfolder + '/' + file.name
         fd = open(withproperpath, 'wb+')
@@ -427,21 +426,21 @@ def uploadAddToVideo(request, event_id):
             selectedcheckprocesslist = str(toolid)  + ',' + selectedcheckprocesslist
         selectedcollect = ToolFile.objects.get(id=request.POST['collection'])
         cleanedvideoname = file.name.replace('.zip', '')
-        v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=ev)
+        v = Video(video_number=int(cleanedvideoname), uploaded_date=timezone.now(), collectiontool=selectedcollect, checkprocesstool = selectedcheckprocesslist, event=eventObj)
         v.save()
     allvideos = Video.objects.all()
     filenames = []
-    pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + ev.name
+    pathtouploadeventfolder = CURRENTLOCATION + '/videos/' + eventObj.name
     for video in allvideos:
-        if video.event_id == ev.id:
+        if video.event_id == eventObj.id:
             withproperpath = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
             filenames.append(withproperpath)
-    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    zip_filename = pathtouploadeventfolder + '/' + eventObj.name + '.zip'
     os.remove(zip_filename)
     zf = zipfile.ZipFile(zip_filename, 'w')
     for fpath in filenames:
         fdir, fname = os.path.split(fpath)
-        zip_path = os.path.join(ev.name, fname)
+        zip_path = os.path.join(eventObj.name, fname)
         zf.write(fpath, zip_path)
     zf.close()
     return redirect('/basicsite/videos/')
@@ -449,11 +448,11 @@ def uploadAddToVideo(request, event_id):
 # Loads all the videos associated with a specific event
 def showSpecificEvent(request, event_id):
     event_id = int(event_id)
-    ev = Event.objects.get(id=event_id)
+    eventObj = Event.objects.get(id=event_id)
     allvideos = Video.objects.all()
     eventvideos = []
     for video in allvideos:
-        if video.event_id == ev.id:
+        if video.event_id == eventObj.id:
             sorted = video.checkprocesstool.split(",")
             checkprocessminor = []
             intermediary = []
@@ -465,14 +464,14 @@ def showSpecificEvent(request, event_id):
             intermediary.append(checkprocessminor)
             eventvideos.append(intermediary)
     now = timezone.now()
-    return render_to_response(SPECIFICEVENTPAGETEMPLATE, {'event':ev, 'eventvideos':eventvideos,'now':now}, context_instance=RequestContext(request))
+    return render_to_response(SPECIFICEVENTPAGETEMPLATE, {'event':eventObj, 'eventvideos':eventvideos,'now':now}, context_instance=RequestContext(request))
 
 # Home page
 def showHomePage(request):
-    u = request.session['user']
-    user = User.objects.get(user_name=u)
+    userCookie = request.session['user']
+    userObj = User.objects.get(user_name=userCookie)
     request.session['messageboard'] = 'closed'
-    return render_to_response(HOMEPAGETEMPLATE, {'user':user}, context_instance=RequestContext(request))
+    return render_to_response(HOMEPAGETEMPLATE, {'user':userObj}, context_instance=RequestContext(request))
     
 # Returns a page with a list of all the pipelines created
 def showAllPipelines(request):
@@ -541,9 +540,9 @@ def searchByStatus(request):
     for track in trackswithstatus:
         intermediary = []
         intermediary.append(track)
-        v = Video.objects.get(id=track.video_identifier_id)
-        intermediary.append(v)
-        sorted = v.checkprocesstool.split(",")
+        videoObj = Video.objects.get(id=track.video_identifier_id)
+        intermediary.append(videoObj)
+        sorted = videoObj.checkprocesstool.split(",")
         checkprocessminor = []
         for toolid in sorted:
             if toolid != '':
@@ -558,7 +557,7 @@ def searchByStatus(request):
 def searchByUser(request):
     allroster = PipelineRoster.objects.all()
     try:
-        u = User.objects.get(user_name=request.POST['userfield'])
+        userObj = User.objects.get(user_name=request.POST['userfield'])
         message = 'found'
     except:
         message = 'could not find this particular'
@@ -566,21 +565,21 @@ def searchByUser(request):
         resultingPipelines = []
         for person in allroster:
             tempPipelines = []
-            if person.user_identifier.id == u.id:
-                p = Pipeline.objects.get(id=person.pipeline_identifier.id)
-                resultingPipelines.append(p)
+            if person.user_identifier.id == userObj.id:
+                pipelineObj = Pipeline.objects.get(id=person.pipeline_identifier.id)
+                resultingPipelines.append(pipelineObj)
         assignedPipelines = []
-        for ap in reversed(resultingPipelines):
-            assignedPipelines.append(ap)
+        for aPipeline in reversed(resultingPipelines):
+            assignedPipelines.append(aPipeline)
         allevents = Event.objects.order_by('-event_date')
         userevents = []
         for event in allevents:
-            if event.uploader.id == u.id:
+            if event.uploader.id == userObj.id:
                 userevents.append(event)
         allTrackFileEvents = TrackFileEvent.objects.order_by('-uploaded_date')
         userfevents = []
         for filevent in allTrackFileEvents:
-            if filevent.uploader.id == u.id:
+            if filevent.uploader.id == userObj.id:
                 userfevents.append(filevent)
         alltrackfiles = TrackFiles.objects.all()
         relatedMajor = []
@@ -594,7 +593,7 @@ def searchByUser(request):
             minor.append(trackfiles)
             relatedMajor.append(minor)
     now = timezone.now()
-    return render_to_response(SEARCHUSERPAGETEMPLATE, {'assignedPipelines':assignedPipelines,'userevents':userevents,'user':u,'now':now,'relatedMajor':relatedMajor}, context_instance=RequestContext(request))
+    return render_to_response(SEARCHUSERPAGETEMPLATE, {'assignedPipelines':assignedPipelines,'userevents':userevents,'user':userObj,'now':now,'relatedMajor':relatedMajor}, context_instance=RequestContext(request))
 
 # Searches for and returns the found video
 def searchForVideo(request):
@@ -611,9 +610,9 @@ def searchForVideo(request):
                     tool = ToolFile.objects.get(id=toolid)
                     checkprocessminor.append(tool)
             break
-    ev = Event.objects.get(id=foundvideo.event.id)
+    eventObj = Event.objects.get(id=foundvideo.event.id)
     now = timezone.now()
-    return render_to_response(SEARCHVIDEOPAGETEMPLATE, {'video':foundvideo,'event':ev,'checkprocessminor':checkprocessminor,'now':now}, context_instance=RequestContext(request))
+    return render_to_response(SEARCHVIDEOPAGETEMPLATE, {'video':foundvideo,'event':eventObj,'checkprocessminor':checkprocessminor,'now':now}, context_instance=RequestContext(request))
 
 # Searches for the pipelines and videos that are tied to this tool
 def searchByTool(request):
@@ -645,28 +644,28 @@ def searchByTool(request):
             matchedtools.append(pipelinetool)
     relatedpipes = []
     for mt in matchedtools:
-        p = Pipeline.objects.get(id=mt.pipeline_id)
-        relatedpipes.append(p)
+        pipelineObj = Pipeline.objects.get(id=mt.pipeline_id)
+        relatedpipes.append(pipelineObj)
     now = timezone.now()
     return render_to_response(SEARCHTOOLPAGETEMPLATE, {'now':now,'formattedList':formattedList,'relatedpipes':relatedpipes}, context_instance=RequestContext(request))
    
 # Returns a list of pipelines the user created and a list that the user is assigned to
 def showMyPipelines(request):
     currentuser = request.session['user']
-    u = User.objects.get(user_name=currentuser)
+    userObj = User.objects.get(user_name=currentuser)
     allroster = PipelineRoster.objects.all()
     finalList = []
     for person in allroster:
         intermediary = []
-        if person.user_identifier.id == u.id:
+        if person.user_identifier.id == userObj.id:
             intermediary.append(person)
-            p = Pipeline.objects.get(id=person.pipeline_identifier.id)
-            intermediary.append(p)
+            pipelineObj = Pipeline.objects.get(id=person.pipeline_identifier.id)
+            intermediary.append(pipelineObj)
             finalList.append(intermediary)
     allpipelines = Pipeline.objects.all()
     yourcreatedpipes=[]
     for pipe in allpipelines:
-        if pipe.creator.id == u.id:
+        if pipe.creator.id == userObj.id:
             yourcreatedpipes.append(pipe)
     now = timezone.now()
     request.session['messageboard'] = 'closed'
@@ -677,16 +676,16 @@ def submitPipeline(request):
     title = request.POST['title']
     descript = request.POST['description']
     now = timezone.now()
-    u = User.objects.get(user_name=request.session['user'])
-    p = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now,creator=u)
-    p.save()
+    userObj = User.objects.get(user_name=request.session['user'])
+    pipelineObj = Pipeline(pipeline_title=title, description=descript, started_date=timezone.now(),target_date=now,creator=userObj)
+    pipelineObj.save()
     request.session['messageboard'] = 'closed'
-    return redirect('/basicsite/specificpipeline/' + str(p.id) +'/')
+    return redirect('/basicsite/specificpipeline/' + str(pipelineObj.id) +'/')
     
 # Returns a pipeline's specific page
 def showSpecificPipeline(request, pipeline_id):
     pipeline_id = int(pipeline_id)
-    p = Pipeline.objects.get(id=pipeline_id)
+    pipelineObj = Pipeline.objects.get(id=pipeline_id)
     now = timezone.now()
     request.session['currentpipeline']=pipeline_id
     alltracks = Track.objects.all()
@@ -697,9 +696,9 @@ def showSpecificPipeline(request, pipeline_id):
         intermediary = []
         if track.pipeline_identifier_id == pipeline_id:
             intermediary.append(track)
-            v = Video.objects.get(id=track.video_identifier_id)
-            intermediary.append(v)
-            sorted = v.checkprocesstool.split(",")
+            videoObj = Video.objects.get(id=track.video_identifier_id)
+            intermediary.append(videoObj)
+            sorted = videoObj.checkprocesstool.split(",")
             checkprocessminor = []
             for toolid in sorted:
                 if toolid != '':
@@ -710,24 +709,24 @@ def showSpecificPipeline(request, pipeline_id):
     allroster = PipelineRoster.objects.all()
     roster = []
     for person in allroster:
-        if person.pipeline_identifier.id == p.id:
+        if person.pipeline_identifier.id == pipelineObj.id:
             roster.append(person)
     allcomments = CommentPipeline.objects.all()
     comments = []
     for comment in allcomments:
-        if comment.pipeline.id == p.id:
+        if comment.pipeline.id == pipelineObj.id:
             comments.append(comment)
     allpipelinetools = PipelineTools.objects.all()
     labelingtools = []
     for atool in allpipelinetools:
-        if atool.pipeline.id == p.id:
+        if atool.pipeline.id == pipelineObj.id:
             labelingtools.append(atool)
     replybox = ReplyBox()
-    p_id = int(p.id)
-    form = AddToRosterForm(pipeline_id=p_id)
-    pipelinetoolsform = PipelineToolsForm(pipeline_id=p_id)
+    pipelineObj_id = int(pipelineObj.id)
+    form = AddToRosterForm(pipeline_id=pipelineObj_id)
+    pipelinetoolsform = PipelineToolsForm(pipeline_id=pipelineObj_id)
     messageboard = request.session['messageboard']
-    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':p,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form,'comments':comments,'replybox':replybox,'messageboard':messageboard,'labelingtools':labelingtools,'pipelinetoolsform':pipelinetoolsform}, context_instance=RequestContext(request))
+    return render_to_response(SPECIFICPIPELINEPAGETEMPLATE, {'pipeline':pipelineObj,'now':now,'tracks':tracks,'finalListMajor':finalListMajor,'roster':roster,'form':form,'comments':comments,'replybox':replybox,'messageboard':messageboard,'labelingtools':labelingtools,'pipelinetoolsform':pipelinetoolsform}, context_instance=RequestContext(request))
     
 # Form to allow users to indicate another tool for use in a pipeline
 class PipelineToolsForm(forms.Form):
@@ -755,18 +754,18 @@ class PipelineToolsForm(forms.Form):
 def addToolToPipeline(request):
     selectedTool = request.POST['tools']
     intTool = int(selectedTool)
-    t = ToolFile.objects.get(id=intTool)
+    toolFileObject = ToolFile.objects.get(id=intTool)
     currentpipeline = request.session['currentpipeline']
     currentpipeline = int(currentpipeline)
-    p = Pipeline.objects.get(id=currentpipeline)
-    pt = PipelineTools(tool=t, pipeline=p)
-    pt.save()
-    return redirect('/basicsite/specificpipeline/' + str(p.id) +'/')
+    pipelineObj = Pipeline.objects.get(id=currentpipeline)
+    pipelineToolObj = PipelineTools(tool=toolFileObject, pipeline=pipelineObj)
+    pipelineToolObj.save()
+    return redirect('/basicsite/specificpipeline/' + str(pipelineObj.id) +'/')
     
 # Loads a page which allows a user to select multiple videos to add to a track
 def showCreateTrackPage(request):
     pipeline_id = int(request.session['currentpipeline'])
-    p = Pipeline.objects.get(id=pipeline_id)
+    pipelineObj = Pipeline.objects.get(id=pipeline_id)
     now = timezone.now()
     allvideos = Video.objects.all()
     allevents = Event.objects.order_by("-event_date")
@@ -789,19 +788,19 @@ def showCreateTrackPage(request):
         intermediarymajor.append(event)
         intermediarymajor.append(finalListMinor)
         finalListMajor.append(intermediarymajor)
-    return render_to_response(CREATETRACKPAGETEMPLATE, {'pipeline':p,'now':now,'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
+    return render_to_response(CREATETRACKPAGETEMPLATE, {'pipeline':pipelineObj,'now':now,'finalListMajor':finalListMajor}, context_instance=RequestContext(request))
     
 # Handles the list of selected tracks to add to pipeline
 def createTrackResponse(request):
     pipeline_id = int(request.session['currentpipeline'])
-    p = Pipeline.objects.get(id=pipeline_id)
+    pipelineObj = Pipeline.objects.get(id=pipeline_id)
     now = timezone.now()
     stringlist = request.POST['selectedfields']
     list = stringlist.split(",")
     for video_id in list:
-        v = Video.objects.get(id=int(video_id))
-        tk = Track(pipeline_identifier_id=p.id,video_identifier_id=v.id,status='created',started_date=now)
-        tk.save()
+        videoObj = Video.objects.get(id=int(video_id))
+        trackObj = Track(pipeline_identifier_id=pipelineObj.id,video_identifier_id=videoObj.id,status='created',started_date=now)
+        trackObj.save()
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
     
 # General comment box for the message boards
@@ -812,8 +811,8 @@ class ReplyBox(forms.Form):
 def showSpecificTrack(request, track_id):
     request.session['currenttrack'] = track_id
     trackid = int(track_id)
-    tk = Track.objects.get(id=trackid)
-    video = Video.objects.get(id=tk.video_identifier_id)
+    trackObj = Track.objects.get(id=trackid)
+    video = Video.objects.get(id=trackObj.video_identifier_id)
     now=timezone.now()
     replybox = ReplyBox()
     allcomments = CommentTrack.objects.all()
@@ -827,7 +826,6 @@ def showSpecificTrack(request, track_id):
     trackfilevents = []
     relatedMajor = []
     for trackfilevent in alltrackfilevents:
-        strg = trackfilevent.track.id
         if trackfilevent.track.id == trackid:
             trackfilevents.append(trackfilevent)
             trackfiles = []
@@ -844,7 +842,7 @@ def showSpecificTrack(request, track_id):
         if toolid != '':
             tool = ToolFile.objects.get(id=toolid)
             checkprocessminor.append(tool)
-    return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':tk,'video':video,'now':now,'replybox':replybox,'comments':comments,'uploadform':uploadform,'relatedMajor':relatedMajor,'checkprocessminor':checkprocessminor}, context_instance=RequestContext(request))
+    return render_to_response(SPECIFICTRACKPAGETEMPLATE, {'track':trackObj,'video':video,'now':now,'replybox':replybox,'comments':comments,'uploadform':uploadform,'relatedMajor':relatedMajor,'checkprocessminor':checkprocessminor}, context_instance=RequestContext(request))
     
 # Handles a comment post in a track page
 def postTrackComment(request):
@@ -884,7 +882,7 @@ def uploadRelatedFile(request):
     event_name = request.POST['eventname']
     descript = request.POST['description']
     fileList = request.FILES.getlist('selectedfiles')
-    u = User.objects.get(user_name=request.session['user'])
+    trackObj = User.objects.get(user_name=request.session['user'])
     current_track = int(request.session['currenttrack'])
     now=timezone.now()
     selectedcheckprocesslist = ''
@@ -896,7 +894,7 @@ def uploadRelatedFile(request):
     except:
         selectedtools = ''
     currentrack = Track.objects.get(id=int(current_track))
-    trackevent = TrackFileEvent(eventname=event_name,uploader=u,track=currentrack,description=descript,uploaded_date=now,toolsused=selectedtools)
+    trackevent = TrackFileEvent(eventname=event_name,uploader=trackObj,track=currentrack,description=descript,uploaded_date=now,toolsused=selectedtools)
     trackevent.save()
     pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + event_name
     os.mkdir(pathtouploadeventfolder)
@@ -1020,7 +1018,6 @@ class AddToRosterForm(forms.Form):
             for person in relevantPersons: 
                if person.user_identifier.id == user.id:
                    found = True
-                   #break
             if not found:
                 newArr.append(user)
         self.fields['users'] = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple, choices=[ (o.id, o.user_name ) for o in newArr])
@@ -1029,11 +1026,11 @@ class AddToRosterForm(forms.Form):
 def assignUserToPipeline(request):
     selectedpeeps = request.POST.getlist('users')
     p_id = request.session['currentpipeline']
-    p = Pipeline.objects.get(id=int(p_id))
+    pipelineObj = Pipeline.objects.get(id=int(p_id))
     for user_id in selectedpeeps:
-        u = User.objects.get(id=int(user_id))
-        pr = PipelineRoster(user_identifier=u,pipeline_identifier=p,pipeline_role=request.POST['role'])
-        pr.save()
+        userObj = User.objects.get(id=int(user_id))
+        pipelineRosterObj = PipelineRoster(user_identifier=userObj,pipeline_identifier=pipelineObj,pipeline_role=request.POST['role'])
+        pipelineRosterObj.save()
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
         
 # Handles a comment post to the Pipeline Message Board
@@ -1044,8 +1041,8 @@ def postPipelineComment(request):
         user = User.objects.get(user_name=username)
         now = timezone.now()
         p_id = request.session['currentpipeline']
-        p = Pipeline.objects.get(id=int(p_id))
-        comment = CommentPipeline(text=commenttext,author=user,posted_date=now,pipeline=p)
+        pipelineObj = Pipeline.objects.get(id=int(p_id))
+        comment = CommentPipeline(text=commenttext,author=user,posted_date=now,pipeline=pipelineObj)
         comment.save()
     request.session['messageboard'] = 'open'
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
@@ -1054,26 +1051,26 @@ def postPipelineComment(request):
 def deleteVideo(request, video_id, event_id):
     video_id = int(video_id)
     event_id = int(event_id)
-    ev = Event.objects.get(id=event_id)
-    u = User.objects.get(user_name=request.session['user'])
+    eventObj = Event.objects.get(id=event_id)
+    #userObj = User.objects.get(user_name=request.session['user'])
     allvideos = Video.objects.all()
     videos = []
     for video in allvideos:
-        if video.event.id == ev.id:
+        if video.event.id == eventObj.id:
             if video.id == video_id:
-                v = video
+                targetVideo = video
             else:
                 videos.append(video)
-    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + ev.name
-    fileinfolder = pathtouploadeventfolder + '/' + str(v.video_number) + '.zip'
+    pathtouploadeventfolder = CURRENTLOCATION + 'videos/' + eventObj.name
+    fileinfolder = pathtouploadeventfolder + '/' + str(targetVideo.video_number) + '.zip'
     os.remove(fileinfolder)
     v.delete()
     filenames = []
     for video in videos:
-        if video.event.id == ev.id:
+        if video.event.id == eventObj.id:
             filename = pathtouploadeventfolder + '/' + str(video.video_number) + '.zip'
             filenames.append(filename)
-    zip_filename = pathtouploadeventfolder + '/' + ev.name + '.zip'
+    zip_filename = pathtouploadeventfolder + '/' + eventObj.name + '.zip'
     try:
         os.remove(zip_filename)
         zf = zipfile.ZipFile(zip_filename, 'w')
@@ -1082,7 +1079,7 @@ def deleteVideo(request, video_id, event_id):
         zf = zipfile.ZipFile(zip_filename, 'w')
     for fpath in filenames:
         fdir, fname = os.path.split(fpath)
-        zip_path = os.path.join(ev.name, fname)
+        zip_path = os.path.join(eventObj.name, fname)
         zf.write(fpath, zip_path)
     zf.close()
     return redirect("/basicsite/videos/")
