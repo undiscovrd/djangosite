@@ -1084,3 +1084,8 @@ def deleteVideo(request, video_id, event_id):
     zf.close()
     return redirect("/basicsite/videos/")
         
+def removePipelineTool(request, toolID):
+    toolID=int(toolID)
+    pipelineToolObject = PipelineTools.objects.get(tool_id=toolID,pipeline_id=request.session['currentpipeline'])
+    pipelineToolObject.delete()
+    return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
