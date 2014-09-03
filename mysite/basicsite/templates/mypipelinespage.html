@@ -89,7 +89,7 @@ div.assignedpipestitle {
 
     <div class="yourpipes">
         <div class="createdpipestitle">
-            Created
+            <h3 style="text-align:center">Created</h3>
         </div>
     {% for pipeline in yourcreatedpipes %}
         <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
@@ -103,13 +103,15 @@ div.assignedpipestitle {
                 <span class="pipelinedescription">{{ pipeline.description }}</span>
             </div>
         </div>
+    {%empty%}
+        <p style="text-align:center;">You have not created any</p>
     {% endfor %}
     </div>
 
     <br>
     <div class="assignedpipes">
         <div class="assignedpipestitle">
-            Assigned
+            <h3 style="text-align:center">Assigned</h3>
         </div>
     {% for person, pipeline in finalList %}
         <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
@@ -124,7 +126,7 @@ div.assignedpipestitle {
             </div>
         </div>
     {%empty%}
-    You are in no lists!
+     <p style="text-align:center;">You are in no lists!</p>
     {% endfor %}
     </div>
 

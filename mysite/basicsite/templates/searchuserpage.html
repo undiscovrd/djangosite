@@ -176,7 +176,7 @@ div.eventdescription {
 <body>
 <div class="headerstuff">
     <div class="toolswrapper">
-    <div class="toolsh1"> Search for User</div>
+    <div class="toolsh1"> Search for {{user.user_name}}</div>
     </div>
 
     <div class="toolsections">
@@ -189,7 +189,7 @@ div.eventdescription {
 </div>
 
 <div class="bodywrapper">
-    <h3 style="text-align:center;"> Pipelines </h3>
+    <h3 style="text-align:center;"> Pipelines Assigned To</h3>
     <div class="pipelinecontainer">
     {% for pipeline in assignedPipelines %}
         <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
@@ -207,7 +207,7 @@ div.eventdescription {
         <div style="text-align:center;">Assigned to None</div>
     {% endfor %}
     </div>
-    <h3 style="text-align:center;"> Events </h3>
+    <h3 style="text-align:center;"> Events Created </h3>
     <div class="eventcontainer">
     {% for event in userevents %}
         <div class="eventheaders" onclick="window.location.href='/basicsite/specificevent/{{event.id}}/'">    
