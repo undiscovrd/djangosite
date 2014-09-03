@@ -8,6 +8,10 @@
 # NOR DISTRIBUTED TO ANY OTHER PARTY.
 #
 ############################################################
+# Views.py defines the functions and classes that construct the templates into rendered web pages
+# Author: Michael Zuccarino
+# Date: 9.2.2014
+############################################################
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
@@ -620,7 +624,7 @@ def searchvideo(request):
     now = timezone.now()
     return render_to_response(SEARCHVIDEOPAGETEMPLATE, {'video':foundvideo,'event':ev,'checkprocessminor':checkprocessminor,'now':now}, context_instance=RequestContext(request))
 
-# Searches for the pipelines that are tied to this tool
+# Searches for the pipelines and videos that are tied to this tool
 def searchtool(request):
     selectedTool = request.POST['tools']
     tool = ToolFile.objects.get(id=int(selectedTool))
@@ -629,16 +633,23 @@ def searchtool(request):
     for video in allvideos:
         if video.collectiontool.id == tool.id:
             videosWithTool.append(video)
-            sorted = video.checkprocesstool.split(",")
-            checkprocessminor = []
-            for toolid in sorted:
-                if toolid != '':
-                    tool = ToolFile.objects.get(id=toolid)
-                    checkprocessminor.append(tool)
         if selectedTool in video.checkprocesstool:
             videosWithTool.append(video)
+    formattedList = []
+    for video in videosWithTool:
+        sorted = video.checkprocesstool.split(",")
+        checkprocessminor = []
+        intermediary = []
+        for toolid in sorted:
+            if toolid != '':
+                tool = ToolFile.objects.get(id=toolid)
+                checkprocessminor.append(tool)
+        intermediary.append(video)
+        intermediary.append(checkprocessminor)
+        formattedList.append(intermediary)
+    
     now = timezone.now()
-    return render_to_response(SEARCHTOOLPAGETEMPLATE, {'videosWithTool':videosWithTool,'now':now}, context_instance=RequestContext(request))
+    return render_to_response(SEARCHTOOLPAGETEMPLATE, {'now':now,'formattedList':formattedList}, context_instance=RequestContext(request))
    
 # Returns a list of pipelines the user created and a list that the user is assigned to
 def mypipelines(request):
