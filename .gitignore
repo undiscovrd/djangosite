@@ -52,8 +52,8 @@ coverage.xml
 # Sphinx documentation
 docs/_build/
 
-*.zip
 mysite/versionlogs/*
 mysite/basicsite/relatedfiles/*
 mysite/basicsite/videos/*
 mysite/tools/*
+mysite/versionlogs/*
