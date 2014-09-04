@@ -140,12 +140,8 @@ class UploadFileForm(forms.Form):
 def downloadTool(request, toolfileid):
     conv = int(toolfileid)
     toolfile = ToolFile.objects.get(id=conv)
-    if "jpg" in str(toolfile.tf):
-        response = HttpResponse(toolfile, content_type='image/jpeg')
-        response['Contntent-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
-    elif "zip" in str(toolfile.tf):
-        response = HttpResponse(toolfile.tf, content_type='application/zip')
-        response['Content-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
+    response = HttpResponse(toolfile.tf, content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=' + toolfile.toolfilename
     return response
 
 # Loads page with just the tools for the Collection category
