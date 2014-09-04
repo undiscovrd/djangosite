@@ -36,21 +36,23 @@ def login(request):
         userexists = 'notsubmitted'
     return render(request, LOGINPAGETEMPLATE, {'userexists':userexists})
     
+# Creates a new user if the user does not already exist
 def createNewUser(request):
     username = request.POST['username']
-    email = request.POST['email']
+    emailString = request.POST['email']
     passw = request.POST['pwd']
     try:
         userObj = User.objects.get(user_name=username)
         request.session['userexists'] = 'yes'
         return redirect('/basicsite/login/')
     except:
-        userObj = User(user_name=username,password=passw,rights='user')
+        userObj = User(user_name=username,password=passw,rights='user',email=emailString)
         userObj.save()
         request.session['userexists'] = 'no'
         request.session['user'] = userObj.user_name
         return redirect('/basicsite/home/')
 
+# Attempts a login with the given credentials
 def logWithUser(request):
     username = request.POST['username']
     passw = request.POST['pwd']
@@ -70,7 +72,7 @@ class LoginForm(forms.Form):
     password = forms.CharField()
     
 # Load all tools, descending by version number, then display tools page
-def showAllTools(request):
+def loadToolsPage(request):
     alltools = ToolFile.objects.order_by('-versionnumber')
     request.session['currenttoolpage'] = '/basicsite/tools/'
     return render(request, TOOLPAGETEMPLATE, {'alltools':alltools})
@@ -147,7 +149,7 @@ def downloadTool(request, toolfileid):
     return response
 
 # Loads page with just the tools for the Collection category
-def showCollectionTools(request):
+def loadCollectionToolsPage(request):
     request.session['currenttoolpage'] = '/basicsite/toolcategories/collection/'
     tools = ToolFile.objects.order_by('-versionnumber')
     try:
@@ -173,7 +175,7 @@ def showCollectionTools(request):
     return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Collection Tools', 'relatedtools':relatedtools}, context_instance=RequestContext(request))
 
 # Loads page with just the tools for the Checking/Processing category
-def showCheckingProcessingTools(request):
+def loadCheckingProcessingToolsPage(request):
     request.session['currenttoolpage'] = '/basicsite/toolcategories/checkprocess/'
     tools = ToolFile.objects.order_by('-versionnumber')
     try:
@@ -199,7 +201,7 @@ def showCheckingProcessingTools(request):
     return render_to_response(SPECIFICTOOLPAGETEMPLATE, { 'alltools' : alltools, 'pagetitle' : 'Checking & Processing Tools', 'relatedtools':relatedtools}, context_instance=RequestContext(request))
 
 # Loads page with just the tools for the Labeling category
-def showLabelingTools(request):
+def loadLabelingToolsPage(request):
     request.session['currenttoolpage'] = '/basicsite/toolcategories/labeling/'
     tools = ToolFile.objects.order_by('-versionnumber')
     try:
@@ -289,7 +291,7 @@ def uploadVideos(request):
     return redirect('/basicsite/uploadvideo/')
     
 # Loads and returns tool family page based on what family id is passed in the url
-def showToolFamily(request, familyid):
+def loadToolFamilyPage(request, familyid):
     conv_id = int(familyid)
     everytool = ToolFile.objects.order_by('-versionnumber')
     alltools = []
@@ -300,7 +302,7 @@ def showToolFamily(request, familyid):
             alltools.append(tool)
     return render_to_response(SPECIFICFAMILYPAGETEMPLATE, {'alltools':alltools, 'familyname':familyname}, context_instance=RequestContext(request))
 
-# Delets tool object from database
+# Deletes tool object from database
 def deleteTool(request, toolid):
     tool = ToolFile.objects.get(id=toolid)
     tool.delete()    
@@ -896,8 +898,8 @@ def uploadRelatedFile(request):
     currentrack = Track.objects.get(id=int(current_track))
     trackevent = TrackFileEvent(eventname=event_name,uploader=trackObj,track=currentrack,description=descript,uploaded_date=now,toolsused=selectedtools)
     trackevent.save()
-    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + event_name
-    os.mkdir(pathtouploadeventfolder)
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + str(request.session['currenttrack']) + '/' + event_name
+    os.makedirs(pathtouploadeventfolder)
     filenames = []
     for file in fileList:
         withproperpath = pathtouploadeventfolder + '/' + file.name
@@ -927,7 +929,7 @@ def uploadRelatedFile(request):
 def downloadRelatedEventFiles(request, relatedevent_id):
     relatedevent_id = int(relatedevent_id)
     trackfilevent = TrackFileEvent.objects.get(id=relatedevent_id)
-    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + str(request.session['currenttrack']) + '/' + trackfilevent.eventname
     zip_filename = pathtouploadeventfolder + '/' + trackfilevent.eventname + '.zip'
     event_handle = open(zip_filename, 'rb')
     response = HttpResponse(event_handle, content_type='application/zip')
@@ -940,7 +942,7 @@ def downloadSingleRelatedEventFile(request, relatedfile_id):
     trackfile = TrackFiles.objects.get(id=relatedfile_id)
     trackfilevent_id = trackfile.trackfilevent.id
     trackfilevent = TrackFileEvent.objects.get(id=trackfilevent_id)
-    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + str(request.session['currenttrack']) + '/' + trackfilevent.eventname
     zip_filename = pathtouploadeventfolder + '/' + trackfile.filename
     event_handle = open(zip_filename, 'rb')
     response = HttpResponse(event_handle)
@@ -951,7 +953,7 @@ def downloadSingleRelatedEventFile(request, relatedfile_id):
 def deleteAllFilesInEvent(request, relatedevent_id):
     relatedevent_id = int(relatedevent_id)
     trackfilevent = TrackFileEvent.objects.get(id=relatedevent_id)
-    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + str(request.session['currenttrack']) + '/' + trackfilevent.eventname
     shutil.rmtree(pathtouploadeventfolder)
     alltrackfiles = TrackFiles.objects.all()
     for trackfile in alltrackfiles:
@@ -966,7 +968,7 @@ def deleteSingleRelatedFile(request, relatedfile_id):
     trackfile = TrackFiles.objects.get(id=relatedfile_id)
     trackfilevent_id = trackfile.trackfilevent.id
     trackfilevent = TrackFileEvent.objects.get(id=trackfilevent_id)
-    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + trackfilevent.eventname
+    pathtouploadeventfolder = CURRENTLOCATION + 'relatedfiles/' + str(request.session['currenttrack']) + '/' + trackfilevent.eventname
     fileinfolder = pathtouploadeventfolder + '/' + trackfile.filename
     os.remove(fileinfolder)
     trackfile.delete()
@@ -1084,8 +1086,54 @@ def deleteVideo(request, video_id, event_id):
     zf.close()
     return redirect("/basicsite/videos/")
         
+# Remove a selected tool from use within a pipeline
 def removePipelineTool(request, toolID):
     toolID=int(toolID)
     pipelineToolObject = PipelineTools.objects.get(tool_id=toolID,pipeline_id=request.session['currentpipeline'])
     pipelineToolObject.delete()
     return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
+    
+# Deletes pipeline, however keeps all the relevant files in the files system as a backup
+def deletePipeline(request,pipelineID):
+    pipelineID = int(pipelineID)
+    pipelineObj = Pipeline.objects.get(id=pipelineID)
+    pipelineRoster = PipelineRoster.objects.all()
+    for person in pipelineRoster:
+        if person.pipeline_identifier.id == pipelineObj.id:
+            person.delete()
+    allpipelinecomments = CommentPipeline.objects.all()
+    for comment in allpipelinecomments:
+        if comment.pipeline.id == pipelineObj.id:
+            comment.delete()
+    alltracks = Track.objects.all()
+    alltrackcomments = CommentTrack.objects.all()
+    alltrackevents = TrackFileEvent.objects.all()
+    for track in alltracks:
+        if track.pipeline_identifier.id == pipelineObj.id:
+            for comment in alltrackcomments:
+                if comment.track.id == track.id:
+                    comment.delete()
+            for event in alltrackevents:
+                if event.track.id == track.id:
+                    event.delete()
+            track.delete()
+    pipelineObj.delete()
+    return redirect('/basicsite/pipelines/')
+  
+# Removes a track and relevant comments, however keeps all the relevant files in the file system as a back up  
+def removeTrack(request,trackID):
+    trackID = int(trackID)
+    track = Track.objects.get(id=trackID)
+    alltrackcomments = CommentTrack.objects.all()
+    alltrackevents = TrackFileEvent.objects.all()
+    for comment in alltrackcomments:
+        if comment.track.id == track.id:
+            comment.delete()
+    for event in alltrackevents:
+        if event.track.id == track.id:
+            event.delete()
+    track.delete()
+    return redirect('/basicsite/specificpipeline/' + str(request.session['currentpipeline']) +'/')
+    
+    
+    

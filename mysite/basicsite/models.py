@@ -21,6 +21,7 @@ class User(models.Model):
     user_name = models.CharField(max_length=30)
     password = models.CharField(max_length=30)
     rights = models.CharField(max_length=30)
+    email = models.EmailField(max_length=75)
 	
 # A task that contains many tracks, i.e. TV Wakeup Tagging -> process for video3, process for video5, process for video6, etc
 class Pipeline(models.Model):

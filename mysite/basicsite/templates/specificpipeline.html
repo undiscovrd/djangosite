@@ -33,6 +33,12 @@ $(function() {
            $("#toolhiddendivid").show(); 
        }; 
     });
+    $('.confirm').click(function(e) {
+        e.preventDefault();
+        if (window.confirm("Are you sure?")) {
+            location.href = this.href;
+        }
+    });
 });
 </script>
 <script>
@@ -248,7 +254,7 @@ div.toolrow {
             <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
             <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
             <br>
-            <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span>
+            <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span> | <a class="confirm" style="color: #FF6103" href="/basicsite/deletepipeline/{{ pipeline.id }}/">delete</a>
         </div>
         <div class="pipelineotherstuff">
             <span class="pipelinedescription">{{ pipeline.description }}</span>

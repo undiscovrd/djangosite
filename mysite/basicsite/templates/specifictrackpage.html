@@ -15,7 +15,12 @@ $(function() {
            $("#uploadrelatedfileid").show(); 
        }; 
     });
-
+    $('.confirm').click(function(e) {
+        e.preventDefault();
+        if (window.confirm("Are you sure?")) {
+            location.href = this.href;
+        }
+    });
 });
 </script>
 <script>
@@ -216,7 +221,7 @@ li {
 
 <div class="bodywrapper">
     <div class="trackheaderstuff">
-        <span class="trackheaderrow">Track id: #{{track.id}} </span>
+        <span class="trackheaderrow">Track id: #{{track.id}} </span>  | <a class="confirm" style="color: #FF6103" href="/basicsite/removetrack/{{ track.id }}/">remove</a>
     </div>
     <div class="colmaster" id="idcolmaster{{video.id}}">
         <div class="col" id="colvideo">
