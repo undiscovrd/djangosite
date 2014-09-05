@@ -1,4 +1,5 @@
 Setting up GoodLoaf
+Michael Zuccarino, 9.5.14
 ---------------------
 1. Ensure that Python (2.7 used here) is installed
 2. Set up a database.
