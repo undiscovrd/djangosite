@@ -4,7 +4,7 @@ Michael Zuccarino, 9.5.14
 1. Ensure that Python (2.7 used here) is installed
 2. Set up a database.
     Credentials: databasename: djangobase@localhost
-                       user: goodloaf
+                       user: root
                        pass: dosh1
     Use MySQL.
         How To install MySQL
@@ -15,5 +15,5 @@ Michael Zuccarino, 9.5.14
     Note: Do not use pip to install, just run python setup.py install from inside the unzipped folder
 4. cd into the Goodloaf/mysite/ directory
 5. run `python ./manage.py syncdb` to initialize the database you created with the right tables
-6. to run server, type 'python ./manage.py runserver'
-7. get to the landing page by going to url: `localhost:8000`
+6. to run server, type 'python ./manage.py runserver [serveraddress:portnumber]'. More info can be found here https://docs.djangoproject.com/en/1.6/ref/django-admin/#runserver-port-or-address-port
+7. get to the landing page by going to url: `serveraddress:portnumber`
