@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<script>
+window.onload = initial;
+function initial(){
+    fruits = [];
+}
+function SelectRow(rowid) {
+    var found = false;
+    var newArr = [];
+    for(var i = 0; i < fruits.length; i++) {
+        row = fruits[i]
+        if (row == rowid) {
+            var elmname = 'idcolmaster' + row;
+            var elm = document.getElementById(elmname);
+            elm.style.backgroundColor = '#31649e';  
+            found = true;
+        }
+        else
+        {
+            newArr[newArr.length] = row;
+        }
+    }
+    if (!found) {
+        newArr[newArr.length] = rowid;
+    }
+    fruits = [];
+    fruits = newArr;
+    for(var i = 0; i < fruits.length; i++) {
+        row = fruits[i];
+        var elmname = 'idcolmaster' + row;
+        var elm = document.getElementById(elmname);
+        elm.style.backgroundColor = '#00C957';
+    }
+    var elm = document.getElementById('idselectedfields');
+    elm.value = fruits.join();
+}
+function sendarray() {
+    var elm = document.getElementById('idselectedfields');
+    elm.value = fruits.join();
+    document.getElementById("formid").submit();
+}
+
+</script>
+</head>
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+div.headerstuff {
+    #margin-top:-90px;
+    position:fixed;
+    #background-color:black;
+    width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
+}
+a.sectionbuttons {
+    font-size: 15px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+div.bodywrapper {
+    padding-top:100px;
+    width: 800px;
+    margin-left:auto;
+    margin-right:auto;
+}
+div.pipelinerow {
+    height:150px;
+    background: url("{{ STATIC_URL }}toolsectionslight.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+span.pipelinetitle {
+    font-size:30px;
+    color: #31649E;
+}
+div.colmaster {
+    width:100%;
+    height:85px;
+    background-color: #31649e;
+    border-width: 1px;
+    border-style: solid;
+}
+div.eventheaders {
+    margin-top:10px;
+    background-color:#BBFFFF;
+    color: #31649E;
+    text-align:center;
+}
+
+</style>
+<form name="formname" id="formid" method="POST" action="/basicsite/addtracks/" >
+    {% csrf_token %}
+    <input type="hidden" name="selectedfields" id="idselectedfields">
+</form>
+
+
+<body>
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1"> Create Track </div>
+    </div>
+
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/home/">Home</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelines/">All Pipelines</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/filterpage/">Filter Page</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/mypipelines/">My Pipelines</a></span>
+        <span><a style="color: #0CE84D;" class="sectionbuttons" href="/basicsite/constructpipeline/">Construct Pipeline</a></span>
+    </div>
+</div>
+
+<div class="bodywrapper">
+    <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
+        <div class="pipelinetitlestuff">
+            <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
+            <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
+            <br>
+            <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span>
+        </div>
+        <div class="pipelineotherstuff">
+            <span class="pipelinedescription">{{ pipeline.description }}</span>
+        </div>
+    </div>
+    <div class="explanation">
+        <br>
+        <span style="text-align:center;">Click to select videos you want to add to this pipeline</span>
+    </div>
+    <div class="clickdiv" style="border-width: 1px; border-style: solid; border-color: #0CE84D;" onclick="sendarray()" >
+        <br>
+        <span style="text-align:center;">Submit the selected videos</span>
+    </div>
+    <div class="videolistwraper">
+        {% for event, majorlist  in finalListMajor %}
+            <div class="eventheaders">
+                <br>
+                <span class="eventname">{{event.name}}</span><span><a style="color: #8E388E; font-size:14px;" href="/basicsite/downloadevent/{{ event.id }}/"> download </a></span>
+                <br>
+                <span class="eventdate">{{event.event_date}} </span><span class="eventuploader">| Uploaded by: {{event.uploader.user_name}}</span>
+                <br>
+                <span class="eventdescription">{{event.description}}</span>
+            </div>
+            {% for video, subtup  in majorlist %}
+                <div class="colmaster" id="idcolmaster{{video.id}}" onclick="SelectRow({{video.id}});">
+                    <div class="col" id="colvideo">
+                        <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/{{ event.id }}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
+                    </div>
+                    <div class="col" id="coldata">
+                        <span class="videotablesegmentdata" id="uploaddate" ><span style="font-size:14px; color: #97FFFF;"> Uploaded on: </span> {{ video.uploaded_date }}</span>
+                        <span class="videotablesegmentdata" id="collectiontoolused" ><span style="font-size:14px; color: #97FFFF;">Collection Tool:</span> {{ video.collectiontool.tooltitle }}</span>
+                        <span style="font-size:14px; color: #97FFFF;padding-left:5px;">Checking/Processing Tools:</span>
+                        {% for tup in subtup %}
+                            <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" > {{ tup.tooltitle }},</span>
+                        {% endfor %}
+                        <br>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+</head>
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+div.headerstuff {
+    #margin-top:-90px;
+    position:fixed;
+    #background-color:black;
+    width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
+}
+a.sectionbuttons {
+    font=size: 26px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+</style>
+
+<body>
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1"> video assign to task page </div>
+    </div>
+
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/home/">Home</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/videos/">All Videos</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/videocategories/filterpage/">Filter Page</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/videocategories/assigntotaskpage/">Assign to Task</a></span>
+        <span><a style="color: #0CE84D" class="sectionbuttons" href="/basicsite/uploadvideo/">Upload New Event</a></span>
+    </div>
+</div>
+
+{% for video in allvideos %}
+
+
+{% endfor %}
+
+
+
+</body>
+</html>

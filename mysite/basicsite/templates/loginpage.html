@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Landing!</title>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $("#click1").click(function(){
+       if($('#createnewhidden').is(':visible')){
+           $("#createnewhidden").hide();
+           $("#click2").show();
+       } 
+       else
+       {
+           $("#createnewhidden").show(); 
+           $("#click2").hide();
+       }; 
+    });
+    $("#click2").click(function(){
+       if($('#logintoexistingid').is(':visible')){
+           $("#logintoexistingid").hide();
+           $("#click1").show();
+       } 
+       else
+       {
+           $("#logintoexistingid").show();
+           $("#click1").hide();
+       }; 
+    });
+});
+</script>
+<style>
+    body {
+        margin:0px;
+        font-family: "Avenir Next", sans-serif;
+    }
+	div.titlebar {
+        background: url("/static/topBar.png");
+        background-size: 100% 120px;
+        background-repeat: no-repeat;
+        width:100%;
+        height:120px;
+    }
+    div.title {
+        background: url("/static/welcometodatacollectiontitle.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        width:617px;
+        height:39px;
+        margin-top:-80px;
+        margin-left:auto;
+        margin-right:auto;
+    }
+       
+    div.loginformdiv {
+        background: url("/static/loginrectangle.png");
+        background-size: 100% 120px;
+        background-repeat: no-repeat;
+        height:400px;
+        width:500px;
+        margin-left:auto;
+        margin-right:auto;
+        text-align:center;
+    }
+    
+    div.createnewuserdiv {
+        background: url("/static/loginrectangle.png");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        height:100px;
+        width:300px;
+        margin-top:100px;
+        margin-left:auto;
+        margin-right:auto;
+        text-align:center;
+        padding-top:60px;
+        font-size:30px;
+        color: white;
+        text-shadow:0px 2px 10px #9C9C9C;
+    }
+    
+    div.createnewform {
+        text-align:center;
+        background: url("/static/toolsectionslight.png");
+        background-size: 300px 100%;
+        background-repeat: no-repeat;
+        margin-left:auto;
+        margin-right:auto;
+        width:300px;
+    }
+    
+    div.loginform {
+        text-align:center;
+        background: url("/static/toolsectionslight.png");
+        background-size: 300px 100%;
+        background-repeat: no-repeat;
+        margin-left:auto;
+        margin-right:auto;
+        width:300px;
+    }
+
+    div.messagediv {
+        margin-top:50px;
+        margin-left:auto;
+        margin-right:auto;
+        padding-top:20px;
+        padding-bottom:20px;
+        text-align:center;
+        border-width: 1px;
+        border-style: solid;
+        width:300px;
+    }
+</style>
+</head>
+
+
+<body>
+<div class="wholewrapper">
+    <div class="titlebar"></div>
+    <div class="title"></div>
+    {% if userexists == 'yes' %}
+    <div class="messagediv">
+        <h3>user already exists!</h3>
+    </div>
+    {% elif userexists == 'incorrectlogin' %}
+    <div class="messagediv">
+        <h3>wrong login information!</h3>
+    </div>
+    {% elif userexists == 'notsubmitted' %}
+    {% else %}
+    {% endif %}
+    <div class="createnewuserdiv" id ="click2">
+        login to existing
+    </div>
+        <div class="logintoexistingdiv" id="logintoexistingid" style="display:none;">
+            <div class="loginform">
+                <form id="loginformid" action="/basicsite/logwithuser/" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    User name: <input type="text" name="username"><br>
+                    Password: <input type="password" name="pwd"><br>
+                    <input type="submit" value="login!"/>
+                </form>
+            </div>
+        </div>
+        
+    <div class="createnewuserdiv" id="click1">
+        create new account
+    </div>
+        <div class="createnewhiddendiv" id="createnewhidden" style="display:none;">
+            <div class="createnewform" >
+                <form id="createnewformid" action="/basicsite/createnewuser/" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    User name: <input type="text" name="username"><br>
+                    Email: <input type="text" name="email"><br>
+                    Password: <input type="password" name="pwd"><br>
+                    <input type="submit" value="Create!"/>
+                </form>
+            </div>
+        </div>
+</div>
+
+
+</body>
+</html>

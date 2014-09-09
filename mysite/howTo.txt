@@ -1,0 +1,19 @@
+Setting up GoodLoaf
+Michael Zuccarino, 9.5.14
+---------------------
+1. Ensure that Python (2.7 used here) is installed
+2. Set up a database.
+    Credentials: databasename: djangobase@localhost
+                       user: root
+                       pass: dosh1
+    Use MySQL.
+        How To install MySQL
+            - Download and install MySQL (just getting the full suite of tools is easiest. For light install, you just need the server and the MySQL workbench)
+            - Create a connection with connection name "djangobase", then use the user and password specified above
+            - Create a schema called djangobase (database essentially but called schema here)
+3. Install Django (version 1.6 used here)
+    Note: Do not use pip to install, just run python setup.py install from inside the unzipped folder
+4. cd into the Goodloaf/mysite/ directory
+5. run `python ./manage.py syncdb` to initialize the database you created with the right tables
+6. to run server, type 'python ./manage.py runserver [serveraddress:portnumber]'. More info can be found here https://docs.djangoproject.com/en/1.6/ref/django-admin/#runserver-port-or-address-port
+7. get to the landing page by going to url: `serveraddress:portnumber`

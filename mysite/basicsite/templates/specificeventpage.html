@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+</head>
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+div.headerstuff {
+    #margin-top:-90px;
+    position:fixed;
+    #background-color:black;
+    width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
+}
+a.sectionbuttons {
+    font=size: 26px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+div.pagewrapper {
+    padding-top:60px;
+    margin-left:auto;
+    margin-right:auto;
+    width:850px;
+   # text-align:center;
+}
+div.eventlistwrapper {
+    width:840px;
+}
+
+span.videotablesegment {
+    border-width: 1px;
+    border-style: solid;
+    font-size: 20px;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+span.videotablesegmentdata {
+    font-size:14px;
+    display:block;
+}
+#videonumber {
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:30px;
+    padding-bottom:24px;
+}
+#uploaddate {
+    padding-left:5px;
+    font-size:18px;
+    color:white;
+    border-color: black;
+    border-top:0px;
+}
+#collectiontoolused {
+    padding-left:5px;
+    color:white;
+    border-color: black;
+    border-top:0px;
+}
+#checkprocesstoolused {
+    padding-left:5px;
+    color:white;
+    border-color: black;
+    display:inline;
+    border-style: none;
+}
+div.colmaster {
+    width:100%;
+    height:85px;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+        border-width: 1px;
+    border-style: solid;
+}
+div.col {
+    float:left;
+}
+#colvideo {
+    margin-top:30px;
+    width:55px;
+}
+#coldata {
+    width:500px;
+    height:75px;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+div.eventheaders {
+    width:100%;
+    margin-top:20px;
+    margin-left:auto;
+    margin-right:auto;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
+}
+span.eventname {
+    color: #31649E;
+    font-size: 14px;
+}
+span.eventdate {
+    color: #31649E;
+}
+span.eventdescription {
+    color: #31649E;
+}
+span.eventuploader {
+    color: #31649E;
+    font-size: 14px;
+}
+div.eventrow {
+    text-align:center;
+}
+</style>
+
+<body>
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1"> video filter page </div>
+    </div>
+
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/home/">Home</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/videos/">All Videos</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/videocategories/filterpage/">Filter Page</a></span>
+        <span><a style="color: #0CE84D;" class="sectionbuttons" href="/basicsite/uploadvideo/">Upload New Event</a></span>
+    </div>
+</div>
+<div class="pagewrapper">
+    <div class="eventrow">
+        <div class="eventheaders" onclick="window.location.href='/basicsite/specificevent/{{event.id}}/'">
+        <br>
+        <span class="eventname">{{event.name}}</span><span><a style="color: #8E388E; font-size:14px;" href="/basicsite/downloadevent/{{ event.id }}/"> download </a></span>
+        <span><a style="color: #FF4500; font-size:14px;" href="/basicsite/addtoevent/{{ event.id }}/">add to</a></span>
+        <br>
+        <span class="eventdate">{{event.event_date}}, {{event.event_date|timesince:now}} ago </span><span class="eventuploader">| Uploaded by: {{event.uploader.user_name}}</span>
+        <br>
+        <span class="eventdescription">{{event.description}}</span>
+    </div>
+    </div>
+    {% for video, subtup  in eventvideos %}
+        <div class="colmaster">
+            <div class="col" id="colvideo">
+                <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/{{ event.id }}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
+            </div>
+            <div class="col" id="coldata">
+                <span class="videotablesegmentdata" id="uploaddate" ></span><span style="font-size:12px; color: #97FFFF;"> Uploaded on: </span> <span style="color:white;font-size:14px;">{{ video.uploaded_date }} | {{video.uploaded_date|timesince:now}} ago</span>
+                <span class="videotablesegmentdata" id="collectiontoolused" ><span style="font-size:12px; color: #97FFFF;">Collection Tool:</span> {{ video.collectiontool.tooltitle }}</span>
+                <span style="font-size:14px; color: #97FFFF;padding-left:5px;">Checking/Processing Tools:</span>
+                {% for tup in subtup %}
+                    <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" > {{ tup.tooltitle }},</span>
+                {% endfor %}
+                <br>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+</body>
+</html>

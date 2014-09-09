@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+</head>
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+div.headerstuff {
+    #margin-top:-100px;
+    position:fixed;
+    #background-color:black;
+    width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
+}
+a.sectionbuttons {
+    font=size: 26px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+div.formwrapper {
+    padding-top:60px;
+    margin-left:auto;
+    margin-right:auto;
+    width:400px;
+}
+li {
+    list-style-type:none
+}
+</style>
+<body>
+
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1">Add To Event Page</div>
+    </div>
+
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/home/">Home</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/videos/">All Videos</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/videocategories/filterpage/">Filter Page</a></span>
+        <span><a style="color: #0CE84D" class="sectionbuttons" href="/basicsite/uploadvideo/">Upload New Event</a></span>
+    </div>
+</div>
+
+<div class="formwrapper">
+    <form id="uploadformid" action="/basicsite/handleaddtoevent/{{ event.id }}/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p style="font-size:22px;"> Adding Videos to: {{event.name}} </p>
+        <p> Collection Tools Used? </p>
+        {{ form.collection }}
+        <p> Checking/Process Tools Used </p>
+        {{ form.checkprocess }}
+        <input type="file" name="files" multiple />
+        <p><input type="submit" value="Upload" /></p>
+    </form>
+</div>
+
+
+</body>
+</html>

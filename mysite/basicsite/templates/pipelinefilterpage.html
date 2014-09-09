@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $("#statusfilterdiv").click(function(){
+       if($('#statusfilterhiddendivid').is(':visible')){
+           $("#statusfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#statusfilterhiddendivid").show(); 
+       }; 
+    });
+    $("#userfilterdiv").click(function(){
+       if($('#userfilterhiddendivid').is(':visible')){
+           $("#userfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#userfilterhiddendivid").show(); 
+       }; 
+    });
+    $("#videofilterdiv").click(function(){
+       if($('#videofilterhiddendivid').is(':visible')){
+           $("#videofilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#videofilterhiddendivid").show(); 
+       }; 
+    });
+    $("#toolfilterdiv").click(function(){
+       if($('#toolfilterhiddendivid').is(':visible')){
+           $("#toolfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#toolfilterhiddendivid").show(); 
+       }; 
+    });
+    $('#statusfilterdiv').hover( function(){
+       $(this).css('background-color', '#98FB98');
+        },
+    function(){
+       $(this).css('background-color', 'white');
+    });
+    $('#userfilterdiv').hover( function(){
+       $(this).css('background-color', '#98FB98');
+    },
+    function(){
+       $(this).css('background-color', 'white');
+    });
+    $('#videofilterdiv').hover( function(){
+       $(this).css('background-color', '#98FB98');
+    },
+    function(){
+       $(this).css('background-color', 'white');
+    });
+    $('#toolfilterdiv').hover( function(){
+       $(this).css('background-color', '#98FB98');
+    },
+    function(){
+       $(this).css('background-color', 'white');
+    });
+});
+</script>
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+div.headerstuff {
+    #margin-top:-90px;
+    position:fixed;
+    #background-color:black;
+    width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
+}
+a.sectionbuttons {
+    font-size: 15px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+div.bodywrapper {
+    padding-top:100px;
+    width: 800px;
+    margin-left:auto;
+    margin-right:auto;
+}
+div.assignhiddendiv {
+    border-width: 1px;
+    border-style: solid;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+li {
+list-style-type:none;
+}
+#id_tools {
+    width:600px;
+    margin-left:auto;
+    margin-right:auto;
+    padding-left:200px;
+}
+</style>
+
+<body>
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1"> Pipeline Filter Page</div>
+    </div>
+
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/home/">Home</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelines/">All Pipelines</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/filterpage/">Filter Page</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/mypipelines/">My Pipelines</a></span>
+        <span><a style="color: #0CE84D;" class="sectionbuttons" href="/basicsite/constructpipeline/">Construct Pipeline</a></span>
+    </div>
+</div>
+
+<div class="bodywrapper">
+    <div class="statusfilter">
+        <div class="statusfilterdiv">
+            <div style="border-width: 1px; border-style: solid; border-color: #0CE84D;text-align:center;" id="statusfilterdiv" >
+                <br>
+                <span style="">Filter By Status</span>
+            </div>
+        </div>
+        <div class="assignhiddendiv" id="statusfilterhiddendivid" style="display: none;text-align:center;">
+            <div class="statuslist">
+            <br>
+            List of possible status:
+            <br>
+            {% for status in statuslist %}
+                <br><span style="padding-left:10px;color:#473C8B;">>> {{status}}</span>
+            {% endfor %}
+            </div>
+            <br>
+            <form name="statusfilterform" id="statusfilterformid" method="POST" action="/basicsite/searchstatus/" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <div class="invitetoroster">
+                    <span style="">Look up</span>
+                    {{ statusform.statusfield }}
+                </div>
+                <br>
+                <p><input type="submit" value="search" /></p>
+            </form>
+        </div>
+        <br>
+    </div>
+    
+    <div class="userfilter">
+        <div class="userfilterdiv">
+            <div style="border-width: 1px; border-style: solid; border-color: #0CE84D;text-align:center;" id="userfilterdiv" >
+                <br>
+                <span style="">Filter by User</span>
+            </div>
+        </div>
+        <div class="assignhiddendiv" id="userfilterhiddendivid" style="display: none;text-align:center;">
+            <div class="inroster">
+            <br>
+            List of users:
+            {% for user in allusers %}
+                <br><span style="padding-left:10px;color:#473C8B;">>> {{ user.user_name }}</span>
+            {% endfor %}
+            </div>
+            <form name="userfilterform" id="userfilterformid" method="POST" action="/basicsite/searchuser/" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <div class="invitetoroster">
+                    <br>
+                    <span style="">Look up</span>
+                    {{ userform.userfield }}
+                </div>
+                <p><input type="submit" value="search" /></p>
+            </form>
+        </div>
+        <br>
+    </div>
+    
+    <div class="videofilter">
+        <div class="videofilterdiv">
+            <div style="border-width: 1px; border-style: solid; border-color: #0CE84D;text-align:center;" id="videofilterdiv" >
+                <br>
+                <span style="">Filter by Video</span>
+            </div>
+        </div>
+        <div class="assignhiddendiv" id="videofilterhiddendivid" style="display: none;text-align:center;">
+            <div class="inroster">
+            </div>
+            <form name="videofilterform" id="videofilterformid" method="POST" action="/basicsite/searchvideo/" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <div class="invitetoroster">
+                    <br>
+                    <span style="">Just type in video number</span>
+                    {{ videoform.videofield }}
+                </div>
+                <br>
+                <p><input type="submit" value="submit" /></p>
+            </form>
+        </div>
+        <br>
+    </div>
+    
+    <div class="toolfilter">
+        <div class="toolfilterdiv">
+            <div style="border-width: 1px; border-style: solid; border-color: #0CE84D;text-align:center;" id="toolfilterdiv" >
+                <br>
+                <span style="">Filter by Tool</span>
+            </div>
+        </div>
+        <div class="assignhiddendiv" id="toolfilterhiddendivid" style="display: none;">
+            <div class="inroster">
+            </div>
+            <form name="toolfilterform" id="toolfilterformid" method="POST" action="/basicsite/searchtool/" enctype="multipart/form-data" >
+                {% csrf_token %}
+                <div class="invitetoroster">
+                    <br>
+                    {{ toolsform.tools }}
+                </div>
+                <p style="text-align:center;"><input type="submit" value="search" /></p>
+            </form>
+        </div>
+        <br>
+    </div>
+</div>
+
+</body>
+</html>

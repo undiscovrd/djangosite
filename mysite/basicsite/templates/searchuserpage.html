@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $("#statusfilterdiv").click(function(){
+       if($('#statusfilterhiddendivid').is(':visible')){
+           $("#statusfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#statusfilterhiddendivid").show(); 
+       }; 
+    });
+    $("#userfilterdiv").click(function(){
+       if($('#userfilterhiddendivid').is(':visible')){
+           $("#userfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#userfilterhiddendivid").show(); 
+       }; 
+    });
+    $("#videofilterdiv").click(function(){
+       if($('#videofilterhiddendivid').is(':visible')){
+           $("#videofilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#videofilterhiddendivid").show(); 
+       }; 
+    });
+    $("#toolfilterdiv").click(function(){
+       if($('#toolfilterhiddendivid').is(':visible')){
+           $("#toolfilterhiddendivid").hide();
+       } 
+       else
+       {
+           $("#toolfilterhiddendivid").show(); 
+       }; 
+    });
+});
+</script>
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+div.headerstuff {
+    #margin-top:-90px;
+    position:fixed;
+    #background-color:black;
+    width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
+}
+a.sectionbuttons {
+    font-size: 15px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+div.bodywrapper {
+    padding-top:100px;
+    width: 800px;
+    margin-left:auto;
+    margin-right:auto;
+}
+div.assignhiddendiv {
+    border-width: 1px;
+    border-style: solid;
+    background-color:#F7F7F7;
+}
+li {
+list-style-type:none;
+}
+div.pipelinerow {
+    height:150px;
+    background: url("{{ STATIC_URL }}toolsectionslight.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+span.pipelinetitle {
+    font-size:30px;
+    color: #31649E;
+}
+div.eventheaders {
+    width:100%;
+    margin-top:20px;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
+}
+span.eventname {
+    color: #31649E;
+    font-size: 25px;
+}
+span.eventdate {
+    color: #31649E;
+}
+span.eventdescription {
+    color: #31649E;
+}
+span.eventuploader {
+    color: #31649E;
+    font-size: 18px;
+}
+div.relatedfiles-container {
+    height:300px;
+}
+div.relatedfilesheader {
+    width:70%
+    height:40px;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+    background: url("/static/toolsectionslight.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
+}
+div.changestatus {
+    border-width: 1px;
+    border-style: solid;
+    background-color:#F7F7F7;
+}
+div.relatedfile {
+    padding: 2px 2px 2px 2px;
+    width:600px;
+    margin-left:auto;
+    margin-right:auto;
+    border-width: 1px;
+    border-style: solid;
+    background-color:#F7F7F7;
+}
+div.eventname {
+    color:#104E8B;
+    display:inline;
+}
+div.eventdescription {
+    border-left:3px solid #BCEE68;
+    color:#282828;
+    font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif;
+}
+</style>
+
+<body>
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1"> Search for {{user.user_name}}</div>
+    </div>
+
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/home/">Home</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelines/">All Pipelines</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/filterpage/">Filter Page</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/mypipelines/">My Pipelines</a></span>
+        <span><a style="color: #0CE84D" class="sectionbuttons" href="/basicsite/constructpipeline/">Construct Pipeline</a></span>
+    </div>
+</div>
+
+<div class="bodywrapper">
+    <h3 style="text-align:center;"> Pipelines Assigned To</h3>
+    <div class="pipelinecontainer">
+    {% for pipeline in assignedPipelines %}
+        <div class="pipelinerow" onclick="window.location.href='/basicsite/specificpipeline/{{ pipeline.id }}/'">
+            <div class="pipelinetitlestuff">
+                <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
+                <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
+                <br>
+                <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span>
+            </div>
+            <div class="pipelineotherstuff">
+                <span class="pipelinedescription">{{ pipeline.description }}</span>
+            </div>
+        </div>
+    {% empty %}
+        <div style="text-align:center;">Assigned to None</div>
+    {% endfor %}
+    </div>
+    <h3 style="text-align:center;"> Events Created </h3>
+    <div class="eventcontainer">
+    {% for event in userevents %}
+        <div class="eventheaders" onclick="window.location.href='/basicsite/specificevent/{{event.id}}/'">    
+            <br>
+            <span class="eventname">{{event.name}}</span><span><a style="color: #8E388E; font-size:14px;" href="/basicsite/downloadevent/{{ event.id }}/"> download </a></span>
+            <span><a style="color: #FF4500; font-size:14px;" href="/basicsite/addtoevent/{{ event.id }}/">add to</a></span>
+            <br>
+            <span class="eventdate">{{event.event_date}}, {{event.event_date|timesince:now }} ago </span><span class="eventuploader">| Uploaded by: {{event.uploader.user_name}}</span>
+            <br>
+            <span class="eventdescription">{{event.description}}</span>
+        </div>
+    {% empty %}
+        <div style="text-align:center;">Uploaded none</div>
+    {% endfor %}
+    </div>
+    <h3 style="text-align:center;"> Uploaded Track Files </h3>
+    <div class="trackfilecontainer">
+    {% for trackevent,fileList in relatedMajor %}
+        <div class="relatedfile">
+            <div class="eventname">{{ trackevent.eventname }} | <a href="/basicsite/downloadrelatedevent/{{trackevent.id}}/">get all</a> | <a style="color: #FF6103" href="/basicsite/deletefilevent/{{ trackevent.id }}/">delete</a></div> | <a style="color: #8E388E; font-size:14px;" href="/basicsite/specifictrack/{{trackevent.track.id}}/"> go to pipeline: #{{trackevent.track.pipeline_identifier_id}}, track #{{trackevent.track.id}} </a>
+            <br>
+            <span class="author"> - {{trackevent.uploader.user_name}} - </span><span class="commentdate">{{trackevent.uploaded_date}}, {{ trackevent.uploaded_date|timesince:now }} ago</span>
+            <br>
+            <div class="eventdescription">{{ trackevent.description }}</div>
+            {% for entry in fileList %}
+                <div class="entry" id="entryid{{entry.id}}">
+                    <a href="/basicsite/downloadrelatedfile/{{entry.id}}/">{{entry.filename}}</a>
+                    | <a style="color: #FF6103" href="/basicsite/deleterelatedfile/{{ entry.id }}/">delete</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% empty %}
+        <div style="text-align:center;">Uploaded none</div>
+    {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

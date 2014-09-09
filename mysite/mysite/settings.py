@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'i!jmv%hlkvub$w3bn5jpo&&8v_&py-t6m&((hxbxq!$x($!9k3'
+SECRET_KEY = '7z079nm+y4#(#s#0b8lz0@jj@&91$4ww18e06ag4=ic2s6b4%4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'basicsite',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -45,6 +46,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+SESSION_ENGINE = (
+    'django.contrib.sessions.backends.signed_cookies'
 )
 
 ROOT_URLCONF = 'mysite.urls'
@@ -59,9 +64,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'djangobase',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': 'localhost',
+		'USER': 'root',
+		'PASSWORD': 'dosh1',
+		'HOST': 'localhost',
     }
 }
 
@@ -78,8 +83,15 @@ USE_L10N = True
 
 USE_TZ = True
 
+# for that media yo
+MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATICFILES_DIRS = (
+    # os.path.join(BASE_DIR, 'basicsite/resources'),
+# )
+# STATIC_ROOT = os.path.join(BASE_DIR, 'C:\Users\mike\Documents\djangosite\mysite\basicsite\resources')
+# ARGH = os.path.join(BASE_DIR, 'basicsite/resources')

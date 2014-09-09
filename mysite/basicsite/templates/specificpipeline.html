@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $("#openclosediv").click(function(){
+       if($('#assignhiddendivid').is(':visible')){
+           $("#assignhiddendivid").hide();
+       } 
+       else
+       {
+           $("#assignhiddendivid").show(); 
+       }; 
+    });
+    $("#openclosemessagediv").click(function(){
+       if($('#messagehiddendivid').is(':visible')){
+           $("#messagehiddendivid").hide();
+       } 
+       else
+       {
+           $("#messagehiddendivid").show(); 
+       }; 
+    });
+    $("#toolopenclosediv").click(function(){
+       if($('#toolhiddendivid').is(':visible')){
+           $("#toolhiddendivid").hide();
+       } 
+       else
+       {
+           $("#toolhiddendivid").show(); 
+       }; 
+    });
+    $('.confirm').click(function(e) {
+        e.preventDefault();
+        if (window.confirm("Are you sure?")) {
+            location.href = this.href;
+        }
+    });
+    $('#openclosediv').hover( function(){
+       $(this).css('background-color', '#98FB98');
+    },
+    function(){
+       $(this).css('background-color', 'white');
+    });
+    $('#openclosemessagediv').hover( function(){
+       $(this).css('background-color', '#98FB98');
+    },
+    function(){
+       $(this).css('background-color', 'white');
+    });
+    $('#toolopenclosediv').hover( function(){
+       $(this).css('background-color', '#98FB98');
+    },
+    function(){
+       $(this).css('background-color', 'white');
+    });
+});
+</script>
+<script>
+function submitComment() {
+    var elm = document.getElementById("formid");
+    elm.submit();
+}
+</script>
+<!-- site standard -->
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+div.toolsections {
+    display: block;
+    width: 100%;
+    margin-left:30%;
+    margin-right:auto;
+}
+
+div.headerstuff {
+    #margin-top:-90px;
+    position:fixed;
+    #background-color:black;
+    width:100%;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 60px;
+    background-repeat: no-repeat;
+}
+a.sectionbuttons {
+    font-size: 15px;
+    font-family: "Avenir", sans-serif;
+    color: #97FFFF;
+}
+div.toolsh1 {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    font-size:36px;
+    text-align:center;
+    font-family: "Avenir Next", sans-serif;
+    color: #97FFFF;
+}
+div.toolswrapper {
+    display:block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
+    #background-color: #5F9EA0;
+}
+div.bodywrapper {
+    padding-top:100px;
+    width: 800px;
+    margin-left:auto;
+    margin-right:auto;
+}
+</style>
+<!-- video row styles -->
+<style>
+div.colmaster {
+    width:100%;
+    height:85px;
+    background-color: #31649e;
+    border-width: 1px;
+    border-style: solid;
+}
+#checkprocesstoolused {
+    padding-left:7px;
+    color: #E0EEE0;
+    border-color: black;
+    display:inline;
+    border-style: none;
+}
+#videonumber {
+    padding-left:10px;
+    padding-right:10px;
+    padding-top:30px;
+    padding-bottom:24px;
+}
+div.colmaster {
+    width:100%;
+    height:85px;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border-width: 1px;
+    border-style: solid;
+}
+div.col {
+    float:left;
+}
+#colvideo {
+    margin-top:30px;
+    width:55px;
+    border-width: 1px;
+    border-style: solid;
+    border-color:#FFD700;
+    
+}
+#coldata {
+    width:500px;
+    height:75px;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+</style>
+<!-- special page formats -->
+<style>
+div.pipelinerow {
+    height:150px;
+    background: url("{{ STATIC_URL }}toolsectionslight.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+span.pipelinetitle {
+    font-size:30px;
+    color: #31649E;
+}
+div.tracklist {
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    padding-left:20px;
+}
+div.trackrowcontainer {
+    
+}
+div.trackrow {
+
+}
+li {
+    list-style-type:none
+}
+div.assignhiddendiv {
+    border-width: 1px;
+    border-style: solid;
+    background-color:#F7F7F7;
+}
+div.messagehiddendiv {
+    border-width: 1px;
+    border-style: solid;
+    background-color:#F7F7F7;
+}
+div.toolhiddendiv {
+    border-width: 1px;
+    border-style: solid;
+    background-color:#F7F7F7;
+}
+</style>
+<!-- message board -->
+<style>
+div.comment-container {
+    margin-left:auto;
+    margin-right:auto;
+    background-color:white;
+    border-width:1px;
+    border-color:black;
+    border-style:solid;
+    width:800px;
+    height:600px;
+    overflow:auto;
+}
+div.commentrow {
+    border-bottom:1px dotted #808080;
+    height:auto;
+    background-color:#F7F7F7;
+}
+div.commentcontent {
+    border-left:5px solid #BCEE68;
+    padding-left:1px;
+    width:700px;
+    color:#282828;
+    font-family: Optima, Segoe, "Segoe UI", Candara, Calibri, Arial, sans-serif;
+}
+span.commentdate {
+    font-size:12px;
+    color:#555555;
+}
+span.author {
+    color:#104E8B;
+}
+div.toolrow {
+    display:block;
+    #background-color:#2F4F4F;
+    color: white;
+    font-family: "Avenir", sans-serif;
+    background: url("{{ STATIC_URL }}toolrowdarkblue.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+</style>
+<body>
+<div class="headerstuff">
+    <div class="toolswrapper">
+    <div class="toolsh1"> {{pipeline.pipeline_title}}</div>
+    </div>
+
+    <div class="toolsections">
+        <span><a class="sectionbuttons" href="/basicsite/home/">Home</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelines/">All Pipelines</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/filterpage/">Filter Page</a></span>
+        <span><a class="sectionbuttons" href="/basicsite/pipelinecategories/mypipelines/">My Pipelines</a></span>
+        <span><a style="color: #0CE84D;" class="sectionbuttons" href="/basicsite/constructpipeline/">Construct Pipeline</a></span>
+    </div>
+</div>
+
+<div class="bodywrapper">
+    <div class="pipelinerow">
+        <div class="pipelinetitlestuff">
+            <span class="pipelinetitle">{{ pipeline.pipeline_title }}</span>
+            <span style="font-size:12px;">Started: </span> <span style="font-size:14px;">{{pipeline.started_date }}, {{pipeline.started_date|timesince:now}} ago </span>
+            <br>
+            <span style="font-size:14px;"> Created by: {{pipeline.creator.user_name}}  </span> | <a class="confirm" style="color: #FF6103" href="/basicsite/deletepipeline/{{ pipeline.id }}/">delete</a>
+        </div>
+        <div class="pipelineotherstuff">
+            <span class="pipelinedescription">{{ pipeline.description }}</span>
+        </div>
+    </div>
+    <br>
+    <div class="tooldiv">
+        <div class="clickdiv" style="border-width: 1px; border-style: solid; border-color: #0CE84D;text-align:center;" id="toolopenclosediv" >
+            <br>
+            <span style="">View assigned tools</span>
+        </div>
+    </div>
+    <div class="toolhiddendiv" id="toolhiddendivid" style="display: none;">
+        <div class="inroster">
+        List of assigned:
+        {% for tool in labelingtools %}
+            <div class="toolrow">
+                <span style="color:#00FFFF;"> name: </span>
+                <span style="margin-right:7px"><a style="color:#FFD700; font-size:17px;" href="/basicsite/downloadtool/{{ tool.id }}/">{{ tool.tool.tooltitle }}</a></span>
+                <span><a style="color:#00FF7F; font-size:12px;margin-right:7px;" href="/basicsite/family/versionlog/{{ tool.tool.family.id }}/"> View Version Log </a> </span>
+                <span><a style="color: #FF6103" href="/basicsite/removetool/{{ tool.tool.id }}/">remove</a></span>
+                <br>
+                <span style="color:#00FFFF;"> file: </span>
+                <span> {{ tool.tool.toolfilename }} </span>
+                <br>
+                <span style="color:#00FFFF;"> uploaded: </span>
+                <span> {{ tool.tool.uploaded }} </span>
+                <br>
+                <span style="color:#00FFFF;">description:</span>
+                <span>{{ tool.tool.description }}</span>
+                <br>
+                <div style="background-color: #008B8B; width:100%; height:6px;"></div>
+            </div>
+        {% empty %}
+            no tools assigned :[
+        {% endfor %}
+        </div>
+        <form name="toolformname" id="toolformid" method="POST" action="/basicsite/tooltopipeline/" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <div class="invitetoroster">
+                <span style="">assign tools</span>
+                {{ pipelinetoolsform.tools }}
+            </div>
+            <br>
+            <p><input type="submit" value="submit" /></p>
+        </form>
+    </div>
+    <br>
+    <div class="assigndiv">
+        <div class="clickdiv" style="border-width: 1px; border-style: solid; border-color: #0CE84D;text-align:center;" id="openclosediv" >
+            <br>
+            <span style="">Assign peeps</span>
+        </div>
+    </div>
+    <div class="assignhiddendiv" id="assignhiddendivid" style="display: none;">
+        <div class="inroster">
+        List of assigned:
+        {% for person in roster %}
+            <br><span style="padding-left:10px;color:#388E8E;">>> {{ person.user_identifier.user_name }}</span> with role: {{person.pipeline_role}}
+        {% empty %}
+            nobody assigned :[
+        {% endfor %}
+        </div>
+        <form name="assignformname" id="assignformid" method="POST" action="/basicsite/assigntopipeline/" enctype="multipart/form-data" >
+            {% csrf_token %}
+            <div class="invitetoroster">
+            <span style="">assign more</span>
+            {{ form.users }}
+            </div>
+            <br>
+            <span style=""> With role: {{ form.role }}</span>
+            <p><input type="submit" value="submit" /></p>
+        </form>
+    </div>
+    <br>
+    <div class="messagediv">
+        <div class="clickdiv" style="border-width: 1px; border-style: solid; border-color: #0CE84D;text-align:center;" id="openclosemessagediv" >
+            <br>
+            <span style="">Message Board</span>
+        </div>
+    </div>
+    {% if messageboard == 'open' %}
+    <div class="messageboard-container"  id="messagehiddendivid" >
+    {% else %}
+    <div class="messageboard-container"  id="messagehiddendivid" style="display: none;">
+    {% endif %}
+        <div style="background-color:#008B8B;padding-left:10px;color:#CAE1FF;">Board</div>
+        <div>
+            <div class="comment-container">
+                {% for comment in comments %}
+                <div class="commentrow">
+                    <span class="author"> - {{comment.author.user_name}} - </span><span class="commentdate">{{comment.posted_date}}, {{ comment.posted_date|timesince:now }} ago</span><br>
+                    <div class="commentcontent">{{comment.text}}</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="createcomment-container">
+                <form name="formname" id="formid" method="POST" action="/basicsite/postpipelinecomment/" >
+                     {% csrf_token %}
+                     {{replybox.commentbox}}
+                    <img id="send2" class="postButton" src="{{ STATIC_URL }}post-button-vert.png" alt="some text" onclick="submitComment();">
+                </form>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="tracklist">
+        <div class="trackcreation">
+            <span style=""> <a style="color: #0CE84D;" href="/basicsite/createtrack/"> Create Track </a></span>
+        </div>
+        <div class="trackrowcontainer">
+        {% for track, video, checkprocessminor in finalListMajor %}
+            <div class="colmaster" id="idcolmaster{{video.id}}" onclick="window.location.href='/basicsite/specifictrack/{{track.id}}/';">
+                <div class="col" style="color:#00FF00;">
+                    {{track.id}}
+                </div>
+                <div class="col" id="colvideo">
+                    <a class="videolink" style="color:#FFD700; font-size:17px;" href="/basicsite/downloadvideo/{{ video.video_number}}/{{ video.event.id }}/"><span class="videotablesegment" id="videonumber" >{{ video.video_number }}</span></a>
+                </div>
+                <div class="col" id="coldata">
+                    <span class="videotablesegmentdata" id="uploaddate" ><span style="font-size:14px; color: #97FFFF;"> Uploaded on: </span> <span style="font-size:14px; color: #E0EEE0;"> {{ video.uploaded_date }}</span></span>
+                    <br>
+                    <span class="videotablesegmentdata" id="collectiontoolused" ><span style="font-size:14px; color: #97FFFF;">Collection Tool:</span> <span style="font-size:14px; color: #E0EEE0;">{{ video.collectiontool.tooltitle }}</span>
+                    <br>
+                    <span style="font-size:14px; color: #97FFFF;"> Checking/Processing Tools:</span>
+                    {% for tup in checkprocessminor %}
+                        <span class="videotablesegmentdata" style="font-size:15px;" id="checkprocesstoolused" > {{ tup.tooltitle }},</span>
+                    {% endfor %}
+                    <br>
+                    <span style=""> status is </span><span style="color:white;">{{track.status}} </span>
+                    <div class="relatedfilescontainer">
+                        <div class="relatedfile">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+</body>
+</html>
+</html>

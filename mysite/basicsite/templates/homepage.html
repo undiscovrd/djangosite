@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+</head>
+<style>
+body {
+    background-color: white;
+    margin: 0px;
+    font-family: "Avenir Next", sans-serif;
+}
+div.welcomeheader {
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+    text-align:center;
+    background: url("{{ STATIC_URL }}topBar.png");
+    background-size: 100% 120px;
+    background-repeat: no-repeat;
+}
+span.username {
+    color: #31649E;
+    font-size:40px;
+}
+div.homepagecontent {
+    width:70%;
+    height:300px;
+    margin-left:auto;
+    margin-right:auto;
+    padding-top:100px;
+}
+div.iconblock {
+    width:33%;
+    float:left;
+    padding-left:auto;
+    padding-right:auto;
+    opacity:0.6;
+}
+div.iconblock:hover {
+    -moz-box-shadow: 0 0 10px #CAFF70;
+    -webkit-box-shadow: 0 0 10px #CAFF70;
+    box-shadow: 0 0 10px #CAFF70;
+    opacity:0.9;
+}
+img.icon {
+    padding-left:30px;
+}
+</style>
+<body>
+
+<div class="welcomeheader">
+    <span class="username"> {{ user.user_name}}'s home page </span>
+    <span> <a href="/basicsite/login/"> logout </a> </span>
+</div>
+
+<div class="homepagecontent">
+    <div class="iconblock" onclick="window.location.href='/basicsite/tools/'">
+        <img class="icon" src="{{ STATIC_URL }}tools2-icon.png">
+    </div>
+    <div class="iconblock" onclick="window.location.href='/basicsite/videos/'">
+        <img class="icon" src="{{ STATIC_URL }}diskdrive-icon.png">
+    </div>
+    <div class="iconblock" onclick="window.location.href='/basicsite/pipelines/'">
+        <img class="icon" src="{{ STATIC_URL }}task2-icon.png">
+    </div>
+
+</div>
+
+</body>
+</html>
